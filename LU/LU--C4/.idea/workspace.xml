@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="1967839c-af62-449d-a171-6819f87afb48" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/RabbitMQv1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/ClienteMain.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/MensajeIntercambio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LU-C2/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/../LU-C2/.classpath" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LU-C2/.settings/org.eclipse.jdt.core.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/../LU-C2/.settings/org.eclipse.jdt.core.prefs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LU-C3/Threads_RMI/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/../LU-C3/Threads_RMI/.classpath" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LU-C3/Threads_RMI/.settings/org.eclipse.jdt.core.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/../LU-C3/Threads_RMI/.settings/org.eclipse.jdt.core.prefs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1a32KDSA4Nh0MtvLIOQj8wXVRRa" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn package" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.ServerMain">
+    <configuration name="App" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.example.App" />
+      <module name="RabbitMQv1" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ClienteMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.example.ClienteMain" />
+      <module name="RabbitMQv1" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ServerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.example.ServerMain" />
+      <module name="RabbitMQv1" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.ServerMain" />
+        <item itemvalue="Application.ClienteMain" />
+        <item itemvalue="Application.App" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1967839c-af62-449d-a171-6819f87afb48" name="Default Changelist" comment="" />
+      <created>1585949890619</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1585949890619</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2408" y="71" width="376" height="632" key="#com.intellij.ide.util.MemberChooser" timestamp="1585955188554">
+      <screen x="1920" y="0" width="1360" height="768" />
+    </state>
+    <state x="2408" y="71" width="376" height="632" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1054/1920.0.1360.768@1920.0.1360.768" timestamp="1585955188554" />
+    <state width="1318" height="184" key="GridCell.Tab.0.bottom" timestamp="1585958342109">
+      <screen x="1920" y="0" width="1360" height="768" />
+    </state>
+    <state width="1318" height="184" key="GridCell.Tab.0.bottom/0.0.1920.1054/1920.0.1360.768@1920.0.1360.768" timestamp="1585958342109" />
+    <state width="1318" height="184" key="GridCell.Tab.0.center" timestamp="1585958342109">
+      <screen x="1920" y="0" width="1360" height="768" />
+    </state>
+    <state width="1318" height="184" key="GridCell.Tab.0.center/0.0.1920.1054/1920.0.1360.768@1920.0.1360.768" timestamp="1585958342109" />
+    <state width="1318" height="184" key="GridCell.Tab.0.left" timestamp="1585958342109">
+      <screen x="1920" y="0" width="1360" height="768" />
+    </state>
+    <state width="1318" height="184" key="GridCell.Tab.0.left/0.0.1920.1054/1920.0.1360.768@1920.0.1360.768" timestamp="1585958342109" />
+    <state width="1318" height="184" key="GridCell.Tab.0.right" timestamp="1585958342109">
+      <screen x="1920" y="0" width="1360" height="768" />
+    </state>
+    <state width="1318" height="184" key="GridCell.Tab.0.right/0.0.1920.1054/1920.0.1360.768@1920.0.1360.768" timestamp="1585958342109" />
+    <state x="2263" y="168" width="672" height="677" key="run.anything.popup" timestamp="1585954669829">
+      <screen x="1920" y="0" width="1360" height="768" />
+    </state>
+    <state x="2263" y="168" width="672" height="677" key="run.anything.popup/0.0.1920.1054/1920.0.1360.768@1920.0.1360.768" timestamp="1585954669829" />
+  </component>
+</project>
