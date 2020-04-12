@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * A command line client for the date server. Requires the IP address of the
- * server as the sole argument. Exits after printing the response.
+ * Un cliente de línea de comandos para el servidor de fecha y hora.
+ * Requiere la dirección (host y puerto) del servidor como argumento.
+ * Termina luego de escribir la respuesta.
  */
 public class Cliente {
     public static void main(String[] args) {
