@@ -12,7 +12,8 @@ Bienvenidos a la segunda parte del tutorial de Docker network. Este tutorial te 
 ## Sección 2 -- Manejo de parámetros en DockerCompose
 Existen varias maneras para pasar parámetros a las aplicaciones desde DockerCompose.
 En este caso nosotros utilizaremos las variables de entorno (environment) 
-```
+
+```yaml
 version: '3'
 services:
   server:
@@ -27,10 +28,6 @@ services:
       - port=4444
 ```
 
-https://www.blexin.com/en-US/Article/Blog/High-availability-with-RabbitMQ-47
-https://wiki.linuxchina.net/index.php/Rabbitmq_cluster_on_docker-compose
-https://github.com/mosquito/rabbitmq-cluster/blob/master/docker-compose.yml
-
 ## Sección 3 -- Crear varias instancias para un mismo servicio
 
 ## Sección 4 -- Balancear carga entre instancias de servicios con HaProxy
@@ -38,92 +35,111 @@ https://github.com/mosquito/rabbitmq-cluster/blob/master/docker-compose.yml
 ## Sección 5 -- Construir un balanceador de carga redundante con HaProxy
 
 ## Sección 6 -- Crear un cluster RabbitMQ con Docker Compose
+
+### 6.1 - Qué es RabbitMQ?
+
+> RabbitMQ es un "open source message broker software" que implementa los protocolos de "Advanced Message Queuing Protocol (AMQP)".
+> El servicio de RabbitMQ está escrito en Erlang y construido por Open Telecom Platform
+> Tiene la capacidad de construir su servicio como un cluster con capacidad de redundancia ante fallas. Están disponibles  
+> API's para varios lenguajes de programación
+
+https://www.rabbitmq.com/
+
+### 6.2 - RabbitMQ en Docker
+La imagen oficial de RabbitMQ se encuentra desarrollada y presentada (desde Marzo de 2020) por Bitnami Inc y se encuentra preparada para trabajar en diversos entornos (local, Cloud, Kubernetes, etc)
+https://bitnami.com/stack/rabbitmq/containers
+
+La imagen base se encuentra en Docker Hub, donde se puede visualizar el contínuo update de la misma. 
+https://hub.docker.com/r/bitnami/rabbitmq/
+
+### 6.3 - Porqué usar las imágenes Bitnami
+
+* Bitnami monitorea contínuamente los cambios que producen los proveedores de las plataformas y publica rápidamente las nuveras versiones de esas imágenes a través de pipelines automatizados 
+* Con las imágenes de Bitnami, las últimas correcciones de errores y características están disponibles lo antes posible.
+* Los contenedores de Bitnami, las máquinas virtuales y las imágenes en la nube utilizan los mismos componentes y el mismo enfoque de configuración, lo que facilita el cambio entre formatos según las necesidades de su proyecto.
+* Todas las imágenes de bitnami están basadas en [minideb] (https://github.com/bitnami/minideb) que es una imagen de contenedor minimalista de tamaño reducido basada en Debian (distribución líder de Linux) .
+* Todas las imágenes de Bitnami disponibles en Docker Hub están firmadas con [Docker Content Trust (DTC)] (https://docs.docker.com/engine/security/trust/content_trust/). Puede usar `DOCKER_CONTENT_TRUST = 1` para verificar la integridad de las imágenes
+
 Cómo siempre existen varias maneras de crear un cluster de un determinado servicio para ofrecer características de redundancia, tolerancia a fallos y replicación. Especialmente en docker existen siempre diversos usuarios que publican adaptaciones de las imágenes oficiales para funciones específicas o facilitar el uso de algún plugin o herramienta.  Sin embargo, este tipo de adaptaciones casi siempre quedan sin actualizaciones frecuentes y terminan ofreciendo herramientas desactualizadas.  Por lo tanto, en este tutorial siempre se busca utilizar herramientas de repositorios oficiales con updates contínuos.
 
-La imagen oficial de RabbitMQ se encuentra desarrollada y presentada (desde Marzo de 2020) por Bitnami Inc. a través de los repositorios de Docker Hub 
-[https://hub.docker.com/r/bitnami/rabbitmq/] (Rabbit MQ Bitnami)
+### 6.4 - Cómo correr RabbitMQ desde la imagen básica (docker) de Bitnami
 
-
-# What is RabbitMQ?
-
-> RabbitMQ is an open source message broker software that implements the Advanced Message Queuing Protocol (AMQP).
-> The RabbitMQ server is written in the Erlang programming language and is built on the Open Telecom Platform
-> framework for clustering and failover. Client libraries to interface with the broker are available for all major
-> programming languages.
-
-[https://www.rabbitmq.com/](https://www.rabbitmq.com/)
-
-# TL;DR;
-
+* Obtener la imagen desde el repositorio
 ```bash
 $ docker run --name rabbitmq bitnami/rabbitmq:latest
+
+Unable to find image 'bitnami/rabbitmq:latest' locally
+latest: Pulling from bitnami/rabbitmq
+f741ee3cf64f: Pull complete 
+6e1a7737956d: Pull complete 
+ced5f76dedf2: Downloading [=============================================>     ]  14.34MB/15.83MB
+....
+
+Starting RabbitMQ 3.8.3 on Erlang 22.3
+ Copyright (c) 2007-2020 Pivotal Software, Inc.
+ Licensed under the MPL 1.1. Website: https://rabbitmq.com
+
+  ##  ##      RabbitMQ 3.8.3
+  ##  ##
+  ##########  Copyright (c) 2007-2020 Pivotal Software, Inc.
+.....
+2020-04-13 15:22:53.106 [info] <0.337.0> Running boot step networking defined by app rabbit
+2020-04-13 15:22:53.108 [info] <0.488.0> started TCP listener on [::]:5672
+2020-04-13 15:22:53.108 [info] <0.337.0> Running boot step cluster_name defined by app rabbit
+2020-04-13 15:22:53.108 [info] <0.337.0> Running boot step direct_client defined by app rabbit
+2020-04-13 15:22:53.109 [info] <0.337.0> Running boot step os_signal_handler defined by app rabbit
+2020-04-13 15:22:53.109 [info] <0.490.0> Swapping OS signal event handler (erl_signal_server) for our own
+2020-04-13 15:22:53.149 [info] <0.540.0> Management plugin: HTTP (non-TLS) listener started on port 15672
+2020-04-13 15:22:53.149 [info] <0.646.0> Statistics database started.
+.....
 ```
 
-## Docker Compose
+* Verificar (en otra terminal) que está corriendo el contenedor
+```bash
+$ docker container ps
+```
+```
+CONTAINER ID        IMAGE                     COMMAND                  CREATED             STATUS              PORTS                                      NAMES
+7daa75d3e3db        bitnami/rabbitmq:latest   "/opt/bitnami/script…"   12 seconds ago      Up 10 seconds       4369/tcp, 5672/tcp, 15672/tcp, 25672/tcp   rabbitmq
+```
+* Parar el servicio (Ctrl + c)
+
+#### 6.5 - Usar Docker Compose para correr RabbitMQ 
+
+* Descargar el "template" del docker-compose disponible por el proveedor y visualizarlo 
 
 ```bash
 $ curl -sSL https://raw.githubusercontent.com/bitnami/bitnami-docker-rabbitmq/master/docker-compose.yml > docker-compose.yml
+cat docker-compose.yml
+```
+```yaml
+version: '3'
+
+services:
+  rabbitmq:
+    image: 'bitnami/rabbitmq:latest'
+    ports:
+      - '4369:4369'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq_data:/bitnami'
+volumes:
+  rabbitmq_data:
+    driver: local
+```
+
+* Hacer una prueba y levantarlo con docker-compose
+```bash
 $ docker-compose up -d
 ```
 
-# Why use Bitnami Images?
+#### 6.6 - Persistir los datos de RabbitMQ (a pesar de reinicio) 
 
-* Bitnami closely tracks upstream source changes and promptly publishes new versions of this image using our automated systems.
-* With Bitnami images the latest bug fixes and features are available as soon as possible.
-* Bitnami containers, virtual machines and cloud images use the same components and configuration approach - making it easy to switch between formats based on your project needs.
-* All our images are based on [minideb](https://github.com/bitnami/minideb) a minimalist Debian based container image which gives you a small base container image and the familiarity of a leading linux distribution.
-* All Bitnami images available in Docker Hub are signed with [Docker Content Trust (DTC)](https://docs.docker.com/engine/security/trust/content_trust/). You can use `DOCKER_CONTENT_TRUST=1` to verify the integrity of the images.
-* Bitnami container images are released daily with the latest distribution packages available.
+Si se elimina el contenedor, todos sus datos se perderán, y la próxima vez que ejecute la imagen, la base de datos se reiniciará. Para evitar esta pérdida de datos, debe montar un volumen que persistirá incluso después de quitar el contenedor.
 
-
-> This [CVE scan report](https://quay.io/repository/bitnami/rabbitmq?tab=tags) contains a security report with all open CVEs. To get the list of actionable security issues, find the "latest" tag, click the vulnerability report link under the corresponding "Security scan" field and then select the "Only show fixable" filter on the next page.
-
-# How to deploy RabbitMQ in Kubernetes?
-
-Deploying Bitnami applications as Helm Charts is the easiest way to get started with our applications on Kubernetes. Read more about the installation in the [Bitnami RabbitMQ Chart GitHub repository](https://github.com/bitnami/charts/tree/master/bitnami/rabbitmq).
-
-Bitnami containers can be used with [Kubeapps](https://kubeapps.com/) for deployment and management of Helm Charts in clusters.
-
-# Why use a non-root container?
-
-Non-root container images add an extra layer of security and are generally recommended for production environments. However, because they run as a non-root user, privileged tasks are typically off-limits. Learn more about non-root containers [in our docs](https://docs.bitnami.com/containers/how-to/work-with-non-root-containers/).
-
-# Supported tags and respective `Dockerfile` links
-
-> NOTE: Debian 9 and Oracle Linux 7 images have been deprecated in favor of Debian 10 images. Bitnami will not longer publish new Docker images based on Debian 9 or Oracle Linux 7.
-
-Learn more about the Bitnami tagging policy and the difference between rolling tags and immutable tags [in our documentation page](https://docs.bitnami.com/containers/how-to/understand-rolling-tags-containers/).
-
-
-* [`3.8-debian-10`, `3.8.3-debian-10-r45`, `3.8`, `3.8.3`, `latest` (3.8/debian-10/Dockerfile)](https://github.com/bitnami/bitnami-docker-rabbitmq/blob/3.8.3-debian-10-r45/3.8/debian-10/Dockerfile)
-
-Subscribe to project updates by watching the [bitnami/rabbitmq GitHub repo](https://github.com/bitnami/bitnami-docker-rabbitmq).
-
-# Get this image
-
-The recommended way to get the Bitnami RabbitMQ Docker Image is to pull the prebuilt image from the [Docker Hub Registry](https://hub.docker.com/r/bitnami/rabbitmq).
-
-```bash
-$ docker pull bitnami/rabbitmq:latest
-```
-
-To use a specific version, you can pull a versioned tag. You can view the [list of available versions](https://hub.docker.com/r/bitnami/rabbitmq/tags/) in the Docker Hub Registry.
-
-```bash
-$ docker pull bitnami/rabbitmq:[TAG]
-```
-
-If you wish, you can also build the image yourself.
-
-```bash
-$ docker build -t bitnami/rabbitmq:latest 'https://github.com/bitnami/bitnami-docker-rabbitmq.git#master:3.8/debian-10'
-```
-
-# Persisting your application
-
-If you remove the container all your data will be lost, and the next time you run the image the database will be reinitialized. To avoid this loss of data, you should mount a volume that will persist even after the container is removed.
-
-For persistence you should mount a directory at the `/bitnami` path. If the mounted directory is empty, it will be initialized on the first run.
+Para persistencia, debe montar un directorio en la ruta `/bitnami`. Si el directorio montado está vacío, se inicializará en la primera ejecución.
 
 ```bash
 $ docker run \
@@ -131,9 +147,9 @@ $ docker run \
     bitnami/rabbitmq:latest
 ```
 
-You can also do this with a minor change to the [`docker-compose.yml`](https://github.com/bitnami/bitnami-docker-rabbitmq/blob/master/docker-compose.yml) file present in this repository:
+También puede hacer esto con un cambio menor en el archivo [`docker-compose.yml`] (https://github.com/bitnami/bitnami-docker-rabbitmq/blob/master/docker-compose.yml) presente en este repositorio:
 
-```
+```yaml
 rabbitmq:
   ...
   volumes:
@@ -141,84 +157,13 @@ rabbitmq:
   ...
 ```
 
-> NOTE: As this is a non-root container, the mounted files and directories must have the proper permissions for the UID `1001`.
+#### 6.7 - Configuración avanzada de RabbitMQ (Docker)
 
-# Connecting to other containers
+##### Variables de entorno (Como vimos al principio)
 
-Using [Docker container networking](https://docs.docker.com/engine/userguide/networking/), a RabbitMQ server running inside a container can easily be accessed by your application containers.
+Cuando se inicia la imagen de rabbitmq, se pueden ajustar configuraciones de la instancia pasando una o más variables de entorno en el archivo docker-compose o en la línea de comandos de ejecución de docker. Si desea agregar una nueva variable de entorno:
 
-Containers attached to the same network can communicate with each other using the container name as the hostname.
-
-## Using the Command Line
-
-In this example, we will create a RabbitMQ client instance that will connect to the server instance that is running on the same docker network as the client.
-
-### Step 1: Create a network
-
-```bash
-$ docker network create app-tier --driver bridge
-```
-
-### Step 2: Launch the RabbitMQ server instance
-
-Use the `--network app-tier` argument to the `docker run` command to attach the RabbitMQ container to the `app-tier` network.
-
-```bash
-$ docker run -d --name rabbitmq-server \
-    --network app-tier \
-    bitnami/rabbitmq:latest
-```
-
-### Step 3: Launch your RabbitMQ client instance
-
-Finally we create a new container instance to launch the RabbitMQ client and connect to the server created in the previous step:
-
-```bash
-$ docker run -it --rm \
-    --network app-tier \
-    bitnami/rabbitmq:latest rabbitmqctl -n rabbit@rabbitmq-server status
-```
-
-## Using Docker Compose
-
-When not specified, Docker Compose automatically sets up a new network and attaches all deployed services to that network. However, we will explicitly define a new `bridge` network named `app-tier`. In this example we assume that you want to connect to the RabbitMQ server from your own custom application image which is identified in the following snippet by the service name `myapp`.
-
-```yaml
-version: '2'
-
-networks:
-  app-tier:
-    driver: bridge
-
-services:
-  rabbitmq:
-    image: 'bitnami/rabbitmq:latest'
-    networks:
-      - app-tier
-  myapp:
-    image: 'YOUR_APPLICATION_IMAGE'
-    networks:
-      - app-tier
-```
-
-> **IMPORTANT**:
->
-> 1. Please update the **YOUR_APPLICATION_IMAGE** placeholder in the above snippet with your application image
-> 2. In your application container, use the hostname `rabbitmq` to connect to the RabbitMQ server
-
-Launch the containers using:
-
-```bash
-$ docker-compose up -d
-```
-
-# Configuration
-
-## Environment variables
-
- When you start the rabbitmq image, you can adjust the configuration of the instance by passing one or more environment variables either on the docker-compose file or on the docker run command line. If you want to add a new environment variable:
-
-* For docker-compose add the variable name and value under the application section in the [`docker-compose.yml`](https://github.com/bitnami/bitnami-docker-rabbitmq/blob/master/docker-compose.yml) file present in this repository: :
+Para docker-compose, agregue el nombre y el valor de la variable en la sección de la aplicación en [`docker-compose.yml`] 
 
 ```yaml
 rabbitmq:
@@ -227,10 +172,7 @@ rabbitmq:
     - RABBITMQ_PASSWORD=my_password
   ...
 ```
-
- * For manual execution add a `-e` option with each variable and value.
-
-Available variables:
+* Variables disponibles:
 
  - `RABBITMQ_USERNAME`: RabbitMQ application username. Default: **user**
  - `RABBITMQ_PASSWORD`: RabbitMQ application password. Default: **bitnami**
@@ -251,18 +193,23 @@ Available variables:
  - `RABBITMQ_LDAP_SERVER_PORT`: Port of the LDAP server. Defaults to `389`.
  - `RABBITMQ_LDAP_USER_DN_PATTERN`: DN used to bind to LDAP in the form `cn=$${username},dc=example,dc=org`. No defaults.
 
-## Setting up a cluster
-
-### Docker Compose
+#### 6.8 - Construir un cluster RabbitMQ usando Docker Compose
 
 This is the simplest way to run RabbitMQ with clustering configuration:
 
-#### Step 1: Add a stats node in your `docker-compose.yml`
+##### Paso 1: Crear en /tmp/ los "volúmenes" que usaremos para montar en los nodos 
+Vamos a crear:
+* 1 folder para el stats+node
+* 1 folder para cada queue-disc
+```bash
+ mkdir /tmp/rabbit; mkdir /tmp/rabbit/stats ; mkdir /tmp/rabbit/node1 ; mkdir /tmp/rabbit/node2 ; mkdir /tmp/rabbit/node3; sudo chmod 777 -R /tmp/rabbit
+```
+##### Paso 2: Crear el primer nodo stats al docker-compose.yml`
 
-Copy the snippet below into your docker-compose.yml to add a RabbitMQ stats node to your cluster configuration.
+* Copie el código a continuación en su docker-compose.yml para agregar un nodo de estadísticas web RabbitMQ a la configuración de su clúster.
 
 ```yaml
-version: '2'
+version: '3'
 
 services:
   stats:
@@ -274,60 +221,28 @@ services:
     ports:
       - '15672:15672'
     volumes:
-      - 'rabbitmqstats_data:/bitnami'
+      - '/tmp/rabbit/stats:/bitnami'
 ```
 
-> **Note:** The name of the service (**stats**) is important so that a node could resolve the hostname to cluster with. (Note that the node name is `rabbit@stats`)
+> ** Nota: ** El nombre del servicio (** stats **) es importante para que un nodo pueda resolver el nombre de host para luego poder agrupar los nodos. (Tenga en cuenta que el nombre del nodo es `rabbit@stats`)
 
-#### Step 2: Add a queue node in your configuration
+* Verificar (además de lo informado por consola) que está corriendo el contenedor
+```bash
+$ docker container ps
 
-Update the definitions for nodes you want your RabbitMQ stats node cluster with.
-
-```yaml
-  queue-disc1:
-    image: bitnami/rabbitmq
-    environment:
-      - RABBITMQ_NODE_TYPE=queue-disc
-      - RABBITMQ_NODE_NAME=rabbit@queue-disc1
-      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
-      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
-    volumes:
-      - 'rabbitmqdisc1_data:/bitnami'
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                                                  NAMES
+223e1587c160        bitnami/rabbitmq    "/opt/bitnami/script…"   39 minutes ago      Up 25 minutes       4369/tcp, 5672/tcp, 25672/tcp, 0.0.0.0:15672->15672/tcp                docker-network-tutorial-p2_stats_1
 ```
 
-> **Note:** Again, the name of the service (**queue-disc1**) is important so that each node could resolve the hostname of this one.
+* Validar ingresando a la web-gui que está corriendo el servicio
+http://localhost:15672
 
-We are going to add a ram node too:
+##### Paso 3: Agregar nodos "colas" a la configuración del cluster RabbitMQ
 
-```yaml
-  queue-ram1:
-    image: bitnami/rabbitmq
-    environment:
-      - RABBITMQ_NODE_TYPE=queue-ram
-      - RABBITMQ_NODE_NAME=rabbit@queue-ram1
-      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
-      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
-    volumes:
-      - 'rabbitmqram1_data:/bitnami'
-```
-
-#### Step 3: Add the volume description
+Actualizar con uno o más nodos según el ejemplo siguiente 
 
 ```yaml
-volumes:
-  rabbitmqstats_data:
-    driver: local
-  rabbitmqdisc1_data:
-    driver: local
-  rabbitmqram1_data:
-    driver: local
-```
-
-The `docker-compose.yml` will look like this:
-
-```yaml
-version: '2'
-
+version: '3'
 services:
   stats:
     image: bitnami/rabbitmq
@@ -338,199 +253,44 @@ services:
     ports:
       - '15672:15672'
     volumes:
-      - 'rabbitmqstats_data:/bitnami'
-  queue-disc1:
+      - '/tmp/rabbit/stats/:/bitnami'
+  node1:
     image: bitnami/rabbitmq
     environment:
       - RABBITMQ_NODE_TYPE=queue-disc
-      - RABBITMQ_NODE_NAME=rabbit@queue-disc1
+      - RABBITMQ_NODE_NAME=rabbit@node1
       - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
       - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - 5672:5672
+      - 4369:4369
     volumes:
-      - 'rabbitmqdisc1_data:/bitnami'
-  queue-ram1:
+      - '/tmp/rabbit/node1:/bitnami'
+  node2:
     image: bitnami/rabbitmq
     environment:
-      - RABBITMQ_NODE_TYPE=queue-ram
-      - RABBITMQ_NODE_NAME=rabbit@queue-ram1
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbit@node2
       - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
       - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - 5673:5672
+      - 4370:4369
     volumes:
-      - 'rabbitmqram1_data:/bitnami'
-
-volumes:
-  rabbitmqstats_data:
-    driver: local
-  rabbitmqdisc1_data:
-    driver: local
-  rabbitmqram1_data:
-    driver: local
+      - '/tmp/rabbit/node2:/bitnami'   
 ```
 
-## Configuration file
+##### Paso 4: Parar el cluster y verificar las configuraciones 
 
-A custom configuration file can be mounted to the `/opt/bitnami/rabbitmq/etc/rabbitmq` directory. If no file is mounted, the container will generate one.
-
-## Enabling LDAP support
-
-LDAP configuration parameters must be specified if you wish to enable LDAP support. The following environment variables are available to configure LDAP support:
-
- - `RABBITMQ_ENABLE_LDAP`: Enable the LDAP configuration. Defaults to `no`.
- - `RABBITMQ_LDAP_TLS`: Enable secure LDAP configuration. Defaults to `no`.
- - `RABBITMQ_LDAP_SERVER`: Hostname of the LDAP server. No defaults.
- - `RABBITMQ_LDAP_SERVER_PORT`: Port of the LDAP server. Defaults to `389`.
- - `RABBITMQ_LDAP_USER_DN_PATTERN`: DN used to bind to LDAP in the form `cn=$${username},dc=example,dc=org`.No defaults.
-
-> Note: To escape `$` in `RABBITMQ_LDAP_USER_DN_PATTERN` you need to use `$$`.
-
-# Logging
-
-The Bitnami RabbitMQ Docker image sends the container logs to the `stdout`. To view the logs:
-
-```bash
-$ docker logs rabbitmq
-```
-
-or using Docker Compose:
-
-```bash
-$ docker-compose logs rabbitmq
-```
-
-You can configure the containers [logging driver](https://docs.docker.com/engine/admin/logging/overview/) using the `--log-driver` option if you wish to consume the container logs differently. In the default configuration docker uses the `json-file` driver.
-
-# Maintenance
-
-## Upgrade this application
-
-Bitnami provides up-to-date versions of RabbitMQ, including security patches, soon after they are made upstream. We recommend that you follow these steps to upgrade your container.
-
-### Step 1: Get the updated image
-
-```bash
-$ docker pull bitnami/rabbitmq:latest
-```
-
-or if you're using Docker Compose, update the value of the image property to
-`bitnami/rabbitmq:latest`.
-
-### Step 2: Stop and backup the currently running container
-
-Stop the currently running container using the command
-
-```bash
-$ docker stop rabbitmq
-```
-
-or using Docker Compose:
+Detener el cluster utilizando los siguientes comandos de Docker Compose: 
 
 ```bash
 $ docker-compose stop rabbitmq
 ```
-
-Next, take a snapshot of the persistent volume `/path/to/rabbitmq-persistence` using:
+##### Paso 5: Realizar un backup de las configuraciones para disponer en otro nodo más adelante 
+El backup se realizará a través de utilizar la herramienta rsync hacia otra carpeta utilizando
 
 ```bash
 $ rsync -a /path/to/rabbitmq-persistence /path/to/rabbitmq-persistence.bkp.$(date +%Y%m%d-%H.%M.%S)
 ```
 
-### Step 3: Remove the currently running container
-
-```bash
-$ docker rm -v rabbitmq
-```
-
-or using Docker Compose:
-
-```bash
-$ docker-compose rm -v rabbitmq
-```
-
-### Step 4: Run the new image
-
-Re-create your container from the new image.
-
-```bash
-$ docker run --name rabbitmq bitnami/rabbitmq:latest
-```
-
-or using Docker Compose:
-
-```bash
-$ docker-compose up rabbitmq
-```
-
-# Notable changes
-
-## 3.8.0-r17, 3.8.0-ol-7-r26
-
-- LDAP authentication
-
-## 3.7.15-r18, 3.7.15-ol-7-r19
-- Decrease the size of the container. Node.js is not needed anymore. RabbitMQ configuration logic has been moved to bash scripts in the `rootfs` folder.
-- Configuration is not persisted anymore.
-
-## 3.7.7-r35
-
-- The RabbitMQ container includes a new environment variable `RABBITMQ_HASHED_PASSWORD` that allows setting password via SHA256 hash (consult [official documentation](https://www.rabbitmq.com/passwords.html) for more information about password hashes).
-- Please note that password hashes must be generated following the [official algorithm](https://www.rabbitmq.com/passwords.html#computing-password-hash). You can use [this Python script](https://gist.githubusercontent.com/anapsix/4c3e8a8685ce5a3f0d7599c9902fd0d5/raw/1203a480fcec1982084b3528415c3cad26541b82/rmq_passwd_hash.py) to generate them.
-
-## 3.7.7-r19
-
-- The RabbitMQ container has been migrated to a non-root user approach. Previously the container ran as the `root` user and the RabbitMQ daemon was started as the `rabbitmq` user. From now on, both the container and the RabbitMQ daemon run as user `1001`. As a consequence, the data directory must be writable by that user. You can revert this behavior by changing `USER 1001` to `USER root` in the Dockerfile.
-
-## 3.6.5-r2
-
-The following parameters have been renamed:
-
-|            From            |              To              |
-|----------------------------|------------------------------|
-| `RABBITMQ_ERLANG_COOKIE`    | `RABBITMQ_ERL_COOKIE`     |
-
-## 3.6.5-r2
-
-The following parameters have been renamed:
-
-|            From            |              To              |
-|----------------------------|------------------------------|
-| `RABBITMQ_ERLANGCOOKIE`    | `RABBITMQ_ERLANG_COOKIE`     |
-| `RABBITMQ_NODETYPE`        | `RABBITMQ_NODE_TYPE`         |
-| `RABBITMQ_NODEPORT`        | `RABBITMQ_NODE_PORT`         |
-| `RABBITMQ_NODENAME`        | `RABBITMQ_NODE_NAME`         |
-| `RABBITMQ_CLUSTERNODENAME` | `RABBITMQ_CLUSTER_NODE_NAME` |
-| `RABBITMQ_MANAGERPORT`     | `RABBITMQ_MANAGER_PORT`      |
-
-# Contributing
-
-We'd love for you to contribute to this container. You can request new features by creating an
-[issue](https://github.com/bitnami/bitnami-docker-rabbitmq/issues), or submit a
-[pull request](https://github.com/bitnami/bitnami-docker-rabbitmq/pulls) with your contribution.
-
-# Issues
-
-If you encountered a problem running this container, you can file an
-[issue](https://github.com/bitnami/bitnami-docker-rabbitmq/issues/new). For us to provide better support,
-be sure to include the following information in your issue:
-
-- Host OS and version
-- Docker version (`docker version`)
-- Output of `docker info`
-- Version of this container (`echo $BITNAMI_IMAGE_VERSION` inside the container)
-- The command you used to run the container, and any relevant output you saw (masking any sensitive
-information)
-
-# License
-
-Copyright (c) 2020 Bitnami
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-  <http://www.apache.org/licenses/LICENSE-2.0>
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.

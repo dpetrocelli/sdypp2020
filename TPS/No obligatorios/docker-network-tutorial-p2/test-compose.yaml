@@ -1,0 +1,51 @@
+version: '3'
+services:
+  stats:
+    image: bitnami/rabbitmq
+    environment:
+      - RABBITMQ_NODE_TYPE=stats
+      - RABBITMQ_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - '15672:15672'
+    volumes:
+      - '/tmp/rabbit/stats/:/bitnami'
+  node1:
+    image: bitnami/rabbitmq
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbit@node1
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - 5672:5672
+      - 4369:4369
+      - 25672:25672
+    volumes:
+      - '/tmp/rabbit/node1:/bitnami'
+  node2:
+    image: bitnami/rabbitmq
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbit@node2
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - 5673:5672
+      - 4370:4369
+      - 25673:25672
+    volumes:
+      - '/tmp/rabbit/node2:/bitnami'      
+  node3:
+    image: bitnami/rabbitmq
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbit@node3
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - 5674:5672
+      - 4371:4369
+      - 25674:25672
+    volumes:
+      - '/tmp/rabbit/node3:/bitnami'  
