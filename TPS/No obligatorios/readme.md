@@ -1,4 +1,7 @@
-Este proyecto contiene un tutorial cuyo objetivo es aprender los aspectos básicos para desarrollar utilizando Docker y ser capaz de conectar contenedores a través de una red.
+En el marco de la asignatura de 41409 - Sistemas Distribuidos y Programación Paralela, se desarrolla un proyecto de capacitación en las tecnologías de contenedores (Docker) que se realizarán a lo largo de la jornada en dos fases:
+Primer parte: Un tutorial y ejercitación básica para aprender los aspectos más relevantes de la herramienta Docker (contenedores) y cómo desarrollar aplicaciones utilizando esta arquitectura.  A su vez, lograr conectar contenedores a través de una red Docker.
+
+Segunda parte: Un tutorial avanzado de Docker donde se integran sus capacidades para el desarrollo de aplicaciones distribuidas, buscando definir capacidades de balanceo de carga, redundancia y tolerancia a fallas. Para ello se trabaja en profundidad con la integración de volúmenes para persistir datos, balanceadores de carga para repartir carga, creación de clústeres de servicios, entre otros.
 # 
 Pre requisitos
 ## Instalar Docker
