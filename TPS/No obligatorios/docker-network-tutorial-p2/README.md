@@ -1,18 +1,33 @@
-# Tutorial parte 2 
-## Sección 1 -- Escalar Docker con Docker compose
+# Tutorial parte 2 -- Escalar servicios en Docker con Docker compose
+## Sección 1 -- Introducción
 
 Bienvenidos a la segunda parte del tutorial de Docker network. Este tutorial te guiará en:
 - Continuar avanzando con los conceptos para trabajar con tus propias imágenes
 - Continuar configurando contenedores utilizando Dockerfiles
 - Trabajar con volúmenes compartidos (en Host) para persistir elementos en contenedores y actualizar cambios
-- Comprender como pasar parámetros a los contenedores (ajustando el código java) desde DockerCompose
+- Comprender como pasar parámetros a los contenedores (ajustando el código java) desde Docker compose
 - Diseñar e implementar servicios distribuidos sobre Docker 
-- Implementar un balanceador de cargas en el Host para redireccionar peticiones
+- Implementar balanceo de cargas en el Host para redireccionar peticiones a los servicios distribuidos
+- Utilizar imágenes prearmadas de RabbitMQ para levantar el middleware de colas
+- Persistir los datos de la instancia de RabbitMQ 
+- Construir un cluster de RabbitMQ para brindar alta disponibilidad, redundancia y tolerancia a fallas
+- Definir políticas (HA Policies de RabbitMQ) para crear colas con persistencia (durable) y replicas (ha:mode)
+- Trabajar con simulación de fallas en nodos RabbitMQ 
+- Integrar la administración desde Java hacia la API de RabbitMQ 
+- Integrar balance de carga para optimizar las tareas sobre los nodos de RabbitMQ
+
 
 ## Sección 2 -- Manejo de parámetros en DockerCompose
 Existen varias maneras para pasar parámetros a las aplicaciones desde DockerCompose.
-En este caso nosotros utilizaremos las variables de entorno (environment) 
-
+En este caso nosotros utilizaremos las variables de entorno (environment).
+En este caso el código del servidor de Java se adaptó para que puedan tomarse dichos parámetros desde las variables de entorno.
+* Cambios en código Java
+```java
+String nombre = System.getenv("nombre");
+String logfile = System.getenv("logName");
+int port = Integer.parseInt(System.getenv("port"));
+```
+* Cambios en yml docker-compose
 ```yaml
 version: '3'
 services:
@@ -27,6 +42,38 @@ services:
       - logName=logfile1
       - port=4444
 ```
+* El Dockerfile para crear la imágen de nuestro servicio se mantiene igual
+```yaml
+FROM openjdk:latest
+COPY ./src /usr/src/app
+WORKDIR /usr/src/app
+RUN javac Servidor.java
+EXPOSE 4444
+CMD ["java", "Servidor"]
+```
+- Una vez revisado los tres pasos, se pone a correr la instancia para verificar que recibe los parámetros definidos
+
+```bash
+$ docker-compose -f docker-compose-para-java.yml up
+```
+
+- En la salida podemos verificar que el servidor levanta en base a los parámetros definidos
+>Starting docker-network-tutorial-p2_server_1 ... done
+>Attaching to docker-network-tutorial-p2_server_1
+>server_1  | [Mon Apr 13 23:24:15 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+
+- Desde otra terminal podemos realizar un netcat para ver lo que nos brinda
+```bash
+nc localhost 4444
+```
+Dando como resultado algo similar a
+>Bienvenido al servidor de fecha y hora Servidor 1
+>Mon Apr 13 23:25:41 GMT 2020
+
+Mientras que el servicio en la terminal anterior (servidor) nos muestra algo similar a:
+> server_1  | [Mon Apr 13 23:25:41 GMT 2020] INFO Cliente conectado /172.22.0.1:59434
+
+
 
 ## Sección 3 -- Crear varias instancias para un mismo servicio
 
