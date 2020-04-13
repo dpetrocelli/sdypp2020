@@ -41,7 +41,7 @@ https://github.com/mosquito/rabbitmq-cluster/blob/master/docker-compose.yml
 Cómo siempre existen varias maneras de crear un cluster de un determinado servicio para ofrecer características de redundancia, tolerancia a fallos y replicación. Especialmente en docker existen siempre diversos usuarios que publican adaptaciones de las imágenes oficiales para funciones específicas o facilitar el uso de algún plugin o herramienta.  Sin embargo, este tipo de adaptaciones casi siempre quedan sin actualizaciones frecuentes y terminan ofreciendo herramientas desactualizadas.  Por lo tanto, en este tutorial siempre se busca utilizar herramientas de repositorios oficiales con updates contínuos.
 
 La imagen oficial de RabbitMQ se encuentra desarrollada y presentada (desde Marzo de 2020) por Bitnami Inc. a través de los repositorios de Docker Hub 
-[https://hub.docker.com/r/bitnami/rabbitmq/](Rabbit MQ Bitnami)
+[https://hub.docker.com/r/bitnami/rabbitmq/] (Rabbit MQ Bitnami)
 
 
 # What is RabbitMQ?
