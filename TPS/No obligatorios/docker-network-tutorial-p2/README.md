@@ -15,9 +15,9 @@ Bienvenidos a la segunda parte del tutorial de Docker network. Este tutorial te 
 - Trabajar con simulación de fallas en nodos RabbitMQ 
 - Integrar la administración desde Java hacia la API de RabbitMQ 
 - Integrar balance de carga para optimizar las tareas sobre los nodos de RabbitMQ
+- Integrar un balance de carga con alta disponibilidad con HAProxy y KeepAlived para evitar un único punto de fallo en el sistema (VER)
 
-
-## Sección 2 -- Manejo de parámetros en DockerCompose
+## Sección 2 -- Manejo de parámetros en Docker compose
 Existen varias maneras para pasar parámetros a las aplicaciones desde DockerCompose.
 En este caso nosotros utilizaremos las variables de entorno (environment).
 En este caso el código del servidor de Java se adaptó para que puedan tomarse dichos parámetros desde las variables de entorno.
@@ -43,6 +43,7 @@ services:
       - port=4444
 ```
 * El Dockerfile para crear la imágen de nuestro servicio se mantiene igual
+Nombre de archivo: docker-compose-para-java.yml
 ```yaml
 FROM openjdk:latest
 COPY ./src /usr/src/app
@@ -52,6 +53,7 @@ EXPOSE 4444
 CMD ["java", "Servidor"]
 ```
 - Una vez revisado los tres pasos, se pone a correr la instancia para verificar que recibe los parámetros definidos
+
 
 ```bash
 $ docker-compose -f docker-compose-para-java.yml up
@@ -73,9 +75,55 @@ Dando como resultado algo similar a
 Mientras que el servicio en la terminal anterior (servidor) nos muestra algo similar a:
 > server_1  | [Mon Apr 13 23:25:41 GMT 2020] INFO Cliente conectado /172.22.0.1:59434
 
-
-
 ## Sección 3 -- Crear varias instancias para un mismo servicio
+El objetivo es crear múltiples instancias independientes del servicio Java definido para brindar mayor disponibilidad del servicio.
+Obviamente, en la sección 4, se verá como integrar esto con un balanceador de carga para explotar estas características.
+
+Para cumplir con este objetivo se debe ajustar el archivo yaml para que en vez de levantar una instancia, ponga a correr N de acuerdo a las necesidades del usuario.  Por ejemplo, de la siguiente manera:
+Nombre de archivo: docker-compose-java-escalado.yml
+```yaml
+version: '3'
+services:
+  server:
+    build: ./servidor
+    ports:
+      - "4444:4444"
+    volumes:
+      - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 1
+      - logName=logfile1
+      - port=4444
+  server2:
+    build: ./servidor
+    ports:
+      - "4443:4444"
+    volumes:
+      - /tmp/javadir:/tmp/javadir
+    environment:
+        - nombre=Servidor 2
+        - logName=logfile2
+        - port=4444 
+```
+** Nota: Prestar especial atención en la definición de "ports:" ya que en el host (es decir su equipo) no puede haber más de un puerto asignado en la misma IP (definición de TCP/IP). Por lo tanto, en este ejemplo dice: 
+```yaml
+ports:
+      - "4443:4444"
+```
+Lo que significa que: 
+- En el host el puerto de escucha será el 4443 (en vez del original)
+- En la aplicación interna el puerto seguirá siendo el mismo (4444)
+- Docker hará un bind entre el puerto host y puerto de la aplicación redireccionando todo lo que viene al 4443 hacia el 4444
+En este caso, docker mostrará: 0.0.0.0:4443->4444/tcp 
+Siendo esto obtenido desde ejecutar
+```bash
+$ docker container ps
+```
+viendo la columna ports.
+
+* A modo de resumen se presentan los resultados:
+
+
 
 ## Sección 4 -- Balancear carga entre instancias de servicios con HaProxy
 
