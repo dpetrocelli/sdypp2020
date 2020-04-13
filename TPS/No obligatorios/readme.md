@@ -42,6 +42,8 @@ docker-compose --version
 ```
 ## Continuar el tutorial
 >Para avanzar con la primer parte, ingresar a la carpeta "docker-network-tutorial".
->En ella, ingresar al directorio *tutorial* y leer el README.md para continuar con el tutorial. El directorio *terminado* contiene >la configuración final, para consultar si surge algún error o simplemente correr el proyecto.
+
+>En ella, ingresar al directorio *tutorial* y leer el README.md para continuar con el tutorial. El directorio *terminado* contiene la configuración final, para consultar si surge algún error o simplemente correr el proyecto.
+
 >Una vez finalizada la primer parte, avanzar con la segunda parte que se encuentra en "docker-network-tutorial-p2" y seguir los mismos pasos
 
