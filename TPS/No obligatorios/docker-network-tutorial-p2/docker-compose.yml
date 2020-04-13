@@ -6,16 +6,28 @@ services:
       - "4444:4444"
     volumes:
       - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 1
+      - logName=logfile1
+      - port=4444
   server2:
     build: ./servidor
     ports:
       - "4443:4444"
     volumes:
       - /tmp/javadir:/tmp/javadir
+    environment:
+        - nombre=Servidor 2
+        - logName=logfile2
+        - port=4444
   server3:
     build: ./servidor
     ports:
       - "4442:4444"
     volumes:
       - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 3
+      - logName=logfile3
+      - port=4444
  
