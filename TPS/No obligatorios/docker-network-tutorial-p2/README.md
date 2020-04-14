@@ -123,6 +123,33 @@ viendo la columna ports.
 
 * A modo de resumen se presentan los resultados:
 
+- Correr el docker compose
+```bash
+$ docker-compose -f docker-compose-java-escalado.yml up
+```
+>Starting docker-network-tutorial-p2_server2_1 ... done
+>Starting docker-network-tutorial-p2_server3_1 ... done
+>Starting docker-network-tutorial-p2_server_1  ... done
+>Attaching to docker-network-tutorial-p2_server_1, docker-network-tutorial-p2_server2_1, docker-network-tutorial-p2_server3_1
+>server_1   | [Mon Apr 13 23:54:09 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+>server2_1  | [Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+>server3_1  | [Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 3 iniciado en puerto 4444
+
+- Revisar como están los contenedores y puertos (prestar atención a los bind de los puertos)
+```bash
+$ docker container ps
+```
+>CONTAINER ID        IMAGE                                COMMAND             CREATED             STATUS              PORTS                    NAMES
+>90bff8a1b185        docker-network-tutorial-p2_server3   "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4442->4444/tcp   docker-network-tutorial-p2_server3_1
+>bad75e5d8dac        docker-network-tutorial-p2_server2   "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4443->4444/tcp   docker-network-tutorial-p2_server2_1
+>2609e17074ce        docker-network-tutorial-p2_server    "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4444->4444/tcp   docker-network-tutorial-p2_server_1
+
+- probar con netcat el resultado de los servidores
+```bash
+$ netcat localhost 4443
+```
+>Bienvenido al servidor de fecha y hora Servidor 2
+>Tue Apr 14 00:16:47 GMT 2020
 
 
 ## Sección 4 -- Balancear carga entre instancias de servicios con HaProxy
