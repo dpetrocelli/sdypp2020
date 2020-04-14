@@ -5,8 +5,7 @@ En el marco de la asignatura de 41409 - Sistemas Distribuidos y Programación Pa
 
 * **Segunda parte**: Un tutorial avanzado de Docker donde se integran sus capacidades para el desarrollo de aplicaciones distribuidas, buscando definir capacidades de balanceo de carga, redundancia y tolerancia a fallas. Para ello se trabaja en profundidad con la integración de volúmenes para persistir datos, balanceadores de carga para repartir carga, creación de clústeres de servicios, entre otros.
 
-# 
-Pre requisitos
+# Pre requisitos
 ## Instalar Docker
 Seguir las instrucciones de instalación en https://docs.docker.com/engine/install/
 Se recomienda utilizar el script de instalación para Linux
