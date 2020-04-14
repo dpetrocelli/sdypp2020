@@ -75,6 +75,15 @@ Dando como resultado algo similar a
 Mientras que el servicio en la terminal anterior (servidor) nos muestra algo similar a:
 > server_1  | [Mon Apr 13 23:25:41 GMT 2020] INFO Cliente conectado /172.22.0.1:59434
 
+- Corroborar que también se almacenan los datos del log en el volumen definido
+```bash
+cat /tmp/javadir/logfile1.log
+```
+>[Mon Apr 13 23:24:15 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+>[Mon Apr 13 23:25:41 GMT 2020] INFO Cliente conectado /172.22.0.1:59434
+>[Mon Apr 13 23:54:09 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+>[Tue Apr 14 00:14:31 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+
 ## Sección 3 -- Crear varias instancias para un mismo servicio
 El objetivo es crear múltiples instancias independientes del servicio Java definido para brindar mayor disponibilidad del servicio.
 Obviamente, en la sección 4, se verá como integrar esto con un balanceador de carga para explotar estas características.
@@ -105,7 +114,8 @@ services:
         - logName=logfile2
         - port=4444 
 ```
-** Nota: Prestar especial atención en la definición de "ports:" ya que en el host (es decir su equipo) no puede haber más de un puerto asignado en la misma IP (definición de TCP/IP). Por lo tanto, en este ejemplo dice: 
+**Nota: Prestar especial atención en la definición de "ports:" ya que en el host (es decir su equipo) no puede haber más de un puerto asignado en la misma IP (definición de TCP/IP).** 
+Por lo tanto, en este ejemplo dice: 
 ```yaml
 ports:
       - "4443:4444"
@@ -121,7 +131,7 @@ $ docker container ps
 ```
 viendo la columna ports.
 
-* A modo de resumen se presentan los resultados:
+### A modo de resumen se presentan los resultados:
 
 - Correr el docker compose
 ```bash
@@ -144,21 +154,84 @@ $ docker container ps
 >bad75e5d8dac        docker-network-tutorial-p2_server2   "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4443->4444/tcp   docker-network-tutorial-p2_server2_1
 >2609e17074ce        docker-network-tutorial-p2_server    "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4444->4444/tcp   docker-network-tutorial-p2_server_1
 
-- probar con netcat el resultado de los servidores
+- Probar con netcat el resultado de los servidores
 ```bash
 $ netcat localhost 4443
 ```
 >Bienvenido al servidor de fecha y hora Servidor 2
 >Tue Apr 14 00:16:47 GMT 2020
 
+- Corroborar que también se almacenan los datos del log en el volumen definido
+```bash
+$ cat /tmp/javadir/logfile2.log
+```
+>[Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+>[Tue Apr 14 00:14:31 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+>[Tue Apr 14 00:16:47 GMT 2020] INFO Cliente conectado /172.22.0.1:53830
 
 ## Sección 4 -- Balancear carga entre instancias de servicios con HaProxy
+Para balancear carga entre los servicios de Java se va a proceder a instalar un balanceador de carga en el Host (equipo). Para ello se va a instalar HaProxy a través de la línea de comandos y los repositorios APT.
 
-## Sección 5 -- Construir un balanceador de carga redundante con HaProxy
+```bash
+$ sudo apt update ; sudo apt install haproxy
+```
 
-## Sección 6 -- Crear un cluster RabbitMQ con Docker Compose
+* Una vez instalado se va a proceder a configurar el balanceador en base a la arquitectura definida.  Como archivo de configuración en sistema Linux se encuentra dentro del directorio etc.  En este caso en el archivo se encuentra en /etc/haproxy/haproxy.cfg
 
-### 6.1 - Qué es RabbitMQ?
+- Primero, realizar un bkp del archivo original
+```bash
+$ cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy_old.cfg
+```
+- Segundo, agregar al final del contenido del archivo la siguiente información
+```bash
+$ vim /etc/haproxy/haproxy.cfg
+...
+listen backend-server
+    #Peticiones que lleguen a 8080
+    bind 0.0.0.0:8080
+    mode tcp
+    #Lo balanceo con mismo peso (RoundRobin)
+    balance roundrobin
+    server backend-server1 127.0.0.1:4444 check fall 3 rise 2
+    server backend-server2 127.0.0.1:4443 check fall 3 rise 2
+    server backend-server3 127.0.0.1:4442 check fall 3 rise 2
+
+listen stats
+    #Interfaz de administracion/visualizacion
+    bind 0.0.0.0:8181
+    stats enable
+    stats uri /
+    stats realm Haproxy\ Statistics
+    stats auth admin:admin
+    stats refresh 2s
+```
+- Tercero, reinicio (o recargo) el servicio para que aplique las configuraciones definidas. 
+Obviamente, el comando dependerá de la distribución linux
+
+```bash
+$ sudo systemctl restart/reload haproxy
+```
+
+- Cuarto, verifico que el balanceador esté corriendo sin problemas
+
+```bash
+$ sudo systemctl status haproxy
+```
+Donde debe dar algo similar a lo siguiente
+>Active: active (running) since Mon 2020-04-13 22:07:10 -03; 1s ago
+
+- Quinto, iniciar el sitio de administración (http://localhost:8181) y validar que estén los nodos en verde funcionando.
+
+- Sexto, realizar pruebas de peticiones y validar que la carga se va repartiendo entre los nodos (a la configuración del bind del haproxy)
+
+```bash
+$ telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080
+```
+- Finalmente, luego de validar las funciones, parar los servicios.
+
+## Sección 5 -- Crear un cluster RabbitMQ con Docker Compose
+
+### 5.1 - Qué es RabbitMQ?
 
 > RabbitMQ es un "open source message broker software" que implementa los protocolos de "Advanced Message Queuing Protocol (AMQP)".
 > El servicio de RabbitMQ está escrito en Erlang y construido por Open Telecom Platform
@@ -167,14 +240,14 @@ $ netcat localhost 4443
 
 https://www.rabbitmq.com/
 
-### 6.2 - RabbitMQ en Docker
+### 5.2 - RabbitMQ en Docker
 La imagen oficial de RabbitMQ se encuentra desarrollada y presentada (desde Marzo de 2020) por Bitnami Inc y se encuentra preparada para trabajar en diversos entornos (local, Cloud, Kubernetes, etc)
 https://bitnami.com/stack/rabbitmq/containers
 
 La imagen base se encuentra en Docker Hub, donde se puede visualizar el contínuo update de la misma. 
 https://hub.docker.com/r/bitnami/rabbitmq/
 
-### 6.3 - Porqué usar las imágenes Bitnami
+### 5.3 - Porqué usar las imágenes Bitnami
 
 * Bitnami monitorea contínuamente los cambios que producen los proveedores de las plataformas y publica rápidamente las nuveras versiones de esas imágenes a través de pipelines automatizados 
 * Con las imágenes de Bitnami, las últimas correcciones de errores y características están disponibles lo antes posible.
@@ -182,9 +255,9 @@ https://hub.docker.com/r/bitnami/rabbitmq/
 * Todas las imágenes de bitnami están basadas en [minideb] (https://github.com/bitnami/minideb) que es una imagen de contenedor minimalista de tamaño reducido basada en Debian (distribución líder de Linux) .
 * Todas las imágenes de Bitnami disponibles en Docker Hub están firmadas con [Docker Content Trust (DTC)] (https://docs.docker.com/engine/security/trust/content_trust/). Puede usar `DOCKER_CONTENT_TRUST = 1` para verificar la integridad de las imágenes
 
-Cómo siempre existen varias maneras de crear un cluster de un determinado servicio para ofrecer características de redundancia, tolerancia a fallos y replicación. Especialmente en docker existen siempre diversos usuarios que publican adaptaciones de las imágenes oficiales para funciones específicas o facilitar el uso de algún plugin o herramienta.  Sin embargo, este tipo de adaptaciones casi siempre quedan sin actualizaciones frecuentes y terminan ofreciendo herramientas desactualizadas.  Por lo tanto, en este tutorial siempre se busca utilizar herramientas de repositorios oficiales con updates contínuos.
+Cómo siempre existen varias maneras de crear un cluster de un determinado servicio para ofrecer características de redundancia, tolerancia a fallos y replicación. Especialmente en docker existen siempre diversos usuarios que publican adaptaciones de las imágenes oficiales para funciones específicas o facilitar el uso de algún plugin o herramienta.  Sin embargo, este tipo de adaptaciones casi siempre quedan sin actualizaciones frecuentes y terminan ofreciendo herramientas con ciertas deficiencias.  Por lo tanto, en este tutorial siempre se busca utilizar herramientas de repositorios oficiales con updates contínuos.
 
-### 6.4 - Cómo correr RabbitMQ desde la imagen básica (docker) de Bitnami
+### 5.4 - Cómo correr RabbitMQ desde la imagen básica (docker) de Bitnami
 
 * Obtener la imagen desde el repositorio
 ```bash
@@ -212,7 +285,7 @@ Starting RabbitMQ 3.8.3 on Erlang 22.3
 2020-04-13 15:22:53.109 [info] <0.337.0> Running boot step os_signal_handler defined by app rabbit
 2020-04-13 15:22:53.109 [info] <0.490.0> Swapping OS signal event handler (erl_signal_server) for our own
 2020-04-13 15:22:53.149 [info] <0.540.0> Management plugin: HTTP (non-TLS) listener started on port 15672
-2020-04-13 15:22:53.149 [info] <0.646.0> Statistics database started.
+2020-04-13 15:22:53.149 [info] <0.645.0> Statistics database started.
 .....
 ```
 
@@ -226,7 +299,7 @@ CONTAINER ID        IMAGE                     COMMAND                  CREATED  
 ```
 * Parar el servicio (Ctrl + c)
 
-#### 6.5 - Usar Docker Compose para correr RabbitMQ 
+#### 5.5 - Usar Docker Compose para correr RabbitMQ 
 
 * Descargar el "template" del docker-compose disponible por el proveedor y visualizarlo 
 
@@ -257,7 +330,7 @@ volumes:
 $ docker-compose up -d
 ```
 
-#### 6.6 - Persistir los datos de RabbitMQ (a pesar de reinicio) 
+#### 5.6 - Persistir los datos de RabbitMQ (a pesar de reinicio) 
 
 Si se elimina el contenedor, todos sus datos se perderán, y la próxima vez que ejecute la imagen, la base de datos se reiniciará. Para evitar esta pérdida de datos, debe montar un volumen que persistirá incluso después de quitar el contenedor.
 
@@ -279,7 +352,7 @@ rabbitmq:
   ...
 ```
 
-#### 6.7 - Configuración avanzada de RabbitMQ (Docker)
+#### 5.7 - Configuración avanzada de RabbitMQ (Docker)
 
 ##### Variables de entorno (Como vimos al principio)
 
@@ -315,7 +388,7 @@ rabbitmq:
  - `RABBITMQ_LDAP_SERVER_PORT`: Port of the LDAP server. Defaults to `389`.
  - `RABBITMQ_LDAP_USER_DN_PATTERN`: DN used to bind to LDAP in the form `cn=$${username},dc=example,dc=org`. No defaults.
 
-#### 6.8 - Construir un cluster RabbitMQ usando Docker Compose
+#### 5.8 - Construir un cluster RabbitMQ usando Docker Compose
 
 This is the simplest way to run RabbitMQ with clustering configuration:
 
