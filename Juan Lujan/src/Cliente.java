@@ -6,11 +6,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Cliente {
+public class Cliente implements Runnable  {
 
-	public static void main(String[] args) {
-		
-		
+	@Override
+	public void run() {
 		try {
 			// Paso 1 - Conectarse con el servidor
 			// TCP capa 4, entonces como me conecto a un server?
@@ -23,25 +22,21 @@ public class Cliente {
 			BufferedReader canalEntrada = new BufferedReader (new InputStreamReader (s.getInputStream()));
 			PrintWriter canalSalida = new PrintWriter (s.getOutputStream(), true);
 			
-			// Paso 3 - Enviar petición al servidor 
-			Scanner sc = new Scanner(System.in);
-			System.out.println("Ingrese el mensaje a enviar");
-			String msg = sc.nextLine();
+			// Paso 3 - Enviar petición al servidor
+			String msg = "mensaje " + Thread.currentThread().getId();
 			canalSalida.println("MSG DEL CLIENTE: " + msg);
 			//canalSalida.flush();
-			System.out.println("Mensaje enviado");
+			//System.out.println("Mensaje enviado");
 			
 			// Paso 4 - Recibir la respuesta
 			String msgRespuesta = canalEntrada.readLine();
-			System.out.println(" MSG RESPUESTA: "+msgRespuesta);
+			//System.out.println(" MSG RESPUESTA: "+msgRespuesta);
 			
-			System.out.println("2: Ingrese el mensaje a enviar");
-			msg = sc.nextLine();
-			canalSalida.println("2: MSG DEL CLIENTE: " + msg);
+			canalSalida.println("mensaje 2 " + Thread.currentThread().getId());
 			
 			// Paso 4 - Recibir la respuesta
-			 msgRespuesta = canalEntrada.readLine();
-			System.out.println("2: MSG RESPUESTA: "+msgRespuesta);
+			msgRespuesta = canalEntrada.readLine();
+			//System.out.println("2: MSG RESPUESTA: "+msgRespuesta);
 
 			// Paso 5 - Cerrar la conexión
 			s.close();

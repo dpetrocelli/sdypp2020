@@ -40,10 +40,20 @@ public class Server
 				// 3 - Ejecutar el hilo (start)
 				//shThread.start();
 				
+				Thread t = new Thread(new Worker(cliente));
+				t.start();
+				
+				/*
 				BufferedReader canalEntrada = new BufferedReader (new InputStreamReader (cliente.getInputStream()));
 				PrintWriter canalSalida = new PrintWriter (cliente.getOutputStream(), true);
 				System.out.println("Por leer del socket");
 				String msg = canalEntrada.readLine();
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				System.out.println("Lei del socket");
 				canalSalida.println(msg);
 
@@ -51,8 +61,8 @@ public class Server
 				msg = canalEntrada.readLine();
 				System.out.println("2: Lei del socket");
 				canalSalida.println(msg);
-				
 				cliente.close();
+				*/
 			}
 			
 			
