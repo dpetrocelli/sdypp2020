@@ -1,0 +1,198 @@
+2020-04-14 19:53:38 | INFO  | [main] o.e.BashExecuter:12 -  OS : linux
+2020-04-14 20:12:10 | INFO  | [main] o.e.BashExecuter:15 -  OS : linux
+2020-04-14 20:12:10 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:CH-C3.iml
+2020-04-14 20:12:10 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:log
+2020-04-14 20:12:10 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:pom.xml
+2020-04-14 20:12:10 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:src
+2020-04-14 20:12:10 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:target
+2020-04-14 20:12:49 | INFO  | [main] o.e.BashExecuter:15 -  OS : linux
+2020-04-14 20:12:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:CH-C3.iml
+2020-04-14 20:12:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:log
+2020-04-14 20:12:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:pom.xml
+2020-04-14 20:12:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:src
+2020-04-14 20:12:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:target
+2020-04-14 20:13:21 | INFO  | [main] o.e.BashExecuter:15 -  OS : linux
+2020-04-14 20:13:56 | INFO  | [main] o.e.BashExecuter:15 -  OS : linux
+2020-04-14 20:13:56 | INFO  | [main] o.e.BashExecuter:36 -  LINEA:
+2020-04-14 20:18:21 | INFO  | [main] o.e.BashExecuter:16 -  OS : linux
+2020-04-14 20:18:21 | INFO  | [main] o.e.BashExecuter:39 -  LINEA ENTRADA:
+2020-04-14 20:26:49 | INFO  | [main] o.e.BashExecuter:16 -  OS : linux
+2020-04-14 20:26:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:CH-C3.iml
+2020-04-14 20:26:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:log
+2020-04-14 20:26:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:pom.xml
+2020-04-14 20:26:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:src
+2020-04-14 20:26:49 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:target
+2020-04-14 20:27:04 | INFO  | [main] o.e.BashExecuter:16 -  OS : linux
+2020-04-14 20:27:04 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:total 20
+2020-04-14 20:27:04 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:-rw-r--r-- 1 soporte soporte   80 Apr  7 18:58 CH-C3.iml
+2020-04-14 20:27:04 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:drwxr-xr-x 2 soporte soporte 4096 Apr 14 19:53 log
+2020-04-14 20:27:04 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:-rw-r--r-- 1 soporte soporte 3969 Apr 14 19:26 pom.xml
+2020-04-14 20:27:04 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:drwxr-xr-x 4 soporte soporte 4096 Apr 14 14:54 src
+2020-04-14 20:27:04 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:drwxr-xr-x 6 soporte soporte 4096 Apr  7 18:58 target
+2020-04-14 20:27:29 | INFO  | [main] o.e.BashExecuter:16 -  OS : linux
+2020-04-14 20:27:30 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:total 20
+2020-04-14 20:27:30 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:-rw-r--r-- 1 soporte soporte   80 Apr  7 18:58 CH-C3.iml
+2020-04-14 20:27:30 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:drwxr-xr-x 2 soporte soporte 4096 Apr 14 19:53 log
+2020-04-14 20:27:30 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:-rw-r--r-- 1 soporte soporte 3969 Apr 14 19:26 pom.xml
+2020-04-14 20:27:30 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:drwxr-xr-x 4 soporte soporte 4096 Apr 14 14:54 src
+2020-04-14 20:27:30 | INFO  | [main] o.e.BashExecuter:36 -  LINEA ENTRADA:drwxr-xr-x 6 soporte soporte 4096 Apr  7 18:58 target
+2020-04-14 20:41:30 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:42:30 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:43:04 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:44:03 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:44:03 | INFO  | [main] o.e.BashExecuter:61 -  LINEA ENTRADA:/bin/bash: /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash: Permission denied
+2020-04-14 20:45:18 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:45:18 | INFO  | [main] o.e.BashExecuter:49 -  CMD: /bin/bash /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash
+2020-04-14 20:45:18 | ERROR | [main] o.e.BashExecuter:84 -  EXPLOTO Cannot run program "/bin/bash /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash": error=2, No such file or directory
+2020-04-14 20:45:41 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:45:41 | INFO  | [main] o.e.BashExecuter:49 -  CMD: bash /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash
+2020-04-14 20:45:41 | ERROR | [main] o.e.BashExecuter:84 -  EXPLOTO Cannot run program "bash /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash": error=2, No such file or directory
+2020-04-14 20:47:28 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:47:28 | INFO  | [main] o.e.BashExecuter:49 -  CMD: bash /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash
+2020-04-14 20:47:28 | ERROR | [main] o.e.BashExecuter:84 -  EXPLOTO Cannot run program "bash /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash": error=2, No such file or directory
+2020-04-14 20:48:10 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:48:10 | INFO  | [main] o.e.BashExecuter:49 -  CMD: /bin/bash /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash
+2020-04-14 20:48:10 | ERROR | [main] o.e.BashExecuter:84 -  EXPLOTO Cannot run program "/bin/bash /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash": error=2, No such file or directory
+2020-04-14 20:48:28 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:48:29 | INFO  | [main] o.e.BashExecuter:49 -  CMD: /bin/bash -c /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash
+2020-04-14 20:48:29 | ERROR | [main] o.e.BashExecuter:84 -  EXPLOTO Cannot run program "/bin/bash -c /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash": error=2, No such file or directory
+2020-04-14 20:49:00 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:49:00 | INFO  | [main] o.e.BashExecuter:61 -  LINEA ENTRADA:/bin/bash: /home/soporte/Documents/unlu/sdypp2020/CH/CH-C4/script.bash: Permission denied
+2020-04-14 20:49:50 | INFO  | [main] o.e.BashExecuter:19 -  OS : linux
+2020-04-14 20:49:50 | INFO  | [main] o.e.BashExecuter:61 -  LINEA ENTRADA:/bin/bash: script.bash: command not found
+2020-04-14 20:52:21 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 20:52:21 | INFO  | [main] o.e.BashExecuter:71 -  LINEA ENTRADA:/bin/bash: src/main/java/installer.sh: Permission denied
+2020-04-14 20:53:07 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 20:53:07 | INFO  | [main] o.e.BashExecuter:72 -  LINEA ENTRADA:/bin/bash: src/main/java/installer.sh: Permission denied
+2020-04-14 20:53:52 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 20:53:52 | INFO  | [main] o.e.BashExecuter:72 -  LINEA ENTRADA:/bin/bash: /home/soporte/installer.sh: Permission denied
+2020-04-14 20:55:30 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 20:55:31 | INFO  | [main] o.e.BashExecuter:72 -  LINEA ENTRADA:/bin/bash: /home/soporte/installer.sh: Permission denied
+2020-04-14 20:56:55 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 20:56:55 | INFO  | [main] o.e.BashExecuter:65 -  LINEA ENTRADA:CH-C3.iml
+2020-04-14 20:56:55 | INFO  | [main] o.e.BashExecuter:65 -  LINEA ENTRADA:log
+2020-04-14 20:56:55 | INFO  | [main] o.e.BashExecuter:65 -  LINEA ENTRADA:pom.xml
+2020-04-14 20:56:55 | INFO  | [main] o.e.BashExecuter:65 -  LINEA ENTRADA:script.bash
+2020-04-14 20:56:55 | INFO  | [main] o.e.BashExecuter:65 -  LINEA ENTRADA:src
+2020-04-14 20:56:55 | INFO  | [main] o.e.BashExecuter:65 -  LINEA ENTRADA:target
+2020-04-14 20:57:26 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 20:58:54 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 20:59:59 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 21:00:43 | INFO  | [main] o.e.BashExecuter:21 -  OS : linux
+2020-04-14 21:00:43 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Ign:1 http://dl.google.com/linux/chrome/deb stable InRelease
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Hit:2 https://download.docker.com/linux/debian buster InRelease
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:3 https://brave-browser-apt-release.s3.brave.com stable InRelease [3,181 B]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:4 http://dl.google.com/linux/chrome/deb stable Release [943 B]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Hit:6 https://repo.skype.com/deb stable InRelease
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:7 http://dl.google.com/linux/chrome/deb stable Release.gpg [819 B]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Hit:8 http://linux.teamviewer.com/deb stable InRelease
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Hit:9 http://deb.debian.org/debian buster InRelease
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:10 http://deb.debian.org/debian-security buster/updates InRelease [65.4 kB]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:11 http://deb.debian.org/debian buster-updates InRelease [49.3 kB]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:12 http://packages.microsoft.com/repos/vscode stable InRelease [3,959 B]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Ign:13 http://archive.canonical.com buster InRelease
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Hit:14 https://download.sublimetext.com apt/stable/ InRelease
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:15 https://brave-browser-apt-release.s3.brave.com stable/main amd64 Packages [4,383 B]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Err:16 http://archive.canonical.com buster Release
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:  404  Not Found [IP: 2001:67c:1360:8c01::16 80]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Hit:5 https://packages.cloud.google.com/apt kubernetes-xenial InRelease
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:17 http://ppa.launchpad.net/obsproject/obs-studio/ubuntu focal InRelease [18.0 kB]
+2020-04-14 21:00:44 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Hit:18 https://packages.microsoft.com/repos/azure-cli buster InRelease
+2020-04-14 21:00:45 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Hit:19 https://packages.microsoft.com/repos/ms-teams stable InRelease
+2020-04-14 21:00:45 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:20 http://dl.google.com/linux/chrome/deb stable/main amd64 Packages [1,110 B]
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:21 http://packages.microsoft.com/repos/vscode stable/main amd64 Packages [171 kB]
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Err:21 http://packages.microsoft.com/repos/vscode stable/main amd64 Packages
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:  File has unexpected size (171612 != 171467). Mirror sync in progress? [IP: 40.118.250.56 80]
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:  Hashes of expected file:
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:   - Filesize:171467 [weak]
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:   - SHA512:f7d4a72db6bf2c81806cd506353b68da7d57bc69b72a01695ac44fc18494a6c17987c48cfcb806bbdef5966372d8c2550a8f0e7d9ceb54c270827dc362763263
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:   - SHA256:1bea87fa36b58bc034d153c00cebf03c46303c6ef175e97df86bc63c6503ce91
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:   - SHA1:d4ca05c3b67cf15caf07bf9c17dc18403292ac6b [weak]
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:   - MD5Sum:ab7bb7a48f70850c05a4f647d3db704d [weak]
+2020-04-14 21:00:46 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:  Release file created at: Tue, 14 Apr 2020 17:11:00 +0000
+2020-04-14 21:00:47 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:22 http://deb.debian.org/debian-security buster/updates/main Sources [108 kB]
+2020-04-14 21:00:47 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:23 http://deb.debian.org/debian-security buster/updates/main i386 Packages [187 kB]
+2020-04-14 21:00:47 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Get:24 http://deb.debian.org/debian-security buster/updates/main amd64 Packages [187 kB]
+2020-04-14 21:00:48 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Err:17 http://ppa.launchpad.net/obsproject/obs-studio/ubuntu focal InRelease
+2020-04-14 21:00:48 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:  The following signatures couldn't be verified because the public key is not available: NO_PUBKEY EFC71127F425E228
+2020-04-14 21:00:55 | INFO  | [main] o.e.BashExecuter:66 -  LINEA ENTRADA:Reading package lists...
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:E: The repository 'http://archive.canonical.com buster Release' does not have a Release file.
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Sources (main/source/Sources) is configured multiple times in /etc/apt/sources.list:21 and /etc/apt/sources.list:30
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Sources (main/source/Sources) is configured multiple times in /etc/apt/sources.list:24 and /etc/apt/sources.list:33
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: GPG error: http://ppa.launchpad.net/obsproject/obs-studio/ubuntu focal InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY EFC71127F425E228
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:E: The repository 'http://ppa.launchpad.net/obsproject/obs-studio/ubuntu focal InRelease' is not signed.
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Sources (main/source/Sources) is configured multiple times in /etc/apt/sources.list:21 and /etc/apt/sources.list:30
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list:20 and /etc/apt/sources.list:29
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Sources (main/source/Sources) is configured multiple times in /etc/apt/sources.list:24 and /etc/apt/sources.list:33
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list:23 and /etc/apt/sources.list:32
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:2
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:3
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:4
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:5
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-amd64/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-i386/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Packages (main/binary-all/Packages) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en_US) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
+2020-04-14 21:00:56 | INFO  | [main] o.e.BashExecuter:73 -  LINEA ENTRADA:W: Target Translations (main/i18n/Translation-en) is configured multiple times in /etc/apt/sources.list.d/kubernetes.list:1 and /etc/apt/sources.list.d/kubernetes.list:6
