@@ -4,6 +4,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * Hello world!
@@ -39,12 +41,21 @@ public class Server
 				//Thread shThread = new Thread(sh);
 				// 3 - Ejecutar el hilo (start)
 				//shThread.start();
-				
+				Thread t = new Thread(new Worker(cliente));
+				t.start();
+				/*
 				BufferedReader canalEntrada = new BufferedReader (new InputStreamReader (cliente.getInputStream()));
 				PrintWriter canalSalida = new PrintWriter (cliente.getOutputStream(), true);
 				System.out.println("Por leer del socket");
 				String msg = canalEntrada.readLine();
 				System.out.println("Lei del socket");
+				// Simular un procesamiento
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				canalSalida.println(msg);
 
 				System.out.println("2: Por leer del socket");
@@ -53,6 +64,7 @@ public class Server
 				canalSalida.println(msg);
 				
 				cliente.close();
+				*/
 			}
 			
 			
