@@ -569,12 +569,43 @@ iface lo inet loopback
 ```bash
 $ ifconfig 
 ....
+
 wlp5s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
 inet 192.168.0.25  netmask 255.255.255.0  broadcast 192.168.0.255
 .....
+También lo pueden hacer con ip addr list
+
 ```
 - Sabiendo el nombre del adaptador, ahora vamos a crear el adaptador virtual relacionado con esa placa
+
+```bash
 auto wlp5s0:0
 iface wlp5s0:0 inet static
         address 192.168.0.101
         netmask 255.255.255.0
+```
+- Guardar cambios y reiniciar configuración de la placa
+
+```bash
+$ systemctl restart networking
+```
+- Verificar que disponemos de la placa virtual asociada a nuestra NIC
+```bash
+$ ifconfig 
+....
+wlp1s0:0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.110  netmask 255.255.255.0  broadcast 192.168.0.255
+        ether 40:f0:2f:fd:e6:ac  txqueuelen 1000  (Ethernet)
+....
+
+```
+
+* Luego de instalar KeepAlived hay que configurar el producto (con diferentes configuraciones en los equipos debido a uno se configurará como Maestro y otro como Esclavo)
+
+* interface: donde indicamos la tarjeta de red de nuestro servidor.
+* state: le decimos cual va a ser el MASTER y cual el BACKUP.
+* priority: daremos más prioridad al servidor maestro de tal forma que en caso de que los dos servidores HAProxy estén iniciados tomará toda la carga de conexiones.
+* virtual_router_id: identificador numérico que tiene que ser igual en los dos servidores.
+* auth_pass: especifica la contraseña utilizada para autenticar los servidores en la sincronización de failover.
+* virtual_ipaddress: será la dirección IP virtual que compartirán lo dos servidores y a la que tienen que realizar las peticiones los clientes.
+
