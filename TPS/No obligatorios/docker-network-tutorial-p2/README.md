@@ -332,9 +332,9 @@ $ docker-compose up -d
 
 #### 5.6 - Persistir los datos de RabbitMQ (a pesar de reinicio) 
 
-Si se elimina el contenedor, todos sus datos se perderán, y la próxima vez que ejecute la imagen, la base de datos se reiniciará. Para evitar esta pérdida de datos, debe montar un volumen que persistirá incluso después de quitar el contenedor.
+Si se elimina el contenedor, todos sus datos se perderán, y la próxima vez que ejecute la imagen, la "base de datos" se reiniciará. Para evitar esta pérdida de datos, debe montar un volumen que persistirá incluso después de quitar el contenedor.
 
-Para persistencia, debe montar un directorio en la ruta `/bitnami`. Si el directorio montado está vacío, se inicializará en la primera ejecución.
+Para lograr aplicar persistencia, se debe montar un directorio en la ruta `/bitnami`. Si el directorio montado está vacío, se inicializará en la primera ejecución.
 
 ```bash
 $ docker run \
@@ -390,16 +390,18 @@ rabbitmq:
 
 #### 5.8 - Construir un cluster RabbitMQ usando Docker Compose
 
-This is the simplest way to run RabbitMQ with clustering configuration:
+A continuación se definen los pasos a seguir para construir un cluster en RabbitMQ:
 
 ##### Paso 1: Crear en /tmp/ los "volúmenes" que usaremos para montar en los nodos 
 Vamos a crear:
-* 1 folder para el stats+node
-* 1 folder para cada queue-disc
+* 1 carpeta (storage) para el nodo de "stats-administración" 
+* 1 carpeta para cada nodo "cola-queue-disc"
+
 ```bash
  mkdir /tmp/rabbit; mkdir /tmp/rabbit/stats ; mkdir /tmp/rabbit/node1 ; mkdir /tmp/rabbit/node2 ; mkdir /tmp/rabbit/node3; sudo chmod 777 -R /tmp/rabbit
 ```
-##### Paso 2: Crear el primer nodo stats al docker-compose.yml`
+##### Paso 2: Crear el primer nodo stats en Docker compose 
+Archiv: docker-compose.yml
 
 * Copie el código a continuación en su docker-compose.yml para agregar un nodo de estadísticas web RabbitMQ a la configuración de su clúster.
 
@@ -488,4 +490,91 @@ El backup se realizará a través de utilizar la herramienta rsync hacia otra ca
 ```bash
 $ rsync -a /path/to/rabbitmq-persistence /path/to/rabbitmq-persistence.bkp.$(date +%Y%m%d-%H.%M.%S)
 ```
+#### 5.9 - Ajustar el módulo de HAProxy para balancear carga 
+* Una vez instalado se va a proceder a configurar el balanceador en base a la arquitectura definida.  Como archivo de configuración en sistema Linux se encuentra dentro del directorio etc.  En este caso en el archivo se encuentra en /etc/haproxy/haproxy.cfg
 
+- Primero, realizar un bkp del archivo original
+```bash
+$ cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy_old.cfg
+```
+- Agregar al final del archivo, lo siguiente
+
+```bash
+
+listen rabbitmq_service5672
+	#todo lo que venga a 5672
+bind 0.0.0.0:5672
+mode tcp
+	#Lo balanceo con mismo peso (RoundRobin)
+balance roundrobin
+	#Evitar desconexiones de los CLI se configura timeout client/server 3h
+timeout client 3h
+timeout server 3h
+	#Configuracion clitcpka -> enviarse paquetes de Heartbeat (Cliente) y no se pierda conexion
+option clitcpka
+
+server rabbit1 0.0.0.0:5672 check inter 5s rise 2 fall 3
+server rabbit2 0.0.0.0:5673 check inter 5s rise 2 fall 3
+server rabbit3 0.0.0.0:5674 check inter 5s rise 2 fall 3
+
+listen rabbitmq_service4369
+	#todo lo que venga a 4369
+bind 0.0.0.0:4369
+mode tcp
+	#Lo balanceo con mismo peso (RoundRobin)
+balance roundrobin
+	#Evitar desconexiones de los CLI se configura timeout client/server 3h
+timeout client 3h
+timeout server 3h
+	#Configuracion clitcpka -> enviarse paquetes de Heartbeat (Cliente) y no se pierda conexion
+option clitcpka
+
+server rabbit1 0.0.0.0:4369 check inter 5s rise 2 fall 3
+server rabbit2 0.0.0.0:4370 check inter 5s rise 2 fall 3
+server rabbit3 0.0.0.0:4371 check inter 5s rise 2 fall 3
+
+
+listen rabbitmq_management
+	#todo lo que venga a 15672
+    bind 0.0.0.0:15672
+    mode tcp
+	#Lo balanceo con mismo peso (RoundRobin)
+    balance roundrobin
+    server stats 0.0.0.0:15672 check fall 3 rise 2
+    
+
+listen stats
+	#Interfaz de administracion
+    bind 0.0.0.0:8181
+    stats enable
+    stats uri /
+    stats realm Haproxy\ Statistics
+    stats auth admin:admin
+    stats refresh 5s
+```
+
+#### 5.10 - Construir un "cluster" de HAProxy + KeepAlived
+Para construir un cluster se requeriría tener una red con la que se puedan obtener más de una IP y no solo la local (Por ejemplo con Docker Swarm o Kubernetes).  Para solventar este apartado vamos a definir una IP virtual (dependiendo de la placa de red que estemos utilizando en este momento).  Por ejemplo en Debian, se puede agregar en el siguiente archivo
+
+```bash
+$ cat /etc/network/interfaces
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+```
+- Ahora vamos a crear una interfaz vinculada a nuestra placa de red (wifi en mi caso).  Para averiguar cual es la activa ejecutamos:
+
+```bash
+$ ifconfig 
+....
+wlp5s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+inet 192.168.0.25  netmask 255.255.255.0  broadcast 192.168.0.255
+.....
+```
+- Sabiendo el nombre del adaptador, ahora vamos a crear el adaptador virtual relacionado con esa placa
+auto wlp5s0:0
+iface wlp5s0:0 inet static
+        address 192.168.0.101
+        netmask 255.255.255.0
