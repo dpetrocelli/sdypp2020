@@ -544,11 +544,71 @@ $ docker container inspect 591a212f4baf | grep IPAddress
                     "IPAddress": "172.30.0.16",
 
 ```
-* Una vez obtenida la IP (que ya la sabíamos), vamos a entrar al navegador y validar que podemos llegar desde nuestro HOST. Deberíamos ver algo similar a.
+* Una vez obtenida la IP (que ya la sabíamos), vamos a entrar al navegador y validar que podemos llegar desde nuestro HOST. Deberíamos ver algo similar a:
 >Welcome to nginx!
 >If you see this page, the nginx web server is successfully installed and...
-```bash
 
+* A continuación vamos a integrar esto que previamente vimos a través de la consola de docker en el formato de docker-compose para adptar nuestras aplicaciones en docker compose 
+Archivo: redes_docker/docker-compose-my-network.yml
+```yaml
+version: '3'
+services:
+  server1:
+    build: ../servidor
+    ports:
+      - "4444:4444"
+    volumes:
+      - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 1
+      - logName=logfile1
+      - port=4444
+    #DEFINO QUE RED VOY A UTILIZAR (ABAJO DEBO ESPECIFICAR SI ES NUEVA O EXISTENTE)
+    networks:
+      default:
+        # DEFINIMOS UNA IP ESTÁTICA
+        ipv4_address: 172.30.0.10
+  server2:
+    build: ../servidor
+    ports:
+      - "4443:4444"
+    volumes:
+      - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 2
+      - logName=logfile2
+      - port=4444
+    networks:
+      default:
+        # DEFINIMOS UNA IP ESTÁTICA
+        ipv4_address: 172.30.0.11
+#VAMOS A MAPEAR EL NOMBRE DE LA RED CON LA RED REAL (PREEXISTENTE EN ESTE CASO)        
+networks:
+  default:
+    #COMO ERA EXISTENTE, LE DECIMOS QUE ES "EXTERNAL"
+    external:
+      name: network-bridge-from-console
+```
+* Una vez definido, poner a correr los servicios.
+
+```bash
+$ docker-compose -f docker-compose-my-network.yml up
+>Starting redes_docker_server2_1 ... done
+>Starting redes_docker_server1_1 ... done
+>Attaching to redes_docker_server1_1, redes_docker_server2_1
+>server1_1  | [Mon Apr 20 21:27:20 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+>server2_1  | [Mon Apr 20 21:27:20 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+```
+* En otra terminal, verificar que en la red mencionada (network-bridge-from-console) están las dos IPS mencionadas en uso 
+```bash
+$ docker network inspect network-bridge-from-console | grep IPv4
+>"IPv4Address": "172.30.0.11/16",
+>"IPv4Address": "172.30.0.16/16",
+>"IPv4Address": "172.30.0.10/16",
+
+```
+
+```bash
 ```
 ## Sección 5 -- Crear un cluster RabbitMQ con Docker Compose
 

@@ -1,0 +1,33 @@
+version: '3'
+services:
+  server1:
+    build: ../servidor
+    ports:
+      - "4444:4444"
+    volumes:
+      - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 1
+      - logName=logfile1
+      - port=4444
+    networks:
+      default:
+        ipv4_address: 172.30.0.10
+  server2:
+    build: ../servidor
+    ports:
+      - "4443:4444"
+    volumes:
+      - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 2
+      - logName=logfile2
+      - port=4444
+    networks:
+      default:
+        ipv4_address: 172.30.0.11
+networks:
+  default:
+    external:
+      name: network-bridge-from-console
+
