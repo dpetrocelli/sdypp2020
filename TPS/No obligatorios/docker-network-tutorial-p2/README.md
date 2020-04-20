@@ -169,7 +169,7 @@ $ cat /tmp/javadir/logfile2.log
 >[Tue Apr 14 00:14:31 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
 >[Tue Apr 14 00:16:47 GMT 2020] INFO Cliente conectado /172.22.0.1:53830
 
-## Sección 4 -- Balancear carga entre instancias de servicios con HaProxy
+## Sección 4 -- Balancear carga entre instancias de servicios con HaProxy (Desde el HOST)
 Para balancear carga entre los servicios de Java se va a proceder a instalar un balanceador de carga en el Host (equipo). Para ello se va a instalar HaProxy a través de la línea de comandos y los repositorios APT.
 
 ```bash
@@ -228,6 +228,168 @@ Donde debe dar algo similar a lo siguiente
 $ telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080
 ```
 - Finalmente, luego de validar las funciones, parar los servicios.
+
+## Sección 5 -- Manejo de redes en Docker 
+
+### Sección 5.1 -- Redes básicas Docker
+Al instalar Docker, se configura automáticamente para usar la red 172.17.0.xx, el propio servidor docker es 172.17.0.1 y cada contenedor corriendo adquiere un IP posterior al último (172.17.0.2-254).
+
+Al arrancar un contenedor podremos averiguar cual es la IP asignada con este comando, indicando al final el HASH del contenedor. En este caso nos dice 172.17.0.2.
+
+Existen 3 redes preconfiguradas en Docker,
+
+* Bridge. La red standard que usarán todos los contenedores (172.17.0.0/16)
+* Host. El contenedor usará el mismo IP del servidor real que tengamos (solo podremos tener un docker container corriendo y mapeado a nuestro "localhost")
+* None. Se utiliza para indicar que un contenedor no tiene asignada una red.
+
+### Sección 5.2 -- Comandos básicos en Docker Networks
+
+A continuación se presentan los comandos más importantes para gestionar las redes en Docker 
+
+* connect: Permite conectar un contenedor a un red previamente disponible
+* disconnect: hace la operación opuesta a la anterior, es decir, desconecta un contenedor de una red
+* create es el comando que debes utilizar para crear una red
+* inspect te permite obtener información detallada de una red
+* ls es el comando que se utiliza para ver todas las redes que hay disponible 
+* prune es el comando con el que se borran todas las redes creadas (excepto las redes por defecto -bridge, host, none-) 
+* rm permite borrar una o mas redes especificando ciertos argumentos 
+
+### Sección 5.3 -- Comenzando con las "Dockers networks" 
+Primero analizaremos las redes que están disponibles para el usuario una vez que Docker es instalado
+
+```bash
+
+$ docker network ls
+NETWORK ID          NAME                DRIVER
+7fca4eb8c647        bridge              bridge
+9f904ee27bf5        none                null
+cf03ee007fb4        host                host
+```
+Luego, podemos ver la configuración detallada de una determinada red a través del siguiente comando (se muestran los mas relevantes)
+
+```bash
+$ docker network inspect bridge
+[
+    {
+        "Name": "docker-new-bridge",
+        "Driver": "bridge",
+        .....
+        "Config": [
+                {
+                    "Subnet": "172.17.0.0/16",
+                    "Gateway": "172.17.0.1"
+                }
+            ]
+        .....
+        "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+        },
+        ......
+    
+```
+Siendo el nombre del adaptador de red asociado "docker0" que podemos ver en nuestro comando ifconfig
+
+```bash
+$ ifconfig 
+....
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255
+....
+
+```
+Cómo puede verse, esta información se condice con la información detallada anteriormente
+
+### 5.4 - Entendiendo que pasa cuando creamos contenedores en la red "bridge" por defecto 
+
+Vamos a volver a correr el servidor java que desarrollamos para este proyecto (o podría ser cualquier otra imagen) y la ponemos a correr
+
+- Para forzar a los que los contenedores corran en la red por defecto "bridge", ajustamos el yaml del docker-compose
+Archivo: docker-compose-bridge-java.yml
+
+```yaml
+version: '3'
+services:
+  server1:
+    build: ./servidor
+    network_mode: bridge
+    ports:
+      - "4444:4444"
+    volumes:
+      - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 1
+      - logName=logfile1
+      - port=4444
+  server2:
+    build: ./servidor
+    network_mode: bridge
+    ports:
+      - "4443:4444"
+    volumes:
+      - /tmp/javadir:/tmp/javadir
+    environment:
+      - nombre=Servidor 2
+      - logName=logfile2
+      - port=4444
+```
+- Una vez ajustado el yaml, levantamos nos dos nodos java a través del comando habitual de docker compose
+
+```bash
+$ docker-compose -f docker-compose-bridge-java.yml up
+...
+Attaching to docker-network-tutorial-p2_server1_1, docker-network-tutorial-p2_server2_1
+server1_1  | [Mon Apr 20 00:33:17 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+server2_1  | [Mon Apr 20 00:33:17 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+...
+```
+
+- Revisamos que los dos nodos estén corriendo
+
+```bash
+$ docker container ps
+CONTAINER ID        IMAGE                                COMMAND             CREATED             STATUS              PORTS                    NAMES
+f2e300f725d6        docker-network-tutorial-p2_server1   "java Servidor"     5 minutes ago       Up 2 seconds        0.0.0.0:4444->4444/tcp   docker-network-tutorial-p2_server1_1
+965ca0ae921c        docker-network-tutorial-p2_server2   "java Servidor"     5 minutes ago       Up 2 seconds        0.0.0.0:4443->4444/tcp   docker-network-tutorial-p2_server2_1
+```
+
+- Ahora vamos a revisar que configuración de IP "interna" tiene cada nodo "java" corriendo.  Hay dos opciones para hacer esto
+a) con docker container inspect ID, y buscar la información de ipv4
+b) con docker network inspect bridge, y ver los datos de los contenedores.  Vamos por esta última opción
+```bash
+$ docker network inspect bridge
+...
+"Containers": {
+            "965ca0ae921cf013666589545ed7a6600683daf9fa9e5507493a55e3a0ee5cad": {
+                "Name": "docker-network-tutorial-p2_server2_1",
+                "EndpointID": "931dbace497085cc7487146e2f9a7fd9017c87e9e6baee5f0d05f9974ec4378f",
+                "MacAddress": "02:42:ac:11:00:03",
+                "IPv4Address": "172.17.0.3/16",
+                "IPv6Address": ""
+            },
+            "f2e300f725d62cd1356fc464f02545ced4e7b18e657fb681233a9ea36b2dd268": {
+                "Name": "docker-network-tutorial-p2_server1_1",
+                "EndpointID": "17d13fb5cac4fde4eec4502f0544df0adc498d0655b34913f182e9bb19b0ea73",
+                "MacAddress": "02:42:ac:11:00:02",
+                "IPv4Address": "172.17.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+
+...
+```
+- 
+ 
+docker network create \
+  --driver=bridge \
+  --subnet=172.18.0.0/16 \
+  --gateway=172.18.0.1 \
+  david
+
 
 ## Sección 5 -- Crear un cluster RabbitMQ con Docker Compose
 
