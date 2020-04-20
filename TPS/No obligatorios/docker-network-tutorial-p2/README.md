@@ -382,13 +382,48 @@ $ docker network inspect bridge
 
 ...
 ```
-- 
- 
-docker network create \
-  --driver=bridge \
-  --subnet=172.18.0.0/16 \
-  --gateway=172.18.0.1 \
-  david
+- Pudimos obtener, entonces, las dos direcciones IP de nuestros nodos java (172.17.0.2 y 172.17.0.3).  Ahora vamos a validar que desde nuestro host podemos "llegar" a dichas direcciones.  Esto es posible ya que la red fue creada en modo puente de nuestra NIC.  
+Para ello la opción más simple es el telnet o netcat a IP:PORT (a los puertos originales de la aplicación, no de los bind que hicimos en el docker-file ya que no estamos accediendo desde el bind, sino de la ip local de la red bridge)
+
+```bash
+$ nc 172.17.0.2 4444
+Bienvenido al servidor de fecha y hora Servidor 1
+Mon Apr 20 00:45:41 GMT 2020
+
+$ nc 172.17.0.3 4444
+Bienvenido al servidor de fecha y hora Servidor 2
+Mon Apr 20 00:46:06 GMT 2020
+
+```
+De esta manera pudimos validar que desde el host es posible también acceder a los servicios si conocemos la IP que otorga el DNS del bridge (problema a analizar un poco más adelante)
+
+- Aprovechando que tenemos los dos nodos levantados .0.2 y 0.3, vamos a ver como conectarnos por SSH al menos a uno de los contenedores y validar que internamente ellos se ven en la Docker bridge.  Esto es importante para comprender que las aplicaciones que desarrollemos se pueden comunicar independientemente de lo que suceda en el "mundo del HOST" mientras la red definida (default / propia) esté activa.  Para ello tomamos algunos de los IDS de los contenedores y luego nos conectamos a dicho nodo.
+
+```bash
+$ docker container ps
+CONTAINER ID        IMAGE                                COMMAND             CREATED             STATUS              PORTS                    NAMES
+f2e300f725d6        docker-network-tutorial-p2_server1   "java Servidor"     5 minutes ago       Up 2 seconds        0.0.0.0:4444->4444/tcp   docker-network-tutorial-p2_server1_1
+965ca0ae921c        docker-network-tutorial-p2_server2   "java Servidor"     5 minutes ago       Up 2 seconds        0.0.0.0:4443->4444/tcp   docker-network-tutorial-p2_server2_1
+
+$ docker exec -it f2e300f725d6 /bin/bash
+bash-4.2# yum update -y ; yum install net-tools -y ; yum install telnet -y
+
+bash-4.2# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.3  netmask 255.255.0.0  broadcast 172.17.255.255
+....
+
+bash-4.2# telnet 172.17.0.2 4444
+Trying 172.17.0.2...
+Connected to 172.17.0.2.
+Escape character is '^]'.
+...
+```
+
+```bash
+```
+
+
 
 
 ## Sección 5 -- Crear un cluster RabbitMQ con Docker Compose
