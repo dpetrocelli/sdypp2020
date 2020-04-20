@@ -232,17 +232,46 @@ $ telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080 & telnet
 ## Sección 5 -- Manejo de redes en Docker 
 
 ### Sección 5.1 -- Redes básicas Docker
-Al instalar Docker, se configura automáticamente para usar la red 172.17.0.xx, el propio servidor docker es 172.17.0.1 y cada contenedor corriendo adquiere un IP posterior al último (172.17.0.2-254).
+La mayoría de aplicaciones estos día no corren de forma aislada y necesitan comunicarse con otros sistemas a través de la red. Si quisiéramos que un sitio web, un webservice, una base de datos o un servidor de caché en un contenedor de docker entonces necesitamos entender al menos los conceptos básicos de configuración de redes en contenedores docker.
+Cuando el proceso de Docker se crea, configura una nueva interfaz puente virtual llamada docker0 en el sistema host. Esta interface permite a Docker crear una sub-red virtual para el uso de los contenedores que se ejecutarán. Este puente funciona como el punto o interfaz principal entre la creación de redes en el contenedor y el host.
+Esa red tiene un rango de 172.17.0.xx, el propio servidor docker es 172.17.0.1 y cada contenedor corriendo adquiere un IP posterior al último (172.17.0.2-254).
+Docker automáticamente configura las reglas en iptables que permitirán redirigir y condigurar la máscara NAT para el tráfico originado en la interfaz docker0 hacia el resto del mundo.
 
-Al arrancar un contenedor podremos averiguar cual es la IP asignada con este comando, indicando al final el HASH del contenedor. En este caso nos dice 172.17.0.2.
-
-Existen 3 redes preconfiguradas en Docker,
+Además de la red "docker0" en modo bridge, existen 2 redes más preconfiguradas en Docker,
 
 * Bridge. La red standard que usarán todos los contenedores (172.17.0.0/16)
 * Host. El contenedor usará el mismo IP del servidor real que tengamos (solo podremos tener un docker container corriendo y mapeado a nuestro "localhost")
 * None. Se utiliza para indicar que un contenedor no tiene asignada una red.
 
-### Sección 5.2 -- Comandos básicos en Docker Networks
+### Sección 5.2 -- ¿Cómo los contenedores exponen servicios a los consumidores?
+- Comunicación interna:
+Si toda nuestra aplicación y servicios corren dentro del mundo "docker" y no tienen vinculación con el mundo exterior, toda la comunicación de los contenedores que están corriendo dentro de la docker0 network (o la que corresponda) pueden comunicarse sin configuraciones adicionales (Lo validaremmos más adelante). Para ello, el sistema host simplemente enruta las peticiones originadas por y destinadas a la interfaz docker0 a la ubicación de los servicios adecuados.
+Cuando creamos/añadimos un contenedor a una red, por defecto todos los puertos estarán cerrados en la conexión hacia al exterior y todos abiertos para las máquinas que se encuentren dentro de la misma red. Esto significa que por ejemplo no haría falta exponer puertos del contenedor "mysql", ya que si nos queremos conectar a él desde otro contenedor en la misma red podrán conectarse por el puerto sin problema.  Sin embargo, con esta configuración, no podremos acceder al puerto de mysql desde fuera de la red.
+
+- Comunicación "con el mundo":
+Por el contrario, si yo necesito que al menos un servicio tenga contacto con el mundo exterior (por ejemplo otro equipo en la red), voy a tener que tomar acciones para que esto pueda realizarse correctamente.  Más allá que esto ya lo hicimos en apartados anteriores, ahora vamos a entender detalladamente el porque.  
+Para lograr este "binding" entre la red interna de docker y la NIC del host es necesario EXPONER los puertos de escucha de los servicios al host (donde es que estos reciben el tráfico redirigido hacia el mundo exterior). Los puertos expuestos pueden ser mapeados al sistema host, tan solo con seleccionar un puerto específico o dejando a Docker seleccionar un puerto al azar, alto y sin usar (no recomendable si queremos una administración de los servicios). Recordar que en este caso no vamos a poder mapear nuestros servicios más de un puerto de contenedor a un puerto de HOST (cosa que ya vimos también)
+Para este servicio, Docker se encarga de todas la configuración en las reglas de redirección e iptables en estas situaciones.
+
+* Para el primer caso, no es necesario que hagamos ningún ajuste.
+* Para el segundo caso es necesario que hagamos el bind en el docker-file del compose o en el mismo docker run (cómo lo vinimos haciendo en la primer parte de este tutorial), Solo a modo de recordarlo:
+
+```yaml
+version: '3'
+services:
+  server:
+    ...
+    ports:
+      - "4444:4444"
+    ...
+  server2:
+    ...
+    ports:
+      - "4443:4444"
+    ....
+```
+
+### Sección 5.3 -- Comandos básicos en Docker Networks
 
 A continuación se presentan los comandos más importantes para gestionar las redes en Docker 
 
@@ -254,7 +283,7 @@ A continuación se presentan los comandos más importantes para gestionar las re
 * prune es el comando con el que se borran todas las redes creadas (excepto las redes por defecto -bridge, host, none-) 
 * rm permite borrar una o mas redes especificando ciertos argumentos 
 
-### Sección 5.3 -- Comenzando con las "Dockers networks" 
+### Sección 5.4 -- Comenzando con las "Dockers networks" 
 Primero analizaremos las redes que están disponibles para el usuario una vez que Docker es instalado
 
 ```bash
@@ -304,7 +333,7 @@ inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255
 ```
 Cómo puede verse, esta información se condice con la información detallada anteriormente
 
-### 5.4 - Entendiendo que pasa cuando creamos contenedores en la red "bridge" por defecto 
+### 5.5 -- Entendiendo que pasa cuando creamos contenedores en la red "bridge" por defecto 
 
 Vamos a volver a correr el servidor java que desarrollamos para este proyecto (o podría ser cualquier otra imagen) y la ponemos a correr
 
@@ -397,7 +426,12 @@ Mon Apr 20 00:46:06 GMT 2020
 ```
 De esta manera pudimos validar que desde el host es posible también acceder a los servicios si conocemos la IP que otorga el DNS del bridge (problema a analizar un poco más adelante)
 
-- Aprovechando que tenemos los dos nodos levantados .0.2 y 0.3, vamos a ver como conectarnos por SSH al menos a uno de los contenedores y validar que internamente ellos se ven en la Docker bridge.  Esto es importante para comprender que las aplicaciones que desarrollemos se pueden comunicar independientemente de lo que suceda en el "mundo del HOST" mientras la red definida (default / propia) esté activa.  Para ello tomamos algunos de los IDS de los contenedores y luego nos conectamos a dicho nodo.
+### 5.6 -- Accediendo por SSH a los contenedores y verificando conectividad 
+- Aprovechando que tenemos los dos nodos levantados .0.2 y 0.3, vamos a ver:
+a) Cómo conectarse por SSH a un contenedor
+b) Validar que los contenedores en la docker bridge se ven
+
+Esto es importante para comprender que las aplicaciones que desarrollemos se pueden comunicar independientemente de lo que suceda en el "mundo del HOST" mientras la red definida (default / propia) esté activa y obviamente que el host esté activo.  Para ello tomamos algunos de los IDS de los contenedores y luego nos conectamos a dicho nodo.
 
 ```bash
 $ docker container ps
@@ -420,11 +454,43 @@ Escape character is '^]'.
 ...
 ```
 
+### 5.7 -- Crear una docker network personalizada 
+La configuración de red por defecto de Docker es funcional, pero bastante simple.  Recordar que por definición las redes en docker son privadas y seguras, es decir, un contenedor conectado a una red no puede ver los contenedores conectados a otra red diferente.  Esto puede no ser adecuado para algunos proyectos que pueden requerir características específicas y mayor flexibilidad.
+Entonces, además de las redes que vienen por defecto (bridge, host, none) existe la posibilidad de crear redes personalizadas según las necesidades del usuario o de las aplicaciones.  Para ello vamos a crear redes privadas diferentes sobre las cuales conectaremos los distintos contenedores que tengamos.
+
+Si bien no vamos a utilizar configuraciones avanzadas, vamos a intentar asignar una dirección IP específica a un contenedor (dentro del rango permitido) y ver que nos dice la docker bridge network. Para verificar rápidamente y no modificar nuestros archivos yamls ya definidos vamos a utilizar una imagen de NGINX server disponible en Docker Hub. 
+
+* Primero probamos la imagen básica:
+
 ```bash
+#---------------network      --container name  container image
+$ docker run -d --net bridge --name nginx-test nginx
+
+$ docker container ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+8fd2d1e72456        nginx               "nginx -g 'daemon of…"   13 seconds ago      Up 11 seconds       80/tcp              nginx-test
+```
+* Vemos que levantó correctamente y vemos en su configuración que tiene asignada una dirección IP
+```bash
+$ docker container inspect 8fd2d1e72456 | grep IPAddress
+"SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.2",
+                    "IPAddress": "172.17.0.2",
+
+```
+* Si ponemos eso en nuestro navegador (porque estamos en el mismo HOST) podemos acceder y veremos algo del estilo:
+>Welcome to nginx!
+>If you see this page, the nginx web server is successfully installed and...
+
+* Ahora paramos el servidor nginx.
+```bash
+$ docker container rm 8fd2d1e72456 -f
 ```
 
+* Ahora vamos a intentar setearle una IP específica al servidor NGINX (que sabemos que no está permitido en una red por defecto)
 
-
+```bash
+```
 
 ## Sección 5 -- Crear un cluster RabbitMQ con Docker Compose
 
