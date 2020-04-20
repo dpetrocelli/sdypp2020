@@ -454,7 +454,7 @@ Escape character is '^]'.
 ...
 ```
 
-### 5.7 -- Crear una docker network personalizada 
+### 5.7 -- Limitantes de una red Docker por defecto
 La configuración de red por defecto de Docker es funcional, pero bastante simple.  Recordar que por definición las redes en docker son privadas y seguras, es decir, un contenedor conectado a una red no puede ver los contenedores conectados a otra red diferente.  Esto puede no ser adecuado para algunos proyectos que pueden requerir características específicas y mayor flexibilidad.
 Entonces, además de las redes que vienen por defecto (bridge, host, none) existe la posibilidad de crear redes personalizadas según las necesidades del usuario o de las aplicaciones.  Para ello vamos a crear redes privadas diferentes sobre las cuales conectaremos los distintos contenedores que tengamos.
 
@@ -488,10 +488,68 @@ $ docker container rm 8fd2d1e72456 -f
 ```
 
 * Ahora vamos a intentar setearle una IP específica al servidor NGINX (que sabemos que no está permitido en una red por defecto)
-
 ```bash
+$ docker run -d --net bridge --ip 172.17.0.16 --name nginx-network nginx
+docker: Error response from daemon: user specified IP address is supported on user defined networks only.
+
 ```
 
+De esta manera pudimos verificar que no es posible tomar esa acción en una red definida por defecto.
+
+### 5.8 -- Crear una red de Docker personalizada
+Cómo sucedió a lo largo de todo el tutorial de docker, existen dos posibilidades para crear una red Docker:
+a) A través del comando docker network create
+b) A través de la definición de los servicios en docker-compose.
+
+* A modo de ejemplo, vamos a comenzar con la consola de docker. 
+```bash
+$ docker network create --driver=bridge --subnet=172.30.0.0/16 --gateway=172.30.0.1 network-bridge-from-console
+```
+* Vamos a validar que la red se haya construido correctamente y analizaremos su configuración básica, para ello:
+```bash
+$ docker network ls 
+...
+3ab4e4794cd3        network-bridge-from-console          bridge              local
+...
+$ docker network inspect network-bridge-from-console 
+...
+ "Driver": "bridge",
+...
+...
+            "Config": [
+                {
+                    "Subnet": "172.30.0.0/16",
+                    "Gateway": "172.30.0.1"
+                }
+            ]
+        },
+...
+```
+* A continuación, vamos a levantar nuevamente el servicio de NGINX pero ahora en la red creada por nosotros y le vamos a asignar una dirección de IP disponible en el rango de la misma.
+
+```bash
+$ docker run -d --net network-bridge-from-console --ip 172.30.0.16 --name nginx-network nginx
+
+```
+* Ahora vamos a validar que dirección IP tiene 
+
+```bash
+$ docker container ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+591a212f4baf        nginx               "nginx -g 'daemon of…"   5 seconds ago       Up 4 seconds        80/tcp              nginx-network
+
+$ docker container inspect 591a212f4baf | grep IPAddress
+"SecondaryIPAddresses": null,
+            "IPAddress": "",
+                    "IPAddress": "172.30.0.16",
+
+```
+* Una vez obtenida la IP (que ya la sabíamos), vamos a entrar al navegador y validar que podemos llegar desde nuestro HOST. Deberíamos ver algo similar a.
+>Welcome to nginx!
+>If you see this page, the nginx web server is successfully installed and...
+```bash
+
+```
 ## Sección 5 -- Crear un cluster RabbitMQ con Docker Compose
 
 ### 5.1 - Qué es RabbitMQ?
