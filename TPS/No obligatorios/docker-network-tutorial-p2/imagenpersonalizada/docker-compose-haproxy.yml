@@ -1,0 +1,11 @@
+version: '3'
+services:
+  haproxy1:
+    image: haproxy-personalized
+    networks:
+      default:
+        ipv4_address: 172.30.0.40
+networks:
+  default:
+    external:
+      name: network-bridge-from-console

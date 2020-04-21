@@ -54,35 +54,35 @@ CMD ["java", "Servidor"]
 ```
 - Una vez revisado los tres pasos, se pone a correr la instancia para verificar que recibe los parámetros definidos
 
-
 ```bash
 $ docker-compose -f docker-compose-para-java.yml up
+Starting docker-network-tutorial-p2_server_1 ... done
+Attaching to docker-network-tutorial-p2_server_1
+server_1  | [Mon Apr 13 23:24:15 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+...
 ```
-
-- En la salida podemos verificar que el servidor levanta en base a los parámetros definidos
->Starting docker-network-tutorial-p2_server_1 ... done
->Attaching to docker-network-tutorial-p2_server_1
->server_1  | [Mon Apr 13 23:24:15 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
 
 - Desde otra terminal podemos realizar un netcat para ver lo que nos brinda
 ```bash
 nc localhost 4444
 ```
 Dando como resultado algo similar a
->Bienvenido al servidor de fecha y hora Servidor 1
->Mon Apr 13 23:25:41 GMT 2020
-
+```bash
+Bienvenido al servidor de fecha y hora Servidor 1
+Mon Apr 13 23:25:41 GMT 2020
+```
 Mientras que el servicio en la terminal anterior (servidor) nos muestra algo similar a:
-> server_1  | [Mon Apr 13 23:25:41 GMT 2020] INFO Cliente conectado /172.22.0.1:59434
-
+```bash
+server_1  | [Mon Apr 13 23:25:41 GMT 2020] INFO Cliente conectado /172.22.0.1:59434
+```
 - Corroborar que también se almacenan los datos del log en el volumen definido
 ```bash
 cat /tmp/javadir/logfile1.log
+[Mon Apr 13 23:24:15 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+[Mon Apr 13 23:25:41 GMT 2020] INFO Cliente conectado /172.22.0.1:59434
+[Mon Apr 13 23:54:09 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+[Tue Apr 14 00:14:31 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
 ```
->[Mon Apr 13 23:24:15 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
->[Mon Apr 13 23:25:41 GMT 2020] INFO Cliente conectado /172.22.0.1:59434
->[Mon Apr 13 23:54:09 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
->[Tue Apr 14 00:14:31 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
 
 ## Sección 3 -- Crear varias instancias para un mismo servicio
 El objetivo es crear múltiples instancias independientes del servicio Java definido para brindar mayor disponibilidad del servicio.
@@ -136,38 +136,38 @@ viendo la columna ports.
 - Correr el docker compose
 ```bash
 $ docker-compose -f docker-compose-java-escalado.yml up
+Starting docker-network-tutorial-p2_server2_1 ... done
+Starting docker-network-tutorial-p2_server3_1 ... done
+Starting docker-network-tutorial-p2_server_1  ... done
+Attaching to docker-network-tutorial-p2_server_1, docker-network-tutorial-p2_server2_1, docker-network-tutorial-p2_server3_1
+server_1   | [Mon Apr 13 23:54:09 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+server2_1  | [Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+server3_1  | [Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 3 iniciado en puerto 4444
 ```
->Starting docker-network-tutorial-p2_server2_1 ... done
->Starting docker-network-tutorial-p2_server3_1 ... done
->Starting docker-network-tutorial-p2_server_1  ... done
->Attaching to docker-network-tutorial-p2_server_1, docker-network-tutorial-p2_server2_1, docker-network-tutorial-p2_server3_1
->server_1   | [Mon Apr 13 23:54:09 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
->server2_1  | [Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
->server3_1  | [Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 3 iniciado en puerto 4444
 
 - Revisar como están los contenedores y puertos (prestar atención a los bind de los puertos)
 ```bash
 $ docker container ps
+CONTAINER ID        IMAGE                                COMMAND             CREATED             STATUS              PORTS                    NAMES
+90bff8a1b185        docker-network-tutorial-p2_server3   "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4442->4444/tcp   docker-network-tutorial-p2_server3_1
+bad75e5d8dac        docker-network-tutorial-p2_server2   "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4443->4444/tcp   docker-network-tutorial-p2_server2_1
+2609e17074ce        docker-network-tutorial-p2_server    "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4444->4444/tcp   docker-network-tutorial-p2_server_1
 ```
->CONTAINER ID        IMAGE                                COMMAND             CREATED             STATUS              PORTS                    NAMES
->90bff8a1b185        docker-network-tutorial-p2_server3   "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4442->4444/tcp   docker-network-tutorial-p2_server3_1
->bad75e5d8dac        docker-network-tutorial-p2_server2   "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4443->4444/tcp   docker-network-tutorial-p2_server2_1
->2609e17074ce        docker-network-tutorial-p2_server    "java Servidor"     22 hours ago        Up 2 seconds        0.0.0.0:4444->4444/tcp   docker-network-tutorial-p2_server_1
 
 - Probar con netcat el resultado de los servidores
 ```bash
 $ netcat localhost 4443
+Bienvenido al servidor de fecha y hora Servidor 2
+Tue Apr 14 00:16:47 GMT 2020
 ```
->Bienvenido al servidor de fecha y hora Servidor 2
->Tue Apr 14 00:16:47 GMT 2020
 
 - Corroborar que también se almacenan los datos del log en el volumen definido
 ```bash
 $ cat /tmp/javadir/logfile2.log
+[Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+[Tue Apr 14 00:14:31 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+[Tue Apr 14 00:16:47 GMT 2020] INFO Cliente conectado /172.22.0.1:53830
 ```
->[Mon Apr 13 23:54:10 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
->[Tue Apr 14 00:14:31 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
->[Tue Apr 14 00:16:47 GMT 2020] INFO Cliente conectado /172.22.0.1:53830
 
 ## Sección 4 -- Balancear carga entre instancias de servicios con HaProxy (Desde el HOST)
 Para balancear carga entre los servicios de Java se va a proceder a instalar un balanceador de carga en el Host (equipo). Para ello se va a instalar HaProxy a través de la línea de comandos y los repositorios APT.
@@ -218,8 +218,9 @@ $ sudo systemctl restart/reload haproxy
 $ sudo systemctl status haproxy
 ```
 Donde debe dar algo similar a lo siguiente
->Active: active (running) since Mon 2020-04-13 22:07:10 -03; 1s ago
-
+```bash
+Active: active (running) since Mon 2020-04-13 22:07:10 -03; 1s ago
+```
 - Quinto, iniciar el sitio de administración (http://localhost:8181) y validar que estén los nodos en verde funcionando.
 
 - Sexto, realizar pruebas de peticiones y validar que la carga se va repartiendo entre los nodos (a la configuración del bind del haproxy)
@@ -228,6 +229,11 @@ Donde debe dar algo similar a lo siguiente
 $ telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080
 ```
 - Finalmente, luego de validar las funciones, parar los servicios.
+```bash
+$ docker container ps 
+
+$ docker container rm ID ID2 ID3
+```
 
 ## Sección 5 -- Manejo de redes en Docker 
 
@@ -593,26 +599,23 @@ networks:
 
 ```bash
 $ docker-compose -f docker-compose-my-network.yml up
->Starting redes_docker_server2_1 ... done
->Starting redes_docker_server1_1 ... done
->Attaching to redes_docker_server1_1, redes_docker_server2_1
->server1_1  | [Mon Apr 20 21:27:20 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
->server2_1  | [Mon Apr 20 21:27:20 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
+Starting redes_docker_server2_1 ... done
+Starting redes_docker_server1_1 ... done
+Attaching to redes_docker_server1_1, redes_docker_server2_1
+server1_1  | [Mon Apr 20 21:27:20 GMT 2020] INFO Servidor 1 iniciado en puerto 4444
+server2_1  | [Mon Apr 20 21:27:20 GMT 2020] INFO Servidor 2 iniciado en puerto 4444
 ```
 * En otra terminal, verificar que en la red mencionada (network-bridge-from-console) están las dos IPS mencionadas en uso 
 ```bash
 $ docker network inspect network-bridge-from-console | grep IPv4
->"IPv4Address": "172.30.0.11/16",
->"IPv4Address": "172.30.0.16/16",
->"IPv4Address": "172.30.0.10/16",
+"IPv4Address": "172.30.0.11/16",
+"IPv4Address": "172.30.0.16/16",
+"IPv4Address": "172.30.0.10/16",
 
 ```
+## Sección 6 -- Crear un cluster RabbitMQ con Docker Compose
 
-```bash
-```
-## Sección 5 -- Crear un cluster RabbitMQ con Docker Compose
-
-### 5.1 - Qué es RabbitMQ?
+### 6.1 - Qué es RabbitMQ?
 
 > RabbitMQ es un "open source message broker software" que implementa los protocolos de "Advanced Message Queuing Protocol (AMQP)".
 > El servicio de RabbitMQ está escrito en Erlang y construido por Open Telecom Platform
@@ -621,14 +624,14 @@ $ docker network inspect network-bridge-from-console | grep IPv4
 
 https://www.rabbitmq.com/
 
-### 5.2 - RabbitMQ en Docker
+### 6.2 - RabbitMQ en Docker
 La imagen oficial de RabbitMQ se encuentra desarrollada y presentada (desde Marzo de 2020) por Bitnami Inc y se encuentra preparada para trabajar en diversos entornos (local, Cloud, Kubernetes, etc)
 https://bitnami.com/stack/rabbitmq/containers
 
 La imagen base se encuentra en Docker Hub, donde se puede visualizar el contínuo update de la misma. 
 https://hub.docker.com/r/bitnami/rabbitmq/
 
-### 5.3 - Porqué usar las imágenes Bitnami
+### 6.3 - Porqué usar las imágenes Bitnami
 
 * Bitnami monitorea contínuamente los cambios que producen los proveedores de las plataformas y publica rápidamente las nuveras versiones de esas imágenes a través de pipelines automatizados 
 * Con las imágenes de Bitnami, las últimas correcciones de errores y características están disponibles lo antes posible.
@@ -638,7 +641,7 @@ https://hub.docker.com/r/bitnami/rabbitmq/
 
 Cómo siempre existen varias maneras de crear un cluster de un determinado servicio para ofrecer características de redundancia, tolerancia a fallos y replicación. Especialmente en docker existen siempre diversos usuarios que publican adaptaciones de las imágenes oficiales para funciones específicas o facilitar el uso de algún plugin o herramienta.  Sin embargo, este tipo de adaptaciones casi siempre quedan sin actualizaciones frecuentes y terminan ofreciendo herramientas con ciertas deficiencias.  Por lo tanto, en este tutorial siempre se busca utilizar herramientas de repositorios oficiales con updates contínuos.
 
-### 5.4 - Cómo correr RabbitMQ desde la imagen básica (docker) de Bitnami
+### 6.4 - Cómo correr RabbitMQ desde la imagen básica (docker) de Bitnami
 
 * Obtener la imagen desde el repositorio
 ```bash
@@ -680,7 +683,7 @@ CONTAINER ID        IMAGE                     COMMAND                  CREATED  
 ```
 * Parar el servicio (Ctrl + c)
 
-#### 5.5 - Usar Docker Compose para correr RabbitMQ 
+#### 6.5 - Usar Docker Compose para correr RabbitMQ 
 
 * Descargar el "template" del docker-compose disponible por el proveedor y visualizarlo 
 
@@ -711,7 +714,7 @@ volumes:
 $ docker-compose up -d
 ```
 
-#### 5.6 - Persistir los datos de RabbitMQ (a pesar de reinicio) 
+#### 6.6 - Persistir los datos de RabbitMQ (a pesar de reinicio) 
 
 Si se elimina el contenedor, todos sus datos se perderán, y la próxima vez que ejecute la imagen, la "base de datos" se reiniciará. Para evitar esta pérdida de datos, debe montar un volumen que persistirá incluso después de quitar el contenedor.
 
@@ -733,9 +736,9 @@ rabbitmq:
   ...
 ```
 
-#### 5.7 - Configuración avanzada de RabbitMQ (Docker)
+#### 6.7 - Configuración avanzada de RabbitMQ (Docker)
 
-##### Variables de entorno (Como vimos al principio)
+##### Configurar RabbitMQ a través de variables de entorno
 
 Cuando se inicia la imagen de rabbitmq, se pueden ajustar configuraciones de la instancia pasando una o más variables de entorno en el archivo docker-compose o en la línea de comandos de ejecución de docker. Si desea agregar una nueva variable de entorno:
 
@@ -769,7 +772,7 @@ rabbitmq:
  - `RABBITMQ_LDAP_SERVER_PORT`: Port of the LDAP server. Defaults to `389`.
  - `RABBITMQ_LDAP_USER_DN_PATTERN`: DN used to bind to LDAP in the form `cn=$${username},dc=example,dc=org`. No defaults.
 
-#### 5.8 - Construir un cluster RabbitMQ usando Docker Compose
+#### 6.8 - Construir un cluster RabbitMQ usando Docker Compose
 
 A continuación se definen los pasos a seguir para construir un cluster en RabbitMQ:
 
@@ -779,7 +782,7 @@ Vamos a crear:
 * 1 carpeta para cada nodo "cola-queue-disc"
 
 ```bash
- mkdir /tmp/rabbit; mkdir /tmp/rabbit/stats ; mkdir /tmp/rabbit/node1 ; mkdir /tmp/rabbit/node2 ; mkdir /tmp/rabbit/node3; sudo chmod 777 -R /tmp/rabbit
+$ mkdir /tmp/rabbit; mkdir /tmp/rabbit/stats ; mkdir /tmp/rabbit/node1 ; mkdir /tmp/rabbit/node2 ; mkdir /tmp/rabbit/node3; sudo chmod 777 -R /tmp/rabbit
 ```
 ##### Paso 2: Crear el primer nodo stats en Docker compose 
 Archiv: docker-compose.yml
@@ -871,7 +874,7 @@ El backup se realizará a través de utilizar la herramienta rsync hacia otra ca
 ```bash
 $ rsync -a /path/to/rabbitmq-persistence /path/to/rabbitmq-persistence.bkp.$(date +%Y%m%d-%H.%M.%S)
 ```
-#### 5.9 - Ajustar el módulo de HAProxy para balancear carga 
+#### 6.9 - Ajustar el módulo de HAProxy para balancear carga 
 * Una vez instalado se va a proceder a configurar el balanceador en base a la arquitectura definida.  Como archivo de configuración en sistema Linux se encuentra dentro del directorio etc.  En este caso en el archivo se encuentra en /etc/haproxy/haproxy.cfg
 
 - Primero, realizar un bkp del archivo original
@@ -933,9 +936,225 @@ listen stats
     stats auth admin:admin
     stats refresh 5s
 ```
+### FALTA HACER LAS PRUEBAS DE CAIDA DE LOS NODOS DE RABBITMQ 
 
-#### 5.10 - Construir un "cluster" de HAProxy + KeepAlived
-Para construir un cluster se requeriría tener una red con la que se puedan obtener más de una IP y no solo la local (Por ejemplo con Docker Swarm o Kubernetes).  Para solventar este apartado vamos a definir una IP virtual (dependiendo de la placa de red que estemos utilizando en este momento).  Por ejemplo en Debian, se puede agregar en el siguiente archivo
+## Sección 7 -- "Armar" un cluster de RabbitMQ + Cluster de HAProxy + KeepAlived
+Para construir un cluster se requeriría tener una red con la que se puedan obtener más de una IP y no solo la local (Por ejemplo con Docker Swarm o Kubernetes).  Para solventar este apartado vamos a intentar crear un balanceador en cluster redundante pero dentro de la docker network que creamos previamente y lo haremos redundante y tolerante a fallos dentro de dicha red. Este apartado hará un repaso intenso de todos los conceptos visto en el curso por lo que se requiere especial atención en cada uno de los puntos.  El consumo del cluster de RabbitMQ y de los webservers Java será a través de clientes dentro de la docker network. 
+
+### 7.1 - Cluster RabbitMQ 
+Para construir el cluster de rabbitMQ vamos a setearle (en base a lo que hicimos en todos los pasos anteriores) IP fija.
+Archivo cluster_rabbitmq/docker-compose-cluster-rabbitmq.yml
+
+```yaml
+version: '3'
+services:
+  stats:
+    image: bitnami/rabbitmq
+    environment:
+      - RABBITMQ_NODE_TYPE=stats
+      - RABBITMQ_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - 15672:15672
+      - 5672:5672
+      - 4369:4369
+    networks:
+      default:
+        ipv4_address: 172.30.0.30
+    volumes:
+      - '/tmp/rabbit/stats/:/bitnami'
+  node1:
+    image: bitnami/rabbitmq
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbit@node1
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - 5673:5672
+      - 4370:4369
+    networks:
+      default:
+        ipv4_address: 172.30.0.31
+    volumes:
+      - '/tmp/rabbit/node1:/bitnami'
+  node2:
+    image: bitnami/rabbitmq
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbit@node2
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    ports:
+      - 5674:5672
+      - 4371:4369
+    networks:
+      default:
+        ipv4_address: 172.30.0.32
+    volumes:
+      - '/tmp/rabbit/node2:/bitnami'   
+networks:
+  default:
+    external:
+      name: network-bridge-from-console
+```
+
+
+### 7.2 -- Crear la imagen docker de haproxy adaptada a nuestra necesidad (configuración de haproxy.cfg)
+* Definir el archivo haproxy.cfg
+Archivo: imagenpersonalizada/haproxy.cfg
+
+```bash
+global
+    maxconn 4096
+    daemon
+
+defaults
+    log     global
+    mode    http
+    
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+    
+listen rabbitmq_service5672
+	#todo lo que venga a 5672
+	bind 0.0.0.0:5672
+	mode tcp
+		#Lo balanceo con mismo peso (RoundRobin)
+	balance roundrobin
+		#Evitar desconexiones de los CLI se configura timeout client/server 3h
+	timeout client 3h
+	timeout server 3h
+		#Configuracion clitcpka -> enviarse paquetes de Heartbeat (Cliente) y no se pierda conexion
+	option clitcpka
+
+	server stats 172.30.0.30:5672 check inter 5s rise 2 fall 3
+	server rabbit1 172.30.0.31:5672 check inter 5s rise 2 fall 3
+	server rabbit2 172.30.0.32:5672 check inter 5s rise 2 fall 3
+
+listen rabbitmq_service4369
+	#todo lo que venga a 5672
+	bind 0.0.0.0:4369
+	mode tcp
+		#Lo balanceo con mismo peso (RoundRobin)
+	balance roundrobin
+		#Evitar desconexiones de los CLI se configura timeout client/server 3h
+	timeout client 3h
+	timeout server 3h
+		#Configuracion clitcpka -> enviarse paquetes de Heartbeat (Cliente) y no se pierda conexion
+	option clitcpka
+
+	server stats 172.30.0.30:4369 check inter 5s rise 2 fall 3
+	server rabbit1 172.30.0.31:4369 check inter 5s rise 2 fall 3
+	server rabbit2 172.30.0.32:4369 check inter 5s rise 2 fall 3
+
+listen rabbitmq_management
+	#todo lo que venga a 15672
+    bind 0.0.0.0:15672
+    mode http
+	#Lo balanceo con mismo peso (RoundRobin)
+    balance roundrobin
+    server stats 172.30.0.30:15672 check fall 3 rise 2
+
+listen stats
+	#Interfaz de administracion
+    bind 0.0.0.0:8181
+    stats enable
+    stats uri /
+    stats realm Haproxy\ Statistics
+    stats auth admin:admin
+    stats refresh 5s
+```
+* Definimos el archivo Dockerfile para crear la imagen personalizada
+```yaml
+FROM haproxy:latest
+COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+```
+* Construimos la imagen 
+```bash
+$ docker build . -t haproxy-personalized
+```
+
+* ahora definimos nuestro yaml del docker-compose para el servicio haproxy
+Arcjivo: docker-compose-haproxy.yml
+```yaml
+version: '3'
+services:
+  haproxy1:
+    image: haproxy-personalized
+    networks:
+      default:
+        ipv4_address: 172.30.0.40
+networks:
+  default:
+    external:
+      name: network-bridge-from-console
+```
+
+* Corremos el docker-compose
+$ docker-compose -f docker-compose-haproxy.yml up
+la imagen adaptada ALTA HACER LAS PRUEBAS DE CAIDA DE LOS NODOS DE RABBITMQ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Luego de instalar hay que configurar el producto (con diferentes configuraciones en los equipos debido a uno se configurará como Maestro y otro como Esclavo.
+
+
+interface: donde indicamos la tarjeta de red de nuestro servidor.
+state: le decimos cual va a ser el MASTER y cual el BACKUP.
+priority: daremos más prioridad al servidor maestro de tal forma que en caso de que los dos servidores HAProxy estén iniciados tomará toda la carga de conexiones.
+virtual_router_id: identificador numérico que tiene que ser igual en los dos servidores.
+auth_pass: especifica la contraseña utilizada para autenticar los servidores en la sincronización de failover.
+virtual_ipaddress: será la dirección IP virtual que compartirán lo dos servidores y a la que tienen que realizar las peticiones los clientes.
+
+```
+docker run -d --net network-bridge-from-console --ip 172.30.0.40 --name haproxy1 haproxy-david
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```bash
 $ cat /etc/network/interfaces
