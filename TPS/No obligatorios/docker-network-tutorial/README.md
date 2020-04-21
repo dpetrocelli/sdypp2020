@@ -206,3 +206,53 @@ En el Dockerfile del cliente se definió como argumento para host (en *CMD*) la 
 Docker compose provee muchas herramientas avanzadas para hacer deploy y comunicar contenedores y servicios de todo tipo. Para más información dirigirse a la documentación de Docker Compose (https://docs.docker.com/compose/)
 
 ## Sección 6 -- Conectarse por SSH a un contenedor y debug de arquitectura
+Otra actividad importante a tener en cuenta muchas veces es la revisión de un contenedor o de un conjunto de contenedores (estado de servicios, chequeos de configuración, puertos, entre otras cosas).  Para ello, además de los controles que se pueden realizar desde el HOST que aloja Docker, es posible conectarse a las instancias en si y analizar "internamente" que sucede. En ambientes con productos y servicios en ejecución no siempre es posible cambiar algo y relanzar el contenedor.  En ese caso también es una herramienta util.
+
+Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución linux.  Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, va a ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
+
+Para continuar trabajando con los archivos docker-compose, vamos a agregar a la red que construimos previamente un nodo básico de debian, de la siguiente manera.
+Archivo: docker-compose-debian.yml
+```yaml
+version: '3'
+services:
+  server:
+    build: ./servidor
+    ports:
+      - "4444:4444"
+  server2:
+    build: ./servidor
+    ports:
+      - "4443:4444"
+  debian:
+    image: debian:latest
+```
+A continuación, debemos ponerlo a correr.  De esta manera se levantarán dos servidores (nombre server y server2) y va a levantar una imagen debian básica a través del repositorio de Docker Hub (Imagen debian oficial)
+```bash
+$ docker-compose -f docker-compose-debian.yml up
+
+Pulling debian (debian:latest)...
+latest: Pulling from library/debian
+7e2b2a5af8f6: Pull complete
+Digest: sha256:7790bb087ef265cd56265767a8b689d52c7bc73b30b3cbb37525a9ea66fa9740
+Status: Downloaded newer image for debian:latest
+Starting docker-network-tutorial_server_1 ... done
+Starting docker-network-tutorial_client_1 ... done
+Creating docker-network-tutorial_debian_1 ... done
+Attaching to docker-network-tutorial_server_1, docker-network-tutorial_client_1, docker-network-tutorial_debian_1
+server_1  | [Tue Apr 21 20:26:31 GMT 2020] INFO Servidor iniciado en puerto 4444
+client_1  | Servidor: Bienvenido al servidor de fecha y hora
+server_1  | [Tue Apr 21 20:26:31 GMT 2020] INFO Cliente conectado /172.18.0.2:34940
+client_1  | Servidor: Tue Apr 21 20:26:31 GMT 2020
+docker-network-tutorial_client_1 exited with code 0
+docker-network-tutorial_debian_1 exited with code 0
+
+```
+
+Vamos a revisar que los 3 contenedores estén corriendo correctamente a través del siguiente comando
+```bash
+$ docker container ps 
+
+```
+
+```bash
+```
