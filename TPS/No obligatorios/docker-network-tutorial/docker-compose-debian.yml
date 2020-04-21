@@ -1,0 +1,10 @@
+version: '3'
+services:
+  server:
+    build: ./servidor
+    ports:
+      - "4444:4444"
+  client:
+    build: ./cliente
+  debian:
+    image: debian:latest

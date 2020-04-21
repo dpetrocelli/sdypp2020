@@ -80,10 +80,19 @@ $ docker run --name tutorial-red-servidor -p 4444:4444 tutorial-red-servidor:lat
 *-p* le indica a Docker que publique el/los puerto/s del contenedor al host, en formato <hostPort>:<containerPort>. Esto permitirá conectarse al contenedor con la dirección *localhost:4444*
 Finalmente se define qué imagen utilizar para el contenedor (la que se creó anteriormente).
 El contenedor correrá por primera vez y abrirá una terminal con el programa. Si todo funcionó correctamente, el servidor debería estar escuchando en el puerto 4444 y en la terminal debería aparecer un mensaje de bienvenida.
+Esto se puede verificar a través de la información que nos da Docker respecto de sus contenedores
+
+```bash
+$ docker container ps
+CONTAINER ID        IMAGE                          COMMAND                CREATED              STATUS              PORTS                    NAMES
+51c8006204de        tutorial-red-servidor:latest   "java Servidor 4444"   About a minute ago   Up About a minute   0.0.0.0:4444->4444/tcp   tutorial-red-servidor
+```
+
 Para probar que el servidor funciona correctamente, abrir otra terminal y ejecutar el comando
 ```bash
 $ nc localhost 4444
 ```
+
 La nueva terminal se conectará al proceso servidor escuchando en el puerto 4444 y responderá con la fecha y hora actual. La terminal que ejecuta el servidor mostrará un log de la conexión.
 Para detener el contenedor, presionar CTRL + C.
 Finalmente, si se quiere volver a correr el contenedor, ingresar el comando
@@ -124,9 +133,10 @@ Ahora vamos a volver a correr nuestro contenedor, pero agregando al mismo el vol
 $ docker run --name tutorial-red-servidor -v servidor-log:/usr/src/app -p 4444:4444 tutorial-red-servidor:latest
 ```
 En el comando *-v* se especifica <nombre del volumen>:<ruta al directorio que se va a persistir>. En este caso, y como está definido en el Dockerfile, se persiste el directorio raíz de la aplicación.
-Si ahora se accede al directorio definido en *Mountpoint*, se podrá leer el archivo de log
-```
+Si ahora se accede al directorio definido en *Mountpoint*, se podrá leer el archivo de log (dos opciones)
+```bash
 $ sudo less +F /var/lib/docker/volumes/servidor-log/_data/info.log
+$ sudo tail -f /var/lib/docker/volumes/servidor-log/_data/info.log
 ```
 Otro uso útil para los volúmenes es montar un directorio del host dinámicamente en un contenedor. De esta manera, los cambios realizados en el host se actualizan en tiempo real en el contenedor. Por ejemplo, se podría editar y compilar el código fuente en Servidor.java en el host y este se actualizaría en el contenedor sin necesidad de volver a construir la imagen.
 Para este ejemplo:
@@ -135,7 +145,7 @@ Para este ejemplo:
  - Construir la imagen nuevamente (*docker build -t tutorial-red-servidor-v2*)
  - Correr el contenedor con la opción *-v <ruta absoluta al proyecto>:<ruta del contenedor>*
  ```
-$ docker run --name tutorial-red-servidor-v2 -v /home/usuario/docker-network-tutorial/tutorial/servidor/src:/usr/src/app -p 4444:4444 tutorial-red-servidor-v2:latest
+$ docker run --name tutorial-red-servidor-v2 -v /tmp/:/usr/src/app -p 4444:4444 tutorial-red-servidor-v2:latest
 ```
 Como última aclaración, cabe mencionar que los volúmenes pueden ser accedidos remotamente, compartidos entre contenedores y otras opciones más (consultar https://docs.docker.com/storage/volumes/)
 
@@ -144,7 +154,7 @@ Una vez utilizado, se puede eliminar con el comando rm.  Este comando rm es apli
 $ docker container rm tutorial-red-servidor
 ```
 
-# Sección 5 -- Redes -- Docker compose
+# Sección 5 -- Redes Básicas -- Docker compose
 Análogamente al caso del servidor, generar un Dockerfile para el Cliente que va a preguntar la fecha y hora al servidor. Como parámetro adicional, el Cliente requiere un nombre de host, por lo que se requiere cambiar la línea *CMD*
 ```dockerfile
 CMD ["java", "Cliente", "server", "4444"]
@@ -194,3 +204,5 @@ Con esto, Docker Compose se encargará de:
 Luego, mostrará en la terminal la salida de ambos contenedores. Pero queda un asunto sin cerrar. ¿Cómo puede el cliente ver al servidor sin definir el host?
 En el Dockerfile del cliente se definió como argumento para host (en *CMD*) la palabra "server". Y eso es todo lo que se necesita para que dos contenedores se vean, que conozcan sus *nombres de servicio* declarados en *docker-compose.yml*. Así, el cliente se conecta a server:4444, Docker resuelve esa dirección y dirige los datos al servidor.
 Docker compose provee muchas herramientas avanzadas para hacer deploy y comunicar contenedores y servicios de todo tipo. Para más información dirigirse a la documentación de Docker Compose (https://docs.docker.com/compose/)
+
+## Sección 6 -- Conectarse por SSH a un contenedor y debug de arquitectura
