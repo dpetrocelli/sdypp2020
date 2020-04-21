@@ -1,5 +1,5 @@
 # Taller Docker 
-En el marco de la asignatura de 41409 - Sistemas Distribuidos y Programación Paralela, se desarrolla un proyecto de capacitación en las tecnologías de contenedores (Docker) que se realizarán a lo largo de la jornada en dos fases:
+En el marco de la asignatura de 41409 - Sistemas Distribuidos y Programación Paralela, se desarrolla un taller de capacitación en las tecnologías de contenedores (Docker) que se realizarán a lo largo de la jornada en dos fases:
 
 * **Primer parte**: Un tutorial y ejercitación básica para aprender los aspectos más relevantes de la herramienta Docker (contenedores) y cómo desarrollar aplicaciones utilizando esta arquitectura.  A su vez, lograr conectar contenedores a través de una red Docker.
 
