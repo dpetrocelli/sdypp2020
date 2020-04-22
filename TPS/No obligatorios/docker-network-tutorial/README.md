@@ -17,9 +17,14 @@ El primer requisito para crear un contenedor es buscar un entorno que pueda corr
 ```bash
 $ docker pull openjdk:latest
 ```
+
 Se puede revisar las imágenes descargadas con
 ```bash
 $ docker images
+
+$ docker images | grep openjdk
+openjdk                              latest              0ce6496aae74        6 days ago          497MB
+
 ```
 Para hacer una prueba simple, ejecutar el siguiente comando
 ```
@@ -34,6 +39,19 @@ Se puede salir del contenedor (y detenerlo) con CTRL+D. Es posible ver el conten
 $ docker container ps --all
 ```
 Notar que sin *--all* sólo se verían los contenedores corriendo actualmente.
+
+Si se quiere detener todos los contenedores se puede utilizar el siguiente comando combinado
+```bash
+$ docker stop $(docker ps -a -q)
+```
+Si al mismo tiempo, se quiere eliminar todos los contenedores se puede utilizar el siguiente comando combinado
+```bash
+$ docker rm $(docker ps -a -q)
+```
+Obviamente, se pueden utilizar los dos comandos al mismo tiempo, a través de un pipeline bash
+```bash
+$ docker stop $(docker ps -a -q) ; docker rm $(docker ps -a -q)
+```
 
 # Sección 3 -- Creando la imagen -- Dockerfile
 Ahora es posible usar la imagen descargada para crear nuestra propia imagen, que contendrá la aplicación a ejecutar (en primer lugar, el Servidor). Para esto se generó una estructura de directorios de la siguiente forma:
@@ -174,7 +192,9 @@ tutorial
         |-- Dockerfile
         |-- src
             |--- Servidor.java
-        
+    |- nodejs
+        |-- webserver.js
+        |-- Dockerfile
 ```
 El archivo de configuración *docker-compose.yml* para la aplicación será el siguiente:
 ```yaml
@@ -211,7 +231,7 @@ Otra actividad importante a tener en cuenta muchas veces es la revisión de un c
 Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución linux.  Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, va a ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
 
 Para continuar trabajando con los archivos docker-compose, vamos a agregar a la red que construimos previamente un nodo básico de debian, de la siguiente manera.
-Archivo: docker-compose-debian.yml
+Archivo: docker-compose-ssh-debug.yml
 ```yaml
 version: '3'
 services:
@@ -223,36 +243,38 @@ services:
     build: ./servidor
     ports:
       - "4443:4444"
-  debian:
-    image: debian:latest
+  nginx-webserver:
+    image: nginx:latest
 ```
-A continuación, debemos ponerlo a correr.  De esta manera se levantarán dos servidores (nombre server y server2) y va a levantar una imagen debian básica a través del repositorio de Docker Hub (Imagen debian oficial)
+A continuación, debemos ponerlo a correr.  De esta manera se levantarán dos servidores (nombre server y server2) y va a levantar una imagen de nginx básica a través del repositorio de Docker Hub (Imagen debian oficial)
 ```bash
-$ docker-compose -f docker-compose-debian.yml up
-
-Pulling debian (debian:latest)...
-latest: Pulling from library/debian
-7e2b2a5af8f6: Pull complete
-Digest: sha256:7790bb087ef265cd56265767a8b689d52c7bc73b30b3cbb37525a9ea66fa9740
-Status: Downloaded newer image for debian:latest
-Starting docker-network-tutorial_server_1 ... done
-Starting docker-network-tutorial_client_1 ... done
-Creating docker-network-tutorial_debian_1 ... done
-Attaching to docker-network-tutorial_server_1, docker-network-tutorial_client_1, docker-network-tutorial_debian_1
-server_1  | [Tue Apr 21 20:26:31 GMT 2020] INFO Servidor iniciado en puerto 4444
-client_1  | Servidor: Bienvenido al servidor de fecha y hora
-server_1  | [Tue Apr 21 20:26:31 GMT 2020] INFO Cliente conectado /172.18.0.2:34940
-client_1  | Servidor: Tue Apr 21 20:26:31 GMT 2020
-docker-network-tutorial_client_1 exited with code 0
-docker-network-tutorial_debian_1 exited with code 0
-
+$ docker-compose -f docker-compose-ssh-debug.yml up
+Starting docker-network-tutorial_server_1          ... done
+Starting docker-network-tutorial_server2_1         ... done
+Creating docker-network-tutorial_nginx-webserver_1 ... done
+Attaching to docker-network-tutorial_server_1, docker-network-tutorial_server2_1, docker-network-tutorial_nginx-webserver_1
+server_1           | [Wed Apr 22 14:34:01 GMT 2020] INFO Servidor iniciado en puerto 4444
+server2_1          | [Wed Apr 22 14:34:01 GMT 2020] INFO Servidor iniciado en puerto 4444
 ```
 
-Vamos a revisar que los 3 contenedores estén corriendo correctamente a través del siguiente comando
+En otra pestaña, vamos a revisar que los 3 contenedores estén corriendo correctamente a través del siguiente comando PS
 ```bash
 $ docker container ps 
-
+CONTAINER ID        IMAGE                             COMMAND                  CREATED              STATUS              PORTS                    NAMES
+a8df97dd5cf1        nginx:latest                      "nginx -g 'daemon of…"   13 seconds ago       Up 12 seconds       80/tcp                   docker-network-tutorial_nginx-webserver_1
+ca55452b51e8        docker-network-tutorial_server2   "java Servidor 4444"     About a minute ago   Up 12 seconds       0.0.0.0:4443->4444/tcp   docker-network-tutorial_server2_1
+6875ccf07909        docker-network-tutorial_server    "java Servidor 4444"     About a minute ago   Up 12 seconds       0.0.0.0:4444->4444/tcp   docker-network-tutorial_server_1
 ```
+
+Una vez corriendo, vamos a conectarnos a la consola de /bin/bash del contenedor de nginx (nginx-webserver) simulando un "SSH" al contenedor a través del siguiente comando
+```bash
+$ docker exec -it 201eea0c430b /bin/bash
+```
+
+
+
+
+
 
 ```bash
 ```

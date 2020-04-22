@@ -1,14 +1,11 @@
 version: '3'
 services:
-  server:
+  java-server:
     build: ./servidor
     ports:
       - 4444:4444
-  server2:
+  java-server2:
     build: ./servidor
     ports:
       - 4443:4444
-  debian:
-    image: debian:latest
-    ports:
-      - 22:22
+ 

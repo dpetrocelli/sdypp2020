@@ -18,7 +18,7 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 ```
 ```
-sudo usermod -aG docker $USER
+sudo usermod +aG docker $USER
 ```
 Luego re loguear y verificar la instalación con el siguiente comando (puede tardar unos segundos)
 ```
