@@ -371,11 +371,12 @@ El parámetro "-it" permitirá levantar una terminal interactiva (en vez de ejec
 Para más información acerca de la ejecución de comandos dentro de la consola, dirigirse al sitio oficial de docker (https://docs.docker.com/engine/reference/commandline/exec/)
 
 Entonces, Una vez dentro, podemos realizar diversos comandos básicos para ver el estado y los paquetes instalados en dicha distribución.
-Vamos a comenzar por averiguar el sistema y versión de nuestro sistema operativo. Recuerden que siempre se va a tratar de instalar la menor cantidad posible de paquetes para:
+Recuerden que siempre se va a tratar de instalar la menor cantidad posible de paquetes para:
 a) No incrementar el tamaño del contenedor
 b) Al instalar un paquete en un contenedor corriendo (en base a una imagen) los cambios solo quedarán reflejados en este contenedor, no en la imagen base.  Por lo tanto si despliego una nuevo contenedor basado en la imagen fuente, los contenedores no serán iguales.
 c) No habilitar herramientas innecesarias que pueden dañar el resto de la red de contenedores (Imágenes root, SSH client, etc)
 
+* Vamos a comenzar por averiguar el sistema y versión de nuestro sistema operativo.
 ```bash
 root@a8df97dd5cf1:/# uname -a
 Linux a8df97dd5cf1 4.19.0-8-amd64 #1 SMP Debian 4.19.98-1 (2020-01-26) x86_64 GNU/Linux
@@ -392,7 +393,8 @@ SUPPORT_URL="https://www.debian.org/support"
 BUG_REPORT_URL="https://bugs.debian.org/"
 root@a8df97dd5cf1:/# 
 ```
-Bien, ahora la intención es validar si dentro de la red docker que estemos (esto depende de como se haya generado el docker-compose file) los contenedores se pueden ver por ejemplo a través de IP y nombre de DNS (y buscar de donde viene el nombre de DNS)
+
+* Bien, ahora la intención es validar si dentro de la red docker que estemos (esto depende de como se haya generado el docker-compose file) los contenedores se pueden ver por ejemplo a través de IP y nombre de DNS (y buscar de donde viene el nombre de DNS)
 ```bash
 root@a8df97dd5cf1:/# ping
 bash: ping: command not found
@@ -408,13 +410,14 @@ Setting up netcat (1.10-41.1)
 ...
 ```
 
-Una vez descargado los paquetes, primero que nada voy a revisar mi dirección IP
+* Una vez descargado los paquetes, primero que nada voy a revisar mi dirección IP
 ```bash
 root@a8df97dd5cf1:/# ifconfig | grep 172.
 inet 172.18.0.4  netmask 255.255.0.0  broadcast 172.18.255.255
 ```
 Lo que condice con la información que nos decia el container y la docker-network.
-También voy a revisar que se cumple lo que dice el docker container ps (PORTS tcp/80). Para ello ejecutamos lo siguiente
+
+* También voy a revisar que se cumple lo que dice el docker container ps (PORTS tcp/80). Para ello ejecutamos lo siguiente
 ```bash
 root@a8df97dd5cf1:/# netstat -ant 
 Active Internet connections (servers and established)
@@ -422,7 +425,7 @@ Proto Recv-Q Send-Q Local Address           Foreign Address         State
 tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN     
 tcp        0      0 127.0.0.11:40377        0.0.0.0:*               LISTEN     
 ```
-A continuación vamos a intentar hacer ping a nuestros vecinos (por IP y por nombre de DNS), para ello utilizamos el paquete ping
+* A continuación vamos a intentar hacer ping a nuestros vecinos (por IP y por nombre de DNS), para ello utilizamos el paquete ping
 ```bash
 root@a8df97dd5cf1:/# ping 172.18.0.3
 PING 172.18.0.2 (172.18.0.3) 56(84) bytes of data.
@@ -435,8 +438,29 @@ PING server2 (172.18.0.3) 56(84) bytes of data.
 64 bytes from docker-network-tutorial_server2_1.docker-network-tutorial_default (172.18.0.3): icmp_seq=2 ttl=64 time=0.317 ms
 ...
 ```
+* También vamos a investigar que puertos tiene abierto un determinado nodo de la red (Ya que no tenemos habilitadas reglas de seguridad en los nodos)
+```bash
+root@a8df97dd5cf1:/# nmap server2
+Starting Nmap 7.70 ( https://nmap.org ) at 2020-04-22 22:32 UTC
+Nmap scan report for server2 (172.18.0.4)
+Host is up (0.000034s latency).
+rDNS record for 172.18.0.4: docker-network-tutorial_server2_1.docker-network-tutorial_default
+Not shown: 999 closed ports
+PORT     STATE SERVICE
+4444/tcp open  krb524
+MAC Address: 02:42:AC:12:00:04 (Unknown)
 
-
+Nmap done: 1 IP address (1 host up) scanned in 1.65 seconds
+```
+* Vamos a validar que podemos acceder a la información del servidor de hora que se encuentra escuchando en el 4444 en alguno de los servidores
 
 ```bash
+root@a8df97dd5cf1:/# nc server2 4444
+Bienvenido al servidor de fecha y hora
+Wed Apr 22 22:37:52 GMT 2020
 ```
+
+Finalmente parar los servicios definidos para finalizar con esta parte del tutorial (consola que tiene el docker-compose up). 
+Ahora, tomar un descanso y estar listos para [la segunda parte del tutorial](https://github.com/dpetrocelli/sdypp2020/tree/master/TPS/No%20obligatorios/docker-network-tutorial-p2)
+
+Gracias!
