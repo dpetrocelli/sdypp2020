@@ -18,14 +18,20 @@ El primer requisito para crear un contenedor es buscar un entorno que pueda corr
 $ docker pull openjdk:latest
 ```
 
-Se puede revisar las imágenes descargadas con
+Se puede revisar todas las imágenes descargadas con
 ```bash
 $ docker images
-
+REPOSITORY                             TAG                 IMAGE ID            CREATED             SIZE
+docker-network-tutorial_node-server    latest              a86eef18e5d5        15 hours ago        943MB
+docker-network-tutorial_java-server2   latest              48afc4be897c        15 hours ago        497MB
+...
+```
+Así como también buscar con algún patrón específico dependiendo de nuestras necesidades
+```bash
 $ docker images | grep openjdk
 openjdk                              latest              0ce6496aae74        6 days ago          497MB
-
 ```
+
 Para hacer una prueba simple, ejecutar el siguiente comando
 ```
 $ docker run -it openjdk:latest
@@ -226,9 +232,9 @@ En el Dockerfile del cliente se definió como argumento para host (en *CMD*) la 
 Docker compose provee muchas herramientas avanzadas para hacer deploy y comunicar contenedores y servicios de todo tipo. Para más información dirigirse a la documentación de Docker Compose (https://docs.docker.com/compose/)
 
 ## Sección 6 -- Conectarse por SSH a un contenedor y debug de arquitectura
-Otra actividad importante a tener en cuenta muchas veces es la revisión de un contenedor o de un conjunto de contenedores (estado de servicios, chequeos de configuración, puertos, entre otras cosas).  Para ello, además de los controles que se pueden realizar desde el HOST que aloja Docker, es posible conectarse a las instancias en si y analizar "internamente" que sucede. En ambientes con productos y servicios en ejecución no siempre es posible cambiar algo y relanzar el contenedor.  En ese caso también es una herramienta util.
+Otra actividad importante sobre la que trabajaremos brevemente en este tutorial inicial es la revisión "detallada" de un contenedor o de un conjunto de contenedores (estado de servicios, chequeos de configuración, puertos, entre otras cosas).  Para ello, además de los controles que se pueden realizar desde el HOST (Anfitrión) que aloja Docker, es posible conectarse a las instancias y analizar "internamente" que sucede. En ambientes con productos y servicios en ejecución no siempre es posible cambiar algo y relanzar el contenedor.  En ese caso también es una herramienta util.
 
-Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución linux.  Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, va a ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
+Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución linux.  Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, puede ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
 
 Para continuar trabajando con los archivos docker-compose, vamos a agregar a la red que construimos previamente un nodo básico de debian, de la siguiente manera.
 Archivo: docker-compose-ssh-debug.yml
@@ -246,7 +252,8 @@ services:
   nginx-webserver:
     image: nginx:latest
 ```
-A continuación, debemos ponerlo a correr.  De esta manera se levantarán dos servidores (nombre server y server2) y va a levantar una imagen de nginx básica a través del repositorio de Docker Hub (Imagen debian oficial)
+
+A continuación, debemos ponerlo a correr.  De esta manera se levantarán dos servidores (nombre server y server2) y va a levantar una imagen de nginx básica a través del repositorio de Docker Hub (Imagen debian oficial) a la que nos vamos a conectar por BASH para revisar sus configuraciones y el entorno de estos servicios asociados
 ```bash
 $ docker-compose -f docker-compose-ssh-debug.yml up
 Starting docker-network-tutorial_server_1          ... done
@@ -257,7 +264,7 @@ server_1           | [Wed Apr 22 14:34:01 GMT 2020] INFO Servidor iniciado en pu
 server2_1          | [Wed Apr 22 14:34:01 GMT 2020] INFO Servidor iniciado en puerto 4444
 ```
 
-En otra pestaña, vamos a revisar que los 3 contenedores estén corriendo correctamente a través del siguiente comando PS
+En otra terminal o pestaña de terminal, sin parar los servicios que pusimos a correr previamente, vamos a revisar que los 3 contenedores estén corriendo correctamente a través del siguiente comando:
 ```bash
 $ docker container ps 
 CONTAINER ID        IMAGE                             COMMAND                  CREATED              STATUS              PORTS                    NAMES
@@ -266,9 +273,9 @@ ca55452b51e8        docker-network-tutorial_server2   "java Servidor 4444"     A
 6875ccf07909        docker-network-tutorial_server    "java Servidor 4444"     About a minute ago   Up 12 seconds       0.0.0.0:4444->4444/tcp   docker-network-tutorial_server_1
 ```
 
-Una vez corriendo, vamos a conectarnos a la consola de /bin/bash del contenedor de nginx (nginx-webserver) simulando un "SSH" al contenedor a través del siguiente comando
+Una vez verificado, vamos a conectarnos a la consola de /bin/bash del contenedor de nginx (nginx-webserver) simulando un "SSH" al contenedor a través del siguiente comando
 ```bash
-$ docker exec -it 201eea0c430b /bin/bash
+$ docker exec -it a8df97dd5cf1 /bin/bash
 ```
 
 
