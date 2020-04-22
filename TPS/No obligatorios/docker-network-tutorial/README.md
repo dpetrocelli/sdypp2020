@@ -273,13 +273,168 @@ ca55452b51e8        docker-network-tutorial_server2   "java Servidor 4444"     A
 6875ccf07909        docker-network-tutorial_server    "java Servidor 4444"     About a minute ago   Up 12 seconds       0.0.0.0:4444->4444/tcp   docker-network-tutorial_server_1
 ```
 
-Una vez verificado, vamos a conectarnos a la consola de /bin/bash del contenedor de nginx (nginx-webserver) simulando un "SSH" al contenedor a través del siguiente comando
+Vamos a analizar (inspeccionar) las propiedades de los contenedores (lo vamos a ver en uno pero aplicable al resto) para obtener información de red de los mismos. La información es muy detallada, solo voy a mostrar en el tutorial lo relevante para este apartado.  Para ello, vamos a ejecutar el siguiente comando.
+```bash
+$ docker container inspect a8df97dd5cf1
+[
+    {
+        "Id": "a8df97dd5cf17564f4d2cc6c364f23bad0451cd18b2e2f424d45a51b84026648",
+        "Created": "2020-04-22T14:34:00.538018261Z",
+        "Path": "nginx",
+...
+    "State": {
+            "Status": "running",
+...
+    "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.17.10",
+                "NJS_VERSION=0.3.9",
+                "PKG_RELEASE=1~buster"
+            ],
+...
+    "Image": "nginx:latest",
+            "Volumes": null,
+            "WorkingDir": "",
+...
+    "NetworkSettings": {
+       "docker-network-tutorial_default": {
+...
+        "Ports": {
+                "80/tcp": null
+            },
+...
+      "Gateway": "172.18.0.1",
+      "IPAddress": "172.18.0.4",
+       "IPPrefixLen": 16,
+...
+]
+```
+Esto, entonces, me permite ver las propiedades más importantes (y detalladas) de nuestro contenedor.  Ahora sabemos que la dirección IP es 172.18.0.4, que la imagen corriendo es NGINX y está escuchando en el puerto 80.  También podemos determinar que esa dirección IP pertenece al a red "docker-network-tutorial_default".
+Podemos completar esta información con lo que podemos obtener analizando la red a la que el contenedor pertenece a través del siguiente comando.
+
+```bash
+$ docker network inspect docker-network-tutorial_default
+docker network inspect docker-network-tutorial_default
+[
+    {
+        "Name": "docker-network-tutorial_default",
+ ...
+        "Scope": "local",
+        "Driver": "bridge",
+ ...
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+ ...
+        "Containers": {
+            "6875ccf079096d899d83771cac971d32e17ec121383815495bbd3ee6be0d57f0": {
+                "Name": "docker-network-tutorial_server_1",
+                "EndpointID": "7240616da52f2eb7e7721795a10398260f305484ff43197dc98b2d358e7ab99b",
+                "MacAddress": "02:42:ac:12:00:02",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            },
+            "a8df97dd5cf17564f4d2cc6c364f23bad0451cd18b2e2f424d45a51b84026648": {
+                "Name": "docker-network-tutorial_nginx-webserver_1",
+                "EndpointID": "4080b6f1deb91953681d6e7543aadd74e220b7a617a8a34da3635173d182c623",
+                "MacAddress": "02:42:ac:12:00:04",
+                "IPv4Address": "172.18.0.4/16",
+                "IPv6Address": ""
+            },
+            "ca55452b51e8d3c0b18b83cc68131a72789eb194fcf1d67f0927ef3e678b1a69": {
+                "Name": "docker-network-tutorial_server2_1",
+                "EndpointID": "5c48fa60c720555c1f559fa134171105f5f1d59b3acc0368cea70eeb340043f4",
+                "MacAddress": "02:42:ac:12:00:03",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            }
+   ...
+]
+```
+De esta manera, ahora sabemos también las direcciones IP de los otros contenedores que están corriendo (los de nuestro docker-compose-ssh.yml)
+
+Ahora, habiendo realizado las verficaciones necesarias, vamos a conectarnos a la consola de /bin/bash del contenedor de nginx (nginx-webserver) simulando un "SSH" al contenedor a través del siguiente comando para realizar algunas pruebas "desde adentro" de la red de los contenedores. 
+
 ```bash
 $ docker exec -it a8df97dd5cf1 /bin/bash
+root@a8df97dd5cf1:/# 
+```
+Donde "exec" significa el comando que se va a ejecutar en el contenedor en ejecución.  El comando exec solo se ejecutará mientras se está ejecutando el proceso primario del contenedor (PID 1).  La estructura será la siguiente
+```bash
+docker exec -ti my_container sh -c "echo a && echo b".
+```
+El parámetro "-it" permitirá levantar una terminal interactiva (en vez de ejecutar un comando) para que podamos acceder a la consola del contenedor. Específicamente el último parámetro "/bin/bash" indicará al contenedor que la consola que queremos utilizar será bash (ya que podría haber otras disponibles cómo sh, dash, entre otras)
+Para más información acerca de la ejecución de comandos dentro de la consola, dirigirse al sitio oficial de docker (https://docs.docker.com/engine/reference/commandline/exec/)
+
+Entonces, Una vez dentro, podemos realizar diversos comandos básicos para ver el estado y los paquetes instalados en dicha distribución.
+Vamos a comenzar por averiguar el sistema y versión de nuestro sistema operativo. Recuerden que siempre se va a tratar de instalar la menor cantidad posible de paquetes para:
+a) No incrementar el tamaño del contenedor
+b) Al instalar un paquete en un contenedor corriendo (en base a una imagen) los cambios solo quedarán reflejados en este contenedor, no en la imagen base.  Por lo tanto si despliego una nuevo contenedor basado en la imagen fuente, los contenedores no serán iguales.
+c) No habilitar herramientas innecesarias que pueden dañar el resto de la red de contenedores (Imágenes root, SSH client, etc)
+
+```bash
+root@a8df97dd5cf1:/# uname -a
+Linux a8df97dd5cf1 4.19.0-8-amd64 #1 SMP Debian 4.19.98-1 (2020-01-26) x86_64 GNU/Linux
+
+root@a8df97dd5cf1:/# cat /etc/os-release
+PRETTY_NAME="Debian GNU/Linux 10 (buster)"
+NAME="Debian GNU/Linux"
+VERSION_ID="10"
+VERSION="10 (buster)"
+VERSION_CODENAME=buster
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+root@a8df97dd5cf1:/# 
+```
+Bien, ahora la intención es validar si dentro de la red docker que estemos (esto depende de como se haya generado el docker-compose file) los contenedores se pueden ver por ejemplo a través de IP y nombre de DNS (y buscar de donde viene el nombre de DNS)
+```bash
+root@a8df97dd5cf1:/# ping
+bash: ping: command not found
+```
+Cómo podemos ver, los paquetes "necesarios" no están disponibles.  Para ello vamos a tener que instalarlos.  A continuación se definen un conjunto de herramientas que se consideran necesarias para revisar las tareas que queremos llevar a cabo. 
+```bash
+root@a8df97dd5cf1:/# apt update -y; apt install iputils-ping -y; apt install net-tools -y; apt install telnet -y; apt install ssh-client -y; apt install netcat -y; apt install nmap -y
+...
+update-alternatives: using /bin/nc.traditional to provide /bin/nc (nc) in auto mode
+update-alternatives: warning: skip creation of /usr/share/man/man1/nc.1.gz because associated file /usr/share/man/man1/nc.traditional.1.gz (of link group nc) doesn't exist
+update-alternatives: warning: skip creation of /usr/share/man/man1/netcat.1.gz because associated file /usr/share/man/man1/nc.traditional.1.gz (of link group nc) doesn't exist
+Setting up netcat (1.10-41.1) 
+...
 ```
 
-
-
+Una vez descargado los paquetes, primero que nada voy a revisar mi dirección IP
+```bash
+root@a8df97dd5cf1:/# ifconfig | grep 172.
+inet 172.18.0.4  netmask 255.255.0.0  broadcast 172.18.255.255
+```
+Lo que condice con la información que nos decia el container y la docker-network.
+También voy a revisar que se cumple lo que dice el docker container ps (PORTS tcp/80). Para ello ejecutamos lo siguiente
+```bash
+root@a8df97dd5cf1:/# netstat -ant 
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN     
+tcp        0      0 127.0.0.11:40377        0.0.0.0:*               LISTEN     
+```
+A continuación vamos a intentar hacer ping a nuestros vecinos (por IP y por nombre de DNS), para ello utilizamos el paquete ping
+```bash
+root@a8df97dd5cf1:/# ping 172.18.0.3
+PING 172.18.0.2 (172.18.0.3) 56(84) bytes of data.
+64 bytes from 172.18.0.3: icmp_seq=1 ttl=64 time=0.101 ms
+64 bytes from 172.18.0.3: icmp_seq=2 ttl=64 time=0.190 ms
+...
+root@a8df97dd5cf1:/# ping server2        
+PING server2 (172.18.0.3) 56(84) bytes of data.
+64 bytes from docker-network-tutorial_server2_1.docker-network-tutorial_default (172.18.0.3): icmp_seq=1 ttl=64 time=0.094 ms
+64 bytes from docker-network-tutorial_server2_1.docker-network-tutorial_default (172.18.0.3): icmp_seq=2 ttl=64 time=0.317 ms
+...
+```
 
 
 
