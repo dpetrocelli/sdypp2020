@@ -178,7 +178,7 @@ Una vez utilizado, se puede eliminar con el comando rm.  Este comando rm es apli
 $ docker container rm tutorial-red-servidor
 ```
 
-# Sección 5 -- Redes Básicas -- Docker compose
+# Sección 6 -- Redes Básicas -- Docker compose
 Análogamente al caso del servidor, generar un Dockerfile para el Cliente que va a preguntar la fecha y hora al servidor. Como parámetro adicional, el Cliente requiere un nombre de host, por lo que se requiere cambiar la línea *CMD*
 ```dockerfile
 CMD ["java", "Cliente", "server", "4444"]
@@ -231,7 +231,7 @@ Luego, mostrará en la terminal la salida de ambos contenedores. Pero queda un a
 En el Dockerfile del cliente se definió como argumento para host (en *CMD*) la palabra "server". Y eso es todo lo que se necesita para que dos contenedores se vean, que conozcan sus *nombres de servicio* declarados en *docker-compose.yml*. Así, el cliente se conecta a server:4444, Docker resuelve esa dirección y dirige los datos al servidor.
 Docker compose provee muchas herramientas avanzadas para hacer deploy y comunicar contenedores y servicios de todo tipo. Para más información dirigirse a la documentación de Docker Compose (https://docs.docker.com/compose/)
 
-## Sección 6 -- Conectarse por SSH a un contenedor y debug de arquitectura
+## Sección 7 -- Conectarse por SSH a un contenedor y debug de arquitectura
 Otra actividad importante sobre la que trabajaremos brevemente en este tutorial inicial es la revisión "detallada" de un contenedor o de un conjunto de contenedores (estado de servicios, chequeos de configuración, puertos, entre otras cosas).  Para ello, además de los controles que se pueden realizar desde el HOST (Anfitrión) que aloja Docker, es posible conectarse a las instancias y analizar "internamente" que sucede. En ambientes con productos y servicios en ejecución no siempre es posible cambiar algo y relanzar el contenedor.  En ese caso también es una herramienta util.
 
 Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución linux.  Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, puede ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
