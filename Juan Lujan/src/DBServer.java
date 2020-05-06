@@ -21,8 +21,9 @@ public class DBServer {
 
 			st = conn.createStatement();
 			conn.setAutoCommit(false);
+			System.out.println(conn.getTransactionIsolation());
 			
-			sql = "select * from Test where status = 1 limit 2 for update skip locked;";
+			sql = "select * from Test where status = 1 limit 5 for update skip locked;";
 			res = st.executeQuery(sql);
 
 			while (true) {
@@ -30,7 +31,7 @@ public class DBServer {
 					// Thread que procese la tarea leida
 					int id = res.getInt("id");
 					Thread t = new Thread(new DBWorker(conn, id));
-					t.start();
+					//t.start();
 					System.out.println("Procesando id: " + id);
 				}
 				Thread.sleep(6000);
