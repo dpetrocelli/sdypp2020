@@ -15,10 +15,10 @@ public class DBClient implements Runnable {
 		
 		try {
 			//MariaDB
-			//conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/ssdd2020?user=ssdd&password=ssdd");
+			conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/ssdd2020?user=ssdd&password=ssdd");
 
 			// MySQL
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3316/ssdd2020?user=ssdd&password=ssdd");
+			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3316/ssdd2020?user=ssdd&password=ssdd");
 			st = conn.createStatement();
 			
 			sql = "insert into Test values (0, 'incoming', '', 1)";
@@ -33,7 +33,7 @@ public class DBClient implements Runnable {
 		Thread t;
 		ArrayList<Thread> threads = new ArrayList<Thread>();
 		
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			t = new Thread(new DBClient());
 			threads.add(t);
 			t.start();
@@ -56,10 +56,10 @@ public class DBClient implements Runnable {
 		
 		try {
 			// MariaDB
-			//conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/ssdd2020?user=ssdd&password=ssdd");
+			conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/ssdd2020?user=ssdd&password=ssdd");
 			
 			// MySQL
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3316/ssdd2020?user=ssdd&password=ssdd");
+			//conn = DriverManager.getConnection("jdbc:mysql://localhost:3316/ssdd2020?user=ssdd&password=ssdd");
 			st = conn.createStatement();
 			
 			sql = "select * from Test;";
