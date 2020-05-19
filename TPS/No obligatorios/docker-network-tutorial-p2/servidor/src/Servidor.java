@@ -31,6 +31,8 @@ public class Servidor {
 		String nombre = System.getenv("nombre");
 		String logfile = System.getenv("logName");
 		int port = Integer.parseInt(System.getenv("port"));
+
+		System.out.println (" LOGFILE:"+ logfile);
 		
 		
         try (ServerSocket serverSocket = new ServerSocket(port)) {
