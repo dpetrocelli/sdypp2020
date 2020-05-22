@@ -88,15 +88,19 @@ public class ClientTransaction
           destination = teclado.nextLine();
         }
 
-
+        log.info("ingrese tipo de operación (transferencia, depósito, extracción");
+        String operationType="";
+        while (operationType.length()<1){
+            operationType = teclado.nextLine();
+        }
         log.info ("ingrese monto");
         double amount = teclado.nextDouble();
         Operation op = new Operation();
         op.setcOrigin(this.user);
         op.setcDestination(destination);
         op.setAmount(amount);
-        op.setOperationType(1);
-        op.setTtl(System.currentTimeMillis()+10000000);
+        op.setOperationType(operationType);
+        op.setTtl(System.currentTimeMillis()+1000000);
         String opJson = this.gson.toJson(op);
         try {
             this.queueChannel.basicPublish("", this.jobQueue, MessageProperties.PERSISTENT_TEXT_PLAIN, opJson.getBytes());

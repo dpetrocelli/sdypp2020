@@ -3,11 +3,11 @@ package org.example;
 public class Operation {
     String cOrigin;
     String cDestination;
-    int operationType;
+    String operationType;
     double amount;
     long ttl;
 
-    public Operation(String cOrigin, String cDestination, int operationType, double amount, long ttl) {
+    public Operation(String cOrigin, String cDestination, String operationType, double amount, long ttl) {
         this.cOrigin = cOrigin;
         this.cDestination = cDestination;
         this.operationType = operationType;
@@ -34,11 +34,11 @@ public class Operation {
         this.cDestination = cDestination;
     }
 
-    public int getOperationType() {
+    public String getOperationType() {
         return operationType;
     }
 
-    public void setOperationType(int operationType) {
+    public void setOperationType(String operationType) {
         this.operationType = operationType;
     }
 
