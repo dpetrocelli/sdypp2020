@@ -2,16 +2,16 @@
 El objetivo es llevar a cabo un taller de capacitación en las tecnologías de contenedores (Docker) que se realizarán a lo largo de la jornada en tres fases:
 
 * **Primer parte**: Presentación de conceptos básicos de Docker. Esencialmente veremos:
-    -Conceptos básicos
-    -Docker vs Máquinas virtuales
-    -¿Cómo se compone?
-    -Aplicaciones Distribuidas
-    -Docker para desarrolladores
-    -Docker para operadores
-    -Arquitectura
-    -Popularidad y Adopción
-    -Bases prácticas
-    -Recomendaciones
+    -Conceptos básicos\
+    -Docker vs Máquinas virtuales\
+    -¿Cómo se compone?\
+    -Aplicaciones Distribuidas\
+    -Docker para desarrolladores\
+    -Docker para operadores\
+    -Arquitectura\
+    -Popularidad y Adopción\
+    -Bases prácticas\
+    -Recomendaciones\
 
 Acceso a Presentación: https://drive.google.com/file/d/1C1GO1pKXMNPXMNfG1f0G_6veMzLvFJGy/view?usp=sharing
 
