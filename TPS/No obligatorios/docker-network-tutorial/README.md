@@ -37,6 +37,12 @@ System.out.println("Hola mundo");
 Se puede salir del contenedor (y detenerlo) con CTRL+D. Es posible ver el contenedor generado por el comando *docker run* con
 ```bash
 $ docker container ps --all
+
+CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS                      PORTS               NAMES
+94beef1ca623        seqvence/static-site:latest   "/bin/sh -c 'cd /usr…"   25 hours ago        Exited (137) 22 hours ago                       static-site
+e7cfb37bac35        wordpress:latest              "docker-entrypoint.s…"   26 hours ago        Exited (0) 25 hours ago                         simple-wordpress_web_1
+6bf5ca243c99        mariadb:latest                "docker-entrypoint.s…"   26 hours ago        Exited (0) 25 hours ago                         simple-wordpress_db_1
+.....
 ```
 Notar que sin *--all* sólo se verían los contenedores corriendo actualmente.
 
@@ -48,21 +54,22 @@ Si al mismo tiempo, se quiere eliminar todos los contenedores se puede utilizar 
 ```bash
 $ docker rm $(docker ps -a -q)
 ```
-Obviamente, se pueden utilizar los dos comandos al mismo tiempo, a través de un pipeline bash
+Obviamente, se pueden utilizar los dos comandos al mismo tiempo, a través de un "concatenador" en bash
 ```bash
 $ docker stop $(docker ps -a -q) ; docker rm $(docker ps -a -q)
 ```
 
-# Sección 2 -- Creando la imagen -- Dockerfile
-Ahora es posible usar la imagen descargada para crear nuestra "propia imagen", que contendrá la aplicación a ejecutar (en primer lugar, el Servidor). Para esto se generó una estructura de directorios de la siguiente forma:
+# Sección 2 -- Creando nuestra propia imagen con Dockerfile
+Ahora es posible usar la imagen descargada (openjdk) para tomarla como base y crear nuestra "propia imagen". En nuestro caso contendrá la aplicación de ejemplo a ejecutar (Servidor). Para esto, en el repositorio está incluida la estructura necesaria:
 ```
 servidor
     |- Dockerfile
     |- src
         |-- Servidor.java
 ```
-En esta parte del tutorial se va a trabajar desde el directorio *servidor*.
-*Servidor.java* es una aplicación simple que se pone en escucha en el puerto que indiquemos por argumento, y contesta a quienes se conectan con la hora del servidor.
+Nota de color: En esta parte del tutorial se va a trabajar desde el directorio *servidor*.
+Contenido: 
+* Servidor.java es una aplicación simple que se pone en escucha en el puerto que indiquemos por argumento, y contesta a quienes se conectan con la hora del servidor.
 El archivo a destacar es *Dockerfile*. Aquí es donde se definirán los parámetros para construir la imagen de nuestra aplicación.
 En principio está vacío. Con un editor de texto, abrir el archivo y escribir (no copiar) las siguientes líneas
 
