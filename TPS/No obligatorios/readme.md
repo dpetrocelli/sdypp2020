@@ -6,22 +6,23 @@ Para ello, trabaj
 que se realizarán a lo largo de la jornada en tres fases:
 
 * **Primer parte**: Presentación "teórica" de conceptos básicos de Docker. En este apartado veremos:
-    -  Conceptos básicos\
-    -  Docker vs Máquinas virtuales\
-    -  ¿Cómo se compone?\
-    -  Aplicaciones Distribuidas\
-    -  Docker para desarrolladores\
-    -  Docker para operadores\
-    -  Arquitectura\
-    -  Popularidad y Adopción\
-    -  Bases prácticas\
-    -  Recomendaciones\
+    -  Conceptos básicos
+    -  Docker vs Máquinas virtuales
+    -  ¿Cómo se compone?
+    -  Aplicaciones Distribuidas
+    -  Docker para desarrolladores
+    -  Docker para operadores
+    -  Arquitectura
+    -  Popularidad y Adopción
+    -  Bases prácticas
+    -  Recomendaciones
 
  <a href="https://drive.google.com/file/d/1C1GO1pKXMNPXMNfG1f0G_6veMzLvFJGy/view?usp=sharing" target="blank">Acceso a Presentación - Introducción a Docker</a>
 
 * **Segunda parte**: Un tutorial y ejercitación básica para aprender los aspectos más relevantes de la herramienta Docker (contenedores) y cómo desarrollar aplicaciones utilizando esta arquitectura. A su vez, lograr conectar contenedores a través de una red Docker.
 
 * **Tercera parte (*)** : Un tutorial avanzado de Docker donde se integran sus capacidades para el desarrollo de aplicaciones distribuidas, buscando definir capacidades de balanceo de carga, redundancia y tolerancia a fallas. Para ello se trabaja en profundidad con la integración de volúmenes para persistir datos, balanceadores de carga para repartir carga, creación de clústeres de servicios, entre otros.
+(*) Esta parte del taller no se realizará en esta clase, podrán realizarlo con el paso a paso que está detallado en el tutorial.
 
 # Pre requisitos
 ## 1. Distribución Linux

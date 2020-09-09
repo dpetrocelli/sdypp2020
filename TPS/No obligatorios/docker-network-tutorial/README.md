@@ -6,13 +6,7 @@ Este tutorial te guiará en:
 - Crear volúmenes para persistir y actualizar cambios
 - Crear una red con Docker compose, conectando dos programas en contenedores distintos
 
-# Sección 1 -- Conceptos de Docker
-En Docker existen tres conceptos básicos que hay que entender para utilizar la tecnología:
-- Imagen: paquete que contiene todos los recursos necesarios para correr una aplicación. Las imágenes son distribuibles y autocontenidas; funcionan igual en cualquier entorno de host gracias a la virtualización de Docker. En este tutorial se crearán dos imágenes (Servidor y Cliente), cada una correspondiente a una aplicación.
-- Contenedor: espacio donde corre nuestra aplicación, correspondiente a una instancia de la imagen generada. Los contenedores pueden iniciarse y detenerse a medida. Varios contenedores pueden partir de la misma imagen.
-- Volumen: directorio lógico que utilizan los contenedores para obtener o almacenar información por fuera del contenedor.
-
-# Sección 2 -- Obtener el entorno
+# Sección 1 -- Obtener el entorno
 El primer requisito para crear un contenedor es buscar un entorno que pueda correr la aplicación a desarrollar. Afortunadamente, la comunidad de Docker tiene un repositorio de imágenes actualizado con muchos recursos ya empaquetados y listos para usar. En este caso, utilizaremos la imagen de openjdk que ya viene lista para correr aplicaciones Java (https://hub.docker.com/_/openjdk). Para eso, descargar la imagen con el comando
 ```bash
 $ docker pull openjdk:latest
@@ -59,8 +53,8 @@ Obviamente, se pueden utilizar los dos comandos al mismo tiempo, a través de un
 $ docker stop $(docker ps -a -q) ; docker rm $(docker ps -a -q)
 ```
 
-# Sección 3 -- Creando la imagen -- Dockerfile
-Ahora es posible usar la imagen descargada para crear nuestra propia imagen, que contendrá la aplicación a ejecutar (en primer lugar, el Servidor). Para esto se generó una estructura de directorios de la siguiente forma:
+# Sección 2 -- Creando la imagen -- Dockerfile
+Ahora es posible usar la imagen descargada para crear nuestra "propia imagen", que contendrá la aplicación a ejecutar (en primer lugar, el Servidor). Para esto se generó una estructura de directorios de la siguiente forma:
 ```
 servidor
     |- Dockerfile
@@ -95,7 +89,7 @@ $ docker build -t tutorial-red-servidor .
 El parámetro *-t* permite ponerle un nombre a la imagen, en este caso *tutorial-red-servidor*. El punto al final indica que la imagen se debe construir desde el directorio actual (servidor), donde se debe encontrar el Dockerfile.
 Con esto, la imagen quedará creada (recordar que se puede revisar con *docker images*).
 
-# Sección 4 -- Creando el contenedor
+# Sección 3 -- Creando el contenedor
 Una vez creada la imagen, esta se debe instanciar en un contenedor para poder correr la aplicación. Para crear el contenedor se utiliza el comando *docker run*
 ```bash
 $ docker run --name tutorial-red-servidor -p 4444:4444 tutorial-red-servidor:latest
@@ -116,7 +110,6 @@ Para probar que el servidor funciona correctamente, abrir otra terminal y ejecut
 ```bash
 $ nc localhost 4444
 ```
-
 La nueva terminal se conectará al proceso servidor escuchando en el puerto 4444 y responderá con la fecha y hora actual. La terminal que ejecuta el servidor mostrará un log de la conexión.
 Para detener el contenedor, presionar CTRL + C.
 Finalmente, si se quiere volver a correr el contenedor, ingresar el comando
@@ -125,9 +118,41 @@ $ docker start tutorial-red-servidor -a
 ```
 La opción *-a* de *attach* mostrará la salida estándar y de error en la terminal donde se ejecutó (recordar usar *docker ps --all* para ver todos los contenedores).
 
-# Sección 5 -- Añadiendo persistencia -- Volúmenes
-Hasta ahora solamente se tiene acceso a la salida estándar (y errores) de la aplicación montada en el contenedor. Sin embargo, la clase Servidor también genera un archivo de logs en el directorio donde se ejecuta la aplicación; dentro del contenedor, este sería en */usr/src/app*. ¿Cómo se puede acceder a este directorio desde el host?
-Una facilidad que ofrece Docker son los volúmenes. Utilizando volúmenes es posible persistir los cambios generados dentro del contenedor. Para esto, se crea un volumen
+# Sección 4 -- Añadiendo persistencia -- Volúmenes
+Hasta ahora solamente se tiene acceso a la salida estándar (y errores) de la aplicación montada en el contenedor. Sin embargo, la clase Servidor JAVA también genera un archivo de log en el directorio donde se ejecuta la aplicación. ¿Dónde? Si se acuerdan, se definió cuando creamos la imagen Dockerfile que el "WORKDIR" de trabajo iba a ser */usr/src/app*. Entonces, el archivo de log va a quedar en */usr/src/app/log.log*. 
+Ahora... Muy lindo el log en el contenedor, pero.... ¿No surgen algunas preguntas?
+* ¿Cómo se puede acceder a este directorio desde fuera del contenedor? 
+* ¿Que pasa con la información cuando un contenedor es borrado? 
+* ¿Cómo puedo compartir un directorio para varios contenedores?
+* Otras..
+Todas las preguntas, en principio, se contestan a partir de la misma respuesta, el uso de volúmenes.
+Para tener almacenamiento persistente en nuestros contenedores, que no se elimine al borrar el contenedor, es necesario utilizar volúmenes. 
+Un volumen es un directorio o un fichero en el host (Administrado por el usuario del SO) o un volumen de Docker (Administrado por Docker) que se monta directamente en el contenedor. 
+Al usar volúmenes en contenedores que escriben información en disco (en la carpeta correspondiente) evita que se aumente el tamaño del contenedor registrando el contenido fuera del ciclo de vida del contenedor.
+Podemos montar varios volúmenes en un contenedor y en varios contenedores podemos montar un mismo volumen.
+https://www.atareao.es/tutorial/docker/almacenamiento-en-contenedores/
+https://www.returngis.net/2019/02/gestionar-los-datos-de-tus-contenedores-de-docker/
+
+¿Qué tipos de volúmenes hay entonces?
+<p align="center"> <img src="https://www.returngis.net/wp-content/uploads/2019/02/types-of-mounts-volume.png" width="350"/> </p> 
+Existen tres tipos de almacenamiento:
+* volumes: 
+Docker almacena los datos dentro de un área que él controla del sistema de ficheros del equipo HOST. 
+Es el mecanismo preferido para persistir los datos a día de hoy. Los volúmenes se almacenarán en */var/lib/docker/volumes/* y **solo Docker tiene permisos** sobre esta ubicación (solo con un usario ROOT se puede entrar y revisar que tiene).
+Un volumen puede ser montado por diferentes contenedores a la vez.
+La administración se realiza "completamente" mediante los comandos vía Docker CLI o Docker API.
+Hay que definirle un nombre descriptivo, para poder "localizarlo" amigablemente o hacer un backup
+Tienen funcionalidades extra que bind mount (el próximo a ver) no tiene. Por ejemplo, drivers que te "permiten" almacenar los volúmenes en sitios remotos o cifrarlos.
+
+* bind mounts: 
+Se utiliza para mapear cualquier sitio del sistema de ficheros dentro de tu contenedor. 
+A diferencia de los volúmenes, a través de este mecanismo es posible acceder a la ruta mapeada y modificar los ficheros (sin tantos permisos). 
+Históricamente esta era la única opción que existía en las primeras fases de Docker. 
+Estamos más limitados al host, a su sistema de ficheros, y a que con volumes puedes utilizar drivers para almacenar en remoto
+Los cambios que realice en el HOST serán reflejados en el contenedor/es y viceversa
+
+tmpfs: Se trata de un almacenamiento temporal en memoria. Se suele utilizar para el almacenamiento de configuraciones y espacios efímeros que desparecerán cada vez que el contenedor se pare (No aplica a lo que buscamos)
+
 ```bash
 $ docker volume create servidor-log
 ```
@@ -177,6 +202,57 @@ Una vez utilizado, se puede eliminar con el comando rm.  Este comando rm es apli
 ```bash
 $ docker container rm tutorial-red-servidor
 ```
+
+# Sección 5 -- ¿Y si administramos Docker con una GUI? --
+
+Portainer se puede instalar como contenedor o como herramienta independiente en el SO.
+En este tutorial, instalaremos Portainer como un contenedor Docker. 
+Es realmente simple de instalar y ejecutar en cualquier sistema porque solo necesitamos asegurarnos de que el sistema sea compatible con Docker.
+
+Antes de instalar Portainer, descarguemos la imagen de Portainer desde DockerHub usando el comando docker pull.
+```bash
+$ docker pull portainer/portainer:latest
+```
+Luego tenemos que configurar las capacidades y variables de "entorno" que permiten que la herramienta corra en nuestro entorno y que mantenga las configuraciones que definamos de manera persistente.
+
+*--p* Puertos de escucha: Portainer ahora requiere que dos puertos tcp estén expuestos; 9000 y 8000. El 9000 ha sido históricamente el puerto desde el que servimos la interfaz de usuario. El puerto 8000 es un servidor de túnel SSH y se utiliza para crear un túnel seguro entre el agente y la instancia de Portainer.
+
+*--name* Nombre que le daremos al contenedor
+
+*--restart* Política de gestión cuando el contenedor sufra un reinicio en el HOST anfitrión. En este caso le definimos "always" para que siempre, independientemente de la razón o problema sobre el contenedor, se levante el contendor.
+
+*--v* Volúmenes: Es un muy buen caso para aplicar lo que aprendimos recientemente de "volúmenes". Sin un volumen, cómo dijimos, la información del contenedor se perderá cuando se reinicie (por error o por deseo) y se perderán todos los datos y configuraciones almacenadas dentro del mismo. En este caso, perderemos las configuraciones hacia los HOSTS Docker y otros detalles. ¿Queremos eso? No, entonces debemos persistir esos datos en "algún lado" fuera del contenedor para "sobrevivir" al ciclo de vida del contenedor en cuestión. En este caso utilizamos un folder del host directamente para "montar" dentro del Portainer Container, cómo se detalla a continuación:
+-v /path/on/host/data:/data portainer/portainer
+donde del : tenemos
+- hacia la izquierda el folder en nuestro host y
+- hacia la derecha donde se va a montar el directorio del host dentro del contenedor 
+
+También Portainer define un "volúmen" particular como se detalle a continuación: 
+
+-v /var/run/docker.sock:/var/run/docker.sock
+
+Algunos contenedores necesitan "enlazar" el montaje del archivo /var/run/docker.sock para poder funcionar. 
+Pero la pregunta es ¿Qué es este archivo y por qué a veces lo utilizan los contenedores? 
+Respuesta corta: es el socket Unix en el que está "escuchando" el demonio Docker de forma predeterminada, y la API de docker "llama" al demonio vía "ese canal". 
+Para poder ejecutar "algo" en docker se requieren permisos de root o pertenencia a un grupo de Docker. (Recordar lo que hicimos al principio de agregar nuestro usuario al grupo de Docker)
+En el caso de "enlazarlo" a un contenedor, lo que estamos haciendo es permitir que el container pueda comunicarse con el demonio desde "dentro". ¿Entonces en Portainer para que lo queremos? Usando la GUI Portainer, las solicitudes HTTP que realice el usuario se envían al demonio de Docker a través de docker.sock "montado".
+
+<p align="center"> <img src="https://miro.medium.com/max/700/1*bKtsM045UOnZcU2QVqcAmg.png" width="350"/> </p> 
+<!--<a href="https://miro.medium.com/max/700/1*bKtsM045UOnZcU2QVqcAmg.png" target="blank"> Cómo acceder al demonio de Docker vía socket Unix</a>-->
+
+Nota de color: Se puede habilitar un socket TCP. ¿Para qué lo habilitaría?
+
+El demonio de Docker puede escuchar las solicitudes de la API de Docker Engine a través de tres tipos diferentes de Socket: unix, tcp y fd.
+Si necesita acceder al demonio de Docker de forma remota, se debe habilitar tcp Socket. Tenga en cuenta que la configuración predeterminada proporciona acceso directo no cifrado y no autenticado al demonio de Docker, y debe protegerse mediante el socket cifrado HTTPS integrado o colocando un proxy web seguro frente a él. Puede escuchar en el puerto 2375 en todas las interfaces de red con -H tcp: //0.0.0.0: 2375, o en una interfaz de red particular usando su dirección IP: -H tcp: //192.168.59.103: 2375. Es convencional usar el puerto 2375 para comunicaciones no cifradas y el puerto 2376 para comunicaciones cifradas con el demonio.
+
+
+
+```bash
+$ docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /path/on/host/data:/data portainer/portainer
+```
+
+
+
 
 # Sección 6 -- Redes Básicas -- Docker compose
 Análogamente al caso del servidor, generar un Dockerfile para el Cliente que va a preguntar la fecha y hora al servidor. Como parámetro adicional, el Cliente requiere un nombre de host, por lo que se requiere cambiar la línea *CMD*
