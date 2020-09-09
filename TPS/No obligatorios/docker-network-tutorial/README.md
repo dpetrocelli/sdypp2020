@@ -68,10 +68,41 @@ servidor
         |-- Servidor.java
 ```
 Nota de color: En esta parte del tutorial se va a trabajar desde el directorio *servidor*.
-Contenido: 
+/Contenido: 
 * Servidor.java es una aplicación simple que se pone en escucha en el puerto que indiquemos por argumento, y contesta a quienes se conectan con la hora del servidor.
-El archivo a destacar es *Dockerfile*. Aquí es donde se definirán los parámetros para construir la imagen de nuestra aplicación.
-En principio está vacío. Con un editor de texto, abrir el archivo y escribir (no copiar) las siguientes líneas
+```java
+
+    public static void main(String[] args) {
+    	// [STEP 1] - Recibir el puerto por parámetro
+    	int port = Integer.parseInt(args[0]);
+        // [STEP 2] - Crear un "Servidor Socket" (Podría ser un servidor web o cualquier otra cosa) 
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            // [STEP 3] - Llamar a la clase LOG y pasarle la información (puerto)
+            Log("Servidor iniciado en puerto " + String.valueOf(port));
+            // [STEP 4] - Crear un loop "para siempre"
+            while (true) {
+            	// Aceptar conexiones de clientes
+                try 
+                	
+                 {
+                    // [STEP 5] - Aceptar un cliente 
+                	Socket clientSocket = serverSocket.accept();
+                    // [STEP 6] - Mandar a la clase LOG la información del cliente
+                    Log("Cliente conectado " + clientSocket.getRemoteSocketAddress());
+                    // [STEP 7] - Abrir el canal de salida para poder escribirle la respuesta
+                	PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    out.println("Bienvenido al servidor de fecha y hora");
+                    out.println(new Date().toString());
+                }
+            }
+        } catch(IOException e) {
+        	e.printStackTrace();
+        }
+    }
+
+```
+
+* Dockerfile: Es la clave para la construcción de la "imagen" de nuestra aplicación. El archivo contiene las siguientes líneas:
 
 ```dockerfile
 FROM openjdk:latest
@@ -84,7 +115,7 @@ CMD ["java", "Servidor", "4444"]
 Línea a línea, el archivo define:
 - FROM: la/s imagen/es a utilizar. Si estas no se encuentran, se descargarán (igual que con *docker pull*)
 - COPY: copiar el contenido del directorio *./src* al directorio */usr/src/app* del contenedor. El directorio destino es creado si no existe. Esto nos permite copiar nuestro programa en la imagen generada.
-- WORKDIR: cambiar al directorio especificado (igual al comando *cd* en Linux).
+- WORKDIR: cambiar el directorio de trabajo al especificado (igual al comando *cd* en Linux).
 - RUN: comando que se ejecuta cuando se construye (build) por primera vez la imagen. En este caso se busca compilar la clase Servidor.java.
 - EXPOSE: indica a Docker qué puerto escucha el contenedor.
 - CMD: comando que se debe ejecutar cuando el contenedor *se inicia* (distinto a cuando se construye). En este caso se quiere ejecutar la aplicación java, y se le pasa por parámetro el nombre de la clase compilada y un argumento (el puerto).
@@ -93,14 +124,23 @@ Con esta configuración ya es posible construir la imagen de la aplicación, a t
 ```bash
 $ docker build -t tutorial-red-servidor .
 ```
-El parámetro *-t* permite ponerle un nombre a la imagen, en este caso *tutorial-red-servidor*. El punto al final indica que la imagen se debe construir desde el directorio actual (servidor), donde se debe encontrar el Dockerfile.
-Con esto, la imagen quedará creada (recordar que se puede revisar con *docker images*).
+El parámetro *-t* permite ponerle un nombre a la imagen, en este caso *tutorial-red-servidor*. El "." al final indica que la imagen se debe construir tomando el archivo por defecto (Dockerfile) que se encuentra en el directorio actual (servidor).
+Con esto, se hace la construcción de la imagen. Podemos verificar la creación de la misma y el tiempo de último update con el siguiente comando:
+```docker
+$ docker image ls
+REPOSITORY                    TAG                 IMAGE ID            CREATED             SIZE
+wordpress                     latest              e492f6febf4b        5 days ago          546MB
+dpetrocelli/dev-restserver2   latest              e14811d92414        5 weeks ago         534MB
+dpetrocelli/dev-restserver2   <none>              cb874034535f        5 weeks ago         534MB
+.....
+```
 
 # Sección 3 -- Creando el contenedor
 Una vez creada la imagen, esta se debe instanciar en un contenedor para poder correr la aplicación. Para crear el contenedor se utiliza el comando *docker run*
 ```bash
 $ docker run --name tutorial-red-servidor -p 4444:4444 tutorial-red-servidor:latest
 ```
+donde los parámetros significan:
 *--name* permite definir el nombre del contenedor; en este caso, tutorial-red-servidor
 *-p* le indica a Docker que publique el/los puerto/s del contenedor al host, en formato <hostPort>:<containerPort>. Esto permitirá conectarse al contenedor con la dirección *localhost:4444*
 Finalmente se define qué imagen utilizar para el contenedor (la que se creó anteriormente).
@@ -125,7 +165,7 @@ $ docker start tutorial-red-servidor -a
 ```
 La opción *-a* de *attach* mostrará la salida estándar y de error en la terminal donde se ejecutó (recordar usar *docker ps --all* para ver todos los contenedores).
 
-# Sección 4 -- Añadiendo persistencia -- Volúmenes
+# Sección 4 -- Añadiendo persistencia a través de los Volúmenes
 Hasta ahora solamente se tiene acceso a la salida estándar (y errores) de la aplicación montada en el contenedor. Sin embargo, la clase Servidor JAVA también genera un archivo de log en el directorio donde se ejecuta la aplicación. ¿Dónde? Si se acuerdan, se definió cuando creamos la imagen Dockerfile que el "WORKDIR" de trabajo iba a ser */usr/src/app*. Entonces, el archivo de log va a quedar en */usr/src/app/log.log*. 
 Ahora... Muy lindo el log en el contenedor, pero.... ¿No surgen algunas preguntas?
 * ¿Cómo se puede acceder a este directorio desde fuera del contenedor? 
