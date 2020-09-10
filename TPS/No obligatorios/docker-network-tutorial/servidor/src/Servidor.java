@@ -34,9 +34,7 @@ public class Servidor {
             // [STEP 4] - Crear un loop "para siempre"
             while (true) {
             	// Aceptar conexiones de clientes
-                try 
-                	
-                 {
+                try {
                     // [STEP 5] - Aceptar un cliente 
                 	Socket clientSocket = serverSocket.accept();
                     // [STEP 6] - Mandar a la clase LOG la información del cliente
@@ -45,10 +43,14 @@ public class Servidor {
                 	PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                     out.println("Bienvenido al servidor de fecha y hora");
                     out.println(new Date().toString());
+                }catch(IOException e) {
+                    e.printStackTrace();
                 }
+            
+            
             }
-        } catch(IOException e) {
-        	e.printStackTrace();
+        }catch(IOException e) {
+            e.printStackTrace();
         }
     }
 }

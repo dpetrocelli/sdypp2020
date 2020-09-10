@@ -26,20 +26,24 @@ que se realizarán a lo largo de la jornada en tres fases:
 
 # Pre requisitos
 ## 1. Distribución Linux
-Es necesario contar con una distribución linux actualizada (Ubuntu, Debian, CentOS, etc) con los paquetes de APT (Ubuntu, Debian) o YUM (CentOS) disponibles para trabajar con ellos.
+Es necesario contar con una distribución linux actualizada (Ubuntu, Debian, CentOS, etc) con los paquetes de APT (Ubuntu, Debian) o YUM (CentOS) disponibles para trabajar con ellos. Esto puede ser como Sistema Operativo sobre el equipo o como máquina virtual, es indistinto.
+
 ## 2. Instalar Docker
 Seguir las instrucciones de instalación en https://docs.docker.com/engine/install/
-Se recomienda utilizar el script de instalación para Linux
-```
+Hay varias maneras de instalarlo, nosotros seguimos la que se realiza a través del script de instalación para Linux que mostramos a continuación:
+* Descargar el script
+```bash
 curl -fsSL https://get.docker.com -o get-docker.sh
 ```
-```
+* Ejecutar el script de instalación
+```bash
 sh get-docker.sh
 ```
-```
+* Agregar el usuario actual al grupo "docker"
+```bash
 sudo usermod -aG docker $USER
 ```
-Luego re loguear y verificar la instalación con el siguiente comando (puede tardar unos segundos)
+* Verificar la instalación con el siguiente comando. (A veces el SO no toma el agregado del usuario al grupo de Docker hasta que no se cierre sesión o se reinicie) 
 ```bash
 docker run hello-world
 ...
@@ -53,10 +57,11 @@ Hello from Docker!
 This message shows that your installation appears to be working correctly.
 ....
 ```
+
 ## 3. Instalar Docker Compose
 Seguir las instrucciones de instalación en https://docs.docker.com/compose/install/
 ```bash
-sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.27.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 ```
 ```bash
 sudo chmod +x /usr/local/bin/docker-compose
@@ -65,7 +70,7 @@ Probar la instalación
 ```bash
 docker-compose --version
 ....
-docker-compose version 1.25.5, build 8a1c60f6
+docker-compose version 1.27.0, build xxxxxx
 ....
 ```
 ## 4.  Conocimientos previos

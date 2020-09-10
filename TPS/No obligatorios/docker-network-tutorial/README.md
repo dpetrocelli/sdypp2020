@@ -67,8 +67,8 @@ servidor
     |- src
         |-- Servidor.java
 ```
-Nota de color: En esta parte del tutorial se va a trabajar desde el directorio *servidor*.
-/Contenido: 
+Nota de color: En esta parte del tutorial se va a trabajar desde el directorio *servidor*.<br/>
+Contenido: 
 * Servidor.java es una aplicación simple que se pone en escucha en el puerto que indiquemos por argumento, y contesta a quienes se conectan con la hora del servidor.
 ```java
 
@@ -82,9 +82,7 @@ Nota de color: En esta parte del tutorial se va a trabajar desde el directorio *
             // [STEP 4] - Crear un loop "para siempre"
             while (true) {
             	// Aceptar conexiones de clientes
-                try 
-                	
-                 {
+                try {
                     // [STEP 5] - Aceptar un cliente 
                 	Socket clientSocket = serverSocket.accept();
                     // [STEP 6] - Mandar a la clase LOG la información del cliente
@@ -93,15 +91,18 @@ Nota de color: En esta parte del tutorial se va a trabajar desde el directorio *
                 	PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
                     out.println("Bienvenido al servidor de fecha y hora");
                     out.println(new Date().toString());
+                }catch(IOException e) {
+                    e.printStackTrace();
                 }
+            
+            
             }
-        } catch(IOException e) {
-        	e.printStackTrace();
+        }catch(IOException e) {
+            e.printStackTrace();
         }
     }
 
 ```
-
 * Dockerfile: Es la clave para la construcción de la "imagen" de nuestra aplicación. El archivo contiene las siguientes líneas:
 
 ```dockerfile
@@ -141,8 +142,8 @@ Una vez creada la imagen, esta se debe instanciar en un contenedor para poder co
 $ docker run --name tutorial-red-servidor -p 4444:4444 tutorial-red-servidor:latest
 ```
 donde los parámetros significan:
-*--name* permite definir el nombre del contenedor; en este caso, tutorial-red-servidor
-*-p* le indica a Docker que publique el/los puerto/s del contenedor al host, en formato <hostPort>:<containerPort>. Esto permitirá conectarse al contenedor con la dirección *localhost:4444*
+* *--name* permite definir el nombre del contenedor; en este caso, tutorial-red-servidor
+* *-p* le indica a Docker que publique el/los puerto/s del contenedor al host, en formato <hostPort>:<containerPort>. Esto permitirá conectarse al contenedor con la dirección *localhost:4444*
 Finalmente se define qué imagen utilizar para el contenedor (la que se creó anteriormente).
 El contenedor correrá por primera vez y abrirá una terminal con el programa. Si todo funcionó correctamente, el servidor debería estar escuchando en el puerto 4444 y en la terminal debería aparecer un mensaje de bienvenida.
 Esto se puede verificar a través de la información que nos da Docker respecto de sus contenedores
@@ -166,39 +167,40 @@ $ docker start tutorial-red-servidor -a
 La opción *-a* de *attach* mostrará la salida estándar y de error en la terminal donde se ejecutó (recordar usar *docker ps --all* para ver todos los contenedores).
 
 # Sección 4 -- Añadiendo persistencia a través de los Volúmenes
-Hasta ahora solamente se tiene acceso a la salida estándar (y errores) de la aplicación montada en el contenedor. Sin embargo, la clase Servidor JAVA también genera un archivo de log en el directorio donde se ejecuta la aplicación. ¿Dónde? Si se acuerdan, se definió cuando creamos la imagen Dockerfile que el "WORKDIR" de trabajo iba a ser */usr/src/app*. Entonces, el archivo de log va a quedar en */usr/src/app/log.log*. 
-Ahora... Muy lindo el log en el contenedor, pero.... ¿No surgen algunas preguntas?
+Hasta ahora solamente se tiene acceso a la salida estándar (y errores) de la aplicación montada en el contenedor. Sin embargo, la clase Servidor JAVA también genera un archivo de log en el directorio donde se ejecuta la aplicación. ¿Dónde? Si se acuerdan, se definió cuando creamos la imagen Dockerfile que el "WORKDIR" de trabajo iba a ser */usr/src/app*. Entonces, el archivo de log va a quedar en */usr/src/app/info.log*. 
+Ahora... Muy lindo el log en el contenedor, pero.... ¿No surgen algunas preguntas como....?
 * ¿Cómo se puede acceder a este directorio desde fuera del contenedor? 
-* ¿Que pasa con la información cuando un contenedor es borrado? 
+* ¿Que pasa con la información cuando un contenedor es borrado o si sufre un reinicio? 
 * ¿Cómo puedo compartir un directorio para varios contenedores?
-* Otras..
+* Otras varias.
+
 Todas las preguntas, en principio, se contestan a partir de la misma respuesta, el uso de volúmenes.
-Para tener almacenamiento persistente en nuestros contenedores, que no se elimine al borrar el contenedor, es necesario utilizar volúmenes. 
 Un volumen es un directorio o un fichero en el host (Administrado por el usuario del SO) o un volumen de Docker (Administrado por Docker) que se monta directamente en el contenedor. 
-Al usar volúmenes en contenedores que escriben información en disco (en la carpeta correspondiente) evita que se aumente el tamaño del contenedor registrando el contenido fuera del ciclo de vida del contenedor.
+Al usar volúmenes en contenedores que escriben información en disco (en la carpeta compartida correspondiente) se evita que se mezcle el tamaño del contenedor con el tamaño de los datos persistentes compartidos.
 Podemos montar varios volúmenes en un contenedor y en varios contenedores podemos montar un mismo volumen.
-https://www.atareao.es/tutorial/docker/almacenamiento-en-contenedores/
-https://www.returngis.net/2019/02/gestionar-los-datos-de-tus-contenedores-de-docker/
 
 ¿Qué tipos de volúmenes hay entonces?
-<p align="center"> <img src="https://www.returngis.net/wp-content/uploads/2019/02/types-of-mounts-volume.png" width="350"/> </p> 
-Existen tres tipos de almacenamiento:
+<p align="left"> <img src="https://www.returngis.net/wp-content/uploads/2019/02/types-of-mounts-volume.png" width="350"/> </p> 
+
+**Existen tres tipos de almacenamiento:**
+
 * volumes: 
-Docker almacena los datos dentro de un área que él controla del sistema de ficheros del equipo HOST. 
-Es el mecanismo preferido para persistir los datos a día de hoy. Los volúmenes se almacenarán en */var/lib/docker/volumes/* y **solo Docker tiene permisos** sobre esta ubicación (solo con un usario ROOT se puede entrar y revisar que tiene).
-Un volumen puede ser montado por diferentes contenedores a la vez.
-La administración se realiza "completamente" mediante los comandos vía Docker CLI o Docker API.
-Hay que definirle un nombre descriptivo, para poder "localizarlo" amigablemente o hacer un backup
-Tienen funcionalidades extra que bind mount (el próximo a ver) no tiene. Por ejemplo, drivers que te "permiten" almacenar los volúmenes en sitios remotos o cifrarlos.
+    -  Docker almacena los datos dentro de un área que él controla del sistema de ficheros del equipo HOST. 
+    -  Es el mecanismo preferido para persistir los datos a día de hoy. Los volúmenes se almacenarán en */var/lib/docker/volumes/* y **solo Docker tiene permisos** sobre esta ubicación (solo con un usario ROOT se puede entrar y revisar que tiene).
+    -  Un volumen puede ser montado por diferentes contenedores a la vez.
+    -  La administración se realiza "completamente" mediante los comandos vía Docker CLI o Docker API.
+    -  Hay que definirle un nombre descriptivo, para poder "localizarlo" amigablemente o hacer un backup
+    -  Tienen funcionalidades extra que bind mount (el próximo a ver) no tiene. Por ejemplo, drivers que te "permiten" almacenar los volúmenes en sitios remotos o cifrarlos.
 
 * bind mounts: 
-Se utiliza para mapear cualquier sitio del sistema de ficheros dentro de tu contenedor. 
-A diferencia de los volúmenes, a través de este mecanismo es posible acceder a la ruta mapeada y modificar los ficheros (sin tantos permisos). 
-Históricamente esta era la única opción que existía en las primeras fases de Docker. 
-Estamos más limitados al host, a su sistema de ficheros, y a que con volumes puedes utilizar drivers para almacenar en remoto
-Los cambios que realice en el HOST serán reflejados en el contenedor/es y viceversa
+    -  Se utiliza para mapear cualquier sitio del sistema de ficheros dentro de tu contenedor. 
+    -  A diferencia de los volúmenes, a través de este mecanismo es posible acceder a la ruta mapeada y modificar los ficheros (sin tantos permisos). Por lo tanto los cambios que realice en el HOST serán reflejados en el contenedor/es y viceversa
+    -  Históricamente esta era la única opción que existía en las primeras fases de Docker. 
+    -  Estamos más limitados al host, a su sistema de ficheros, y a que con volumes puedes utilizar drivers para almacenar en remoto
+    
+* tmpfs: Se trata de un almacenamiento temporal en memoria. Se suele utilizar para el almacenamiento de configuraciones y espacios efímeros que desparecerán cada vez que el contenedor se pare (No aplica a lo que buscamos)
 
-tmpfs: Se trata de un almacenamiento temporal en memoria. Se suele utilizar para el almacenamiento de configuraciones y espacios efímeros que desparecerán cada vez que el contenedor se pare (No aplica a lo que buscamos)
+Ahora vamos a llevarlo a la práctica. Empecemos por crear un volumen con Docker
 
 ```bash
 $ docker volume create servidor-log
@@ -213,7 +215,7 @@ Y para ver las características particulares del volumen recién creado.  Nótes
 $ docker volume inspect servidor-log
 [
     {
-        "CreatedAt": "2020-04-21T11:10:35-03:00",
+        "CreatedAt": "2020-09-09T18:45:37-03:00",
         "Driver": "local",
         "Labels": {},
         "Mountpoint": "/var/lib/docker/volumes/servidor-log/_data",
@@ -222,7 +224,24 @@ $ docker volume inspect servidor-log
         "Scope": "local"
     }
 ]
-
+```
+Podemos hacer algunas búsquedas más detalladas que "ls" según los campos anteriores, por ejemplo Name o Driver
+```bash
+$ docker volume ls -f name=servidor-log
+ó 
+$ docker volume ls -f driver=local
+```
+Finalmente, podemos eliminar el volumen con el siguiente comando
+```bash
+$ docker volume rm servidor-log
+```
+Y si quisiéramos eliminar todos los volúmenes que gestiona Docker, lo podemos hacer a través del siguiente comando
+```bash
+$ docker volume prune
+WARNING! This will remove all local volumes not used by at least one container.
+Are you sure you want to continue? [y/N] 
+...
+Total reclaimed space: 842.4MB
 ```
 Ahora vamos a volver a correr nuestro contenedor, pero agregando al mismo el volumen previamente definido para mantener persistencia de los datos que deseemos
 ```bash
@@ -231,8 +250,9 @@ $ docker run --name tutorial-red-servidor -v servidor-log:/usr/src/app -p 4444:4
 En el comando *-v* se especifica <nombre del volumen>:<ruta al directorio que se va a persistir>. En este caso, y como está definido en el Dockerfile, se persiste el directorio raíz de la aplicación.
 Si ahora se accede al directorio definido en *Mountpoint*, se podrá leer el archivo de log (dos opciones)
 ```bash
-$ sudo less +F /var/lib/docker/volumes/servidor-log/_data/info.log
-$ sudo tail -f /var/lib/docker/volumes/servidor-log/_data/info.log
+$sudo tail -f /var/lib/docker/volumes/servidor-log/_data/info.log 
+$sudo less +F /var/lib/docker/volumes/servidor-log/_data/info.log
+ 
 ```
 Otro uso útil para los volúmenes es montar un directorio del host dinámicamente en un contenedor. De esta manera, los cambios realizados en el host se actualizan en tiempo real en el contenedor. Por ejemplo, se podría editar y compilar el código fuente en Servidor.java en el host y este se actualizaría en el contenedor sin necesidad de volver a construir la imagen.
 Para este ejemplo:
@@ -243,7 +263,6 @@ Para este ejemplo:
  ```
 $ docker run --name tutorial-red-servidor-v2 -v /tmp/:/usr/src/app -p 4444:4444 tutorial-red-servidor-v2:latest
 ```
-Como última aclaración, cabe mencionar que los volúmenes pueden ser accedidos remotamente, compartidos entre contenedores y otras opciones más (consultar https://docs.docker.com/storage/volumes/)
 
 Una vez utilizado, se puede eliminar con el comando rm.  Este comando rm es aplicable a todos los recursos docker (contenedores, redes, almacenamiento, etc). 
 ```bash
@@ -251,16 +270,22 @@ $ docker container rm tutorial-red-servidor
 ```
 
 # Sección 5 -- ¿Y si administramos Docker con una GUI? --
+Existen varias alternativas a la hora de buscar administrar gráficamente Docker.  Podemos mencionar las siguientes como principales:
+- [Portainer](https://www.portainer.io/)
+- [Rancher](https://rancher.com/)
+- [Kitematic](https://kitematic.com/)
+- [Dockstation](https://dockstation.io/)
+
+En nuestro caso vamos a utilizar Portainer, ya que es simple de integrar y configurar. Por otro lado, la información que presenta es bastante útil.
 
 Portainer se puede instalar como contenedor o como herramienta independiente en el SO.
-En este tutorial, instalaremos Portainer como un contenedor Docker. 
-Es realmente simple de instalar y ejecutar en cualquier sistema porque solo necesitamos asegurarnos de que el sistema sea compatible con Docker.
+En este tutorial, instalaremos Portainer como un contenedor Docker :)
 
-Antes de instalar Portainer, descarguemos la imagen de Portainer desde DockerHub usando el comando docker pull.
+Antes de "instalarlo", descarguemos la imagen de Portainer desde DockerHub usando el comando docker pull.
 ```bash
 $ docker pull portainer/portainer:latest
 ```
-Luego tenemos que configurar las capacidades y variables de "entorno" que permiten que la herramienta corra en nuestro entorno y que mantenga las configuraciones que definamos de manera persistente.
+Luego tenemos que configurar algunos parámetros de "entorno" que permiten que la herramienta mantenga las configuraciones que definamos de manera persistente.
 
 *--p* Puertos de escucha: Portainer ahora requiere que dos puertos tcp estén expuestos; 9000 y 8000. El 9000 ha sido históricamente el puerto desde el que servimos la interfaz de usuario. El puerto 8000 es un servidor de túnel SSH y se utiliza para crear un túnel seguro entre el agente y la instancia de Portainer.
 
