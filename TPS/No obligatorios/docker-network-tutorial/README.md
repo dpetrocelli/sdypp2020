@@ -258,7 +258,7 @@ Ahora vamos a volver a correr nuestro contenedor, pero agregando al mismo el vol
 ```bash
 $ docker run --name tutorial-red-servidor -v servidor-log:/usr/src/app -p 4444:4444 tutorial-red-servidor:latest
 ```
-En el comando *-v* se especifica <nombre del volumen>:<ruta al directorio que se va a persistir>. En este caso, y como está definido en el Dockerfile, se persiste el directorio raíz de la aplicación. En este caso, como no existía el volúmen Docker se encargará de crearlo.
+En el comando *-v* se especifica nombre del volumen:ruta al directorio que se va a persistir. En este caso, y como está definido en el Dockerfile, se persiste el directorio raíz de la aplicación. En este caso, como no existía el volúmen Docker se encargará de crearlo.
 
 Si ahora se accede al directorio definido en *Mountpoint*, se podrá leer el archivo de log. En otra terminal o pestaña, accedemos al log con alguna de las siguientes dos opciones
 ```bash
