@@ -29,8 +29,8 @@ que se realizarán a lo largo de la jornada en tres fases:
 Es necesario contar con una distribución linux actualizada (Ubuntu, Debian, CentOS, etc) con los paquetes de APT (Ubuntu, Debian) o YUM (CentOS) disponibles para trabajar con ellos. Esto puede ser como Sistema Operativo sobre el equipo o como máquina virtual, es indistinto.
 
 ## 2. Instalar Docker
-Seguir las instrucciones de instalación en https://docs.docker.com/engine/install/
-</br>Hay varias maneras de instalarlo, nosotros seguimos la que se realiza a través del script de instalación para Linux que mostramos a continuación:
+Según las instrucciones de instalación de Docker en https://docs.docker.com/engine/install/ Hay varias maneras de instalarlo.
+</br> Nosotros seguimos la siguiente:
 * Descargar el script
 ```bash
 curl -fsSL https://get.docker.com -o get-docker.sh
