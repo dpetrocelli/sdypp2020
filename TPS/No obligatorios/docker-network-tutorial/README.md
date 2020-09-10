@@ -7,7 +7,7 @@ Este tutorial te guiará en:
 - Crear una red con Docker compose, conectando dos programas en contenedores distintos
 
 # Sección 1 -- Obtener el entorno
-El primer requisito para crear un contenedor es buscar un entorno que pueda correr la aplicación a desarrollar. Afortunadamente, la comunidad de Docker tiene un repositorio de imágenes actualizado con muchos recursos ya empaquetados y listos para usar. En este caso, utilizaremos la imagen de openjdk que ya viene lista para correr aplicaciones Java (https://hub.docker.com/_/openjdk). Para eso, descargar la imagen con el comando
+El primer requisito para crear un contenedor es buscar un entorno que pueda correr la aplicación a desarrollar. Afortunadamente, la comunidad de Docker tiene un repositorio de imágenes actualizado con muchos recursos ya empaquetados y listos para usar. En este caso, utilizaremos la imagen de openjdk que ya viene lista para correr aplicaciones Java (https://hub.docker.com/_/openjdk). Para eso, se debe descargar la imagen con el comando:
 ```bash
 $ docker pull openjdk:latest
 ```
@@ -50,17 +50,28 @@ Si se quiere detener todos los contenedores se puede utilizar el siguiente coman
 ```bash
 $ docker stop $(docker ps -a -q)
 ```
-Si al mismo tiempo, se quiere eliminar todos los contenedores se puede utilizar el siguiente comando combinado
+Esto significa: 
+Primero ejecutar lo que está en paréntesis, teniendo en cuenta que
+-a		Significa mostrar todos los contenedores (no solo los que están corriendo)
+-q		Significa solo mostrar el ID Numérico del Contenedor
+```bash
+$ docker ps -a -q
+2b69cf17a259
+....
+```
+Y luego ejecutar el comando externo, usando los resultados del primero. (En este caso, hacer un docker stop de los IDs de contenedores antes obtenidos)
+
+Si también se quiere eliminar todos los contenedores se puede utilizar el siguiente comando combinado
 ```bash
 $ docker rm $(docker ps -a -q)
 ```
-Obviamente, se pueden utilizar los dos comandos al mismo tiempo, a través de un "concatenador" en bash
+Obviamente, se pueden utilizar los dos comandos al mismo tiempo, a través de un "concatenador" en bash (puede usarse ";" o "&&")
 ```bash
 $ docker stop $(docker ps -a -q) ; docker rm $(docker ps -a -q)
 ```
 
 # Sección 2 -- Creando nuestra propia imagen con Dockerfile
-Ahora es posible usar la imagen descargada (openjdk) para tomarla como base y crear nuestra "propia imagen". En nuestro caso contendrá la aplicación de ejemplo a ejecutar (Servidor). Para esto, en el repositorio está incluida la estructura necesaria:
+Ahora es posible usar la imagen descargada (openjdk) para tomarla como base y crear nuestra "propia imagen". En nuestro caso contendrá la aplicación de ejemplo a ejecutar (Servidor). Para esto, en el repositorio está incluida la estructura y contenido necesario:
 ```
 servidor
     |- Dockerfile
@@ -158,7 +169,7 @@ Para probar que el servidor funciona correctamente, abrir otra terminal y ejecut
 ```bash
 $ nc localhost 4444
 ```
-La nueva terminal se conectará al proceso servidor escuchando en el puerto 4444 y responderá con la fecha y hora actual. La terminal que ejecuta el servidor mostrará un log de la conexión.
+La nueva terminal se "conectará" al proceso servidor TCP que está escuchando en el puerto 4444 y responderá con la fecha y hora actual. La terminal que ejecuta el servidor mostrará un log de la conexión.
 Para detener el contenedor, presionar CTRL + C.
 Finalmente, si se quiere volver a correr el contenedor, ingresar el comando
 ```bash
@@ -172,7 +183,7 @@ Ahora... Muy lindo el log en el contenedor, pero.... ¿No surgen algunas pregunt
 * ¿Cómo se puede acceder a este directorio desde fuera del contenedor? 
 * ¿Que pasa con la información cuando un contenedor es borrado o si sufre un reinicio? 
 * ¿Cómo puedo compartir un directorio para varios contenedores?
-* Otras varias.
+* ¿Cómo veo los archivos desde dentro de un contenedor?.
 
 Todas las preguntas, en principio, se contestan a partir de la misma respuesta, el uso de volúmenes.
 Un volumen es un directorio o un fichero en el host (Administrado por el usuario del SO) o un volumen de Docker (Administrado por Docker) que se monta directamente en el contenedor. 
@@ -186,7 +197,7 @@ Podemos montar varios volúmenes en un contenedor y en varios contenedores podem
 
 * volumes: 
     -  Docker almacena los datos dentro de un área que él controla del sistema de ficheros del equipo HOST. 
-    -  Es el mecanismo preferido para persistir los datos a día de hoy. Los volúmenes se almacenarán en */var/lib/docker/volumes/* y **solo Docker tiene permisos** sobre esta ubicación (solo con un usario ROOT se puede entrar y revisar que tiene).
+    -  Es el mecanismo preferido para persistir los datos a día de hoy (según Docker). Los volúmenes se almacenarán en */var/lib/docker/volumes/* y **solo Docker tiene permisos** sobre esta ubicación (solo con un usario ROOT se puede entrar y revisar que tiene).
     -  Un volumen puede ser montado por diferentes contenedores a la vez.
     -  La administración se realiza "completamente" mediante los comandos vía Docker CLI o Docker API.
     -  Hay que definirle un nombre descriptivo, para poder "localizarlo" amigablemente o hacer un backup
@@ -247,26 +258,179 @@ Ahora vamos a volver a correr nuestro contenedor, pero agregando al mismo el vol
 ```bash
 $ docker run --name tutorial-red-servidor -v servidor-log:/usr/src/app -p 4444:4444 tutorial-red-servidor:latest
 ```
-En el comando *-v* se especifica <nombre del volumen>:<ruta al directorio que se va a persistir>. En este caso, y como está definido en el Dockerfile, se persiste el directorio raíz de la aplicación.
-Si ahora se accede al directorio definido en *Mountpoint*, se podrá leer el archivo de log (dos opciones)
+En el comando *-v* se especifica <nombre del volumen>:<ruta al directorio que se va a persistir>. En este caso, y como está definido en el Dockerfile, se persiste el directorio raíz de la aplicación. En este caso, como no existía el volúmen Docker se encargará de crearlo.
+
+Si ahora se accede al directorio definido en *Mountpoint*, se podrá leer el archivo de log. En otra terminal o pestaña, accedemos al log con alguna de las siguientes dos opciones
 ```bash
 $sudo tail -f /var/lib/docker/volumes/servidor-log/_data/info.log 
+ó
 $sudo less +F /var/lib/docker/volumes/servidor-log/_data/info.log
- 
+....
+[Thu Sep 10 16:58:53 GMT 2020] INFO Servidor iniciado en puerto 4444
+[Thu Sep 10 16:59:11 GMT 2020] INFO Cliente conectado /172.17.0.1:44818
+[Thu Sep 10 16:59:15 GMT 2020] INFO Cliente conectado /172.17.0.1:44822
+.....
 ```
-Otro uso útil para los volúmenes es montar un directorio del host dinámicamente en un contenedor. De esta manera, los cambios realizados en el host se actualizan en tiempo real en el contenedor. Por ejemplo, se podría editar y compilar el código fuente en Servidor.java en el host y este se actualizaría en el contenedor sin necesidad de volver a construir la imagen.
-Para este ejemplo:
- - Probar con quitar la línea *RUN* en el Dockerfile
- - Compilar en el host (*javac Servidor.java*)
- - Construir la imagen nuevamente (*docker build -t tutorial-red-servidor-v2*)
- - Correr el contenedor con la opción *-v <ruta absoluta al proyecto>:<ruta del contenedor>*
- ```
-$ docker run --name tutorial-red-servidor-v2 -v /tmp/:/usr/src/app -p 4444:4444 tutorial-red-servidor-v2:latest
+Perfecto... Ahora vamos a comprobar que pasa cuando "matamos" el contenedor actual. Para ello vamos a cortar el proceso del contenedor con CTRL+C. Y ahora vamos a revisar que no aparezca corriendo
+```bash
+$docker container ps
+```
+Deberíamos entonces eliminarlo. Para ello obtenemos su ID
+```bash
+$docker container ps -all
+CONTAINER ID        IMAGE                          COMMAND                CREATED             STATUS                            PORTS               NAMES
+2b69cf17a259        tutorial-red-servidor:latest   "java Servidor 4444"   6 hours ago         Exited (130) About a minute ago                       tutorial-red-servidor
+```
+Y más tarde lo eliminamos
+```bash
+$docker container rm 2b69cf17a259
+```
+Cómo podemos ver, el volumen sigue creado y el "tail -F" sigue "escuchando" por nuevas escrituras.
+Ahora si volvemos a crear el contenedor en cuestión, montamos el mismo volumen, debería seguir escribiendo en él.
+
+```bash
+$ docker run --name tutorial-red-servidor-nuevocontainer -v servidor-log:/usr/src/app -p 4444:4444 tutorial-red-servidor:latest
+```
+En el terminal del "tail -F" podemos ver que se actualizó la información
+```bash
+[Thu Sep 10 17:21:04 GMT 2020] INFO Servidor iniciado en puerto 4444
+[Thu Sep 10 17:21:08 GMT 2020] INFO Cliente conectado /172.17.0.1:45034
+[Thu Sep 10 17:21:13 GMT 2020] INFO Cliente conectado /172.17.0.1:45038
+```
+Próxima pregunta, ¿Y si pongo más de un contenedor que escribe en el mismo "log"? Vamos a probar agregando un segundo contendor. Abrimos otra pestaña o terminal y agregamos un nuevo contenedor con la misma imagen. A tener en cuenta:
+* Hay que poner otro nombre porque obviamente no pueden existir dos contenedores con la misma denominación
+* Hay que cambiar el puerto de bind del Host anfitrión. Recuerden que todas las comunicaciónes en redes están sobre TCP/IP y solo podemos asignar un proceso a un puerto.  Esto significa que si yo estoy escuchando en un localhost:4444 no puedo poner un segundo servicio en ese puerto. ¿Solución? Simple, ponerlo a escuchar en otro puerto de host (no toco nada del contenedor). ¿Cómo? A través del flag -p 4443:4444.
+```bash
+$ docker run --name tutorial-red-servidor-nuevovecino -v servidor-log:/usr/src/app -p 4443:4444 tutorial-red-servidor:latest
+```
+Bien, primero veamos los contenedores que están corriendo
+```bash
+$ docker container ps
+CONTAINER ID        IMAGE                          COMMAND                CREATED             STATUS              PORTS                    NAMES
+0150061042a6        tutorial-red-servidor:latest   "java Servidor 4444"   47 seconds ago      Up 46 seconds       0.0.0.0:4443->4444/tcp   tutorial-red-servidor-nuevovecino
+763e5a987063        tutorial-red-servidor:latest   "java Servidor 4444"   8 minutes ago       Up 8 minutes        0.0.0.0:4444->4444/tcp   tutorial-red-servidor-nuevocontainer
 ```
 
-Una vez utilizado, se puede eliminar con el comando rm.  Este comando rm es aplicable a todos los recursos docker (contenedores, redes, almacenamiento, etc). 
+Bien ahora podemos probar "pegarle" a través de:
 ```bash
-$ docker container rm tutorial-red-servidor
+$ nc localhost 4444
+```
+y 
+```bash
+$ nc localhost 4443
+```
+Verificando que ambos responden registran en el mismo archivo de log.
+```bash
+....
+[Thu Sep 10 16:59:11 GMT 2020] INFO Cliente conectado /172.17.0.1:44818
+[Thu Sep 10 16:59:15 GMT 2020] INFO Cliente conectado /172.17.0.1:44822
+[Thu Sep 10 17:21:04 GMT 2020] INFO Servidor iniciado en puerto 4444
+[Thu Sep 10 17:21:08 GMT 2020] INFO Cliente conectado /172.17.0.1:45034
+[Thu Sep 10 17:21:13 GMT 2020] INFO Cliente conectado /172.17.0.1:45038
+[Thu Sep 10 17:28:38 GMT 2020] INFO Servidor iniciado en puerto 4444
+....
+```
+¿Y si quiero el volumen en el host?
+Manteniendo el "tail -F", en otra pestaña intentemos acceder a la "carpeta" del directorio del volúmen. Sin ser root sucede que:
+```bash
+$ cd /var/lib/docker/volumes/servidor-log/
+bash: cd: /var/lib/docker/volumes/servidor-log/: Permission denied
+```
+En cambio si entramos como root:
+```bash
+# cd /var/lib/docker/volumes/servidor-log/
+# cd _data
+# ls
+info.log  Servidor.class  Servidor.java
+```
+Pudimos verificar que encontramos el archivo de log. De hecho vamos a agregarle contenido y ver que esto se escribe correctamente y que el "tail -F" lo recibe.
+```bash
+echo "desde el host anfitrion" >> info.log 
+```
+Bien, vimos varias cosas respecto de los volúmenes y los contenedores... Pero no vimos nada desde "dentro" de un contenedor. Por lo tanto, vamos a conectarnos a uno de nuestros servidores y ver que pasa con nuestro volumen
+Primero, vamos a conectarnos a la consola bash (/bin/bash) del contenedor. Esto sería como hacer un "SSH" al mismo.
+```bash
+$ docker container ps
+CONTAINER ID        IMAGE                          COMMAND                CREATED             STATUS              PORTS                    NAMES
+0150061042a6        tutorial-red-servidor:latest   "java Servidor 4444"   2 hours ago         Up 2 hours          0.0.0.0:4443->4444/tcp   tutorial-red-servidor-nuevovecino
+763e5a987063        tutorial-red-servidor:latest   "java Servidor 4444"   2 hours ago         Up 2 hours          0.0.0.0:4444->4444/tcp   tutorial-red-servidor-nuevocontainer
+```
+Elegimos, por ejemplo, a tutorial-red-servidor-nuevocontainer y nos conectamos
+```bash
+$ docker container exec -it tutorial-red-servidor-nuevocontainer /bin/bash
+bash-4.2#
+```
+El parámetro "-it" permitirá levantar una terminal interactiva (en vez de ejecutar un comando) para que podamos acceder a la consola del contenedor. Específicamente el último parámetro "/bin/bash" indicará al contenedor que la consola que queremos utilizar será bash (ya que podría haber otras disponibles cómo sh, dash, entre otras)
+Para más información acerca de la ejecución de comandos dentro de la consola, dirigirse al sitio oficial de docker (https://docs.docker.com/engine/reference/commandline/exec/)
+
+Entonces, Una vez dentro, podemos realizar diversos comandos básicos para ver el estado y los paquetes instalados en dicha distribución.
+Recuerden que siempre se va a tratar de instalar la menor cantidad posible de paquetes para:
+a) No incrementar el tamaño del contenedor
+b) Al instalar un paquete en un contenedor corriendo (en base a una imagen) los cambios solo quedarán reflejados en este contenedor, no en la imagen base.  Por lo tanto si despliego una nuevo contenedor basado en la imagen fuente, los contenedores no serán iguales.
+c) No habilitar herramientas innecesarias que pueden dañar el resto de la red de contenedores (Imágenes root, SSH client, etc)
+
+* Podemos verificar que es un linux por su estructura de directorio
+```bash
+bash-4.2# cd /
+bash-4.2# ls
+bin   dev  home  lib64	mnt  proc  run	 srv  tmp  var
+boot  etc  lib	 media	opt  root  sbin  sys  usr
+```
+
+* Vamos a comenzar por averiguar el sistema y versión de nuestro sistema operativo.
+```bash
+root@a8df97dd5cf1:/# cat /etc/os-release
+NAME="Oracle Linux Server"
+VERSION="7.8"
+ID="ol"
+ID_LIKE="fedora"
+VARIANT="Server"
+VARIANT_ID="server"
+VERSION_ID="7.8"
+PRETTY_NAME="Oracle Linux Server 7.8"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:oracle:linux:7:8:server"
+HOME_URL="https://linux.oracle.com/"
+BUG_REPORT_URL="https://bugzilla.oracle.com/"
+
+ORACLE_BUGZILLA_PRODUCT="Oracle Linux 7"
+ORACLE_BUGZILLA_PRODUCT_VERSION=7.8
+ORACLE_SUPPORT_PRODUCT="Oracle Linux"
+ORACLE_SUPPORT_PRODUCT_VERSION=7.8
+```
+
+* Somos root en el contenedor... Entonces podemos hacer de todo... Vamos a instalar un paquete solo a modo de ejemplo. En este caso es un centos, así que su manejador de paquetes es YUM.
+```bash
+# yum update -y ; yum install net-tools -y
+...
+util-linux.x86_64 0:2.23.2-63.0.1.el7                                                      
+  xz.x86_64 0:5.2.2-1.el7                                                                    
+
+Complete!
+```
+Ejecutamos por ejemplo un ifconfig y nos encontramos con la información de la ip del equipo
+```bash
+# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+....
+```
+* Bien, volvamos al tema del volumen. Nosotros definimos cuando armamos el Dockerfile para la imagen del servidor que el WORKDIR iba a ser /usr/src/app. Entonces, si hacemos un pwd (comando linux para saber en que directorio estamos parados en este momento) debería corroborarlo.  Además, si hacemos un ls, nos encontraríamos con los archivos que pasamos con COPY a nuestro contenedor.
+```bash
+# pwd
+/usr/src/app
+# ls
+info.log  Servidor.class  Servidor.java
+```
+Ahora repitamos el proceso que hicimos por fuera para validar que el archivo de log compartido se actualiza.
+```bash
+# tail -F info.log
+.....
+[Thu Sep 10 17:21:13 GMT 2020] INFO Cliente conectado /172.17.0.1:45038
+[Thu Sep 10 17:28:38 GMT 2020] INFO Servidor iniciado en puerto 4444
+desde el host anfitrion
+
 ```
 
 # Sección 5 -- ¿Y si administramos Docker con una GUI? --
@@ -511,36 +675,7 @@ Ahora, habiendo realizado las verficaciones necesarias, vamos a conectarnos a la
 $ docker exec -it a8df97dd5cf1 /bin/bash
 root@a8df97dd5cf1:/# 
 ```
-Donde "exec" significa el comando que se va a ejecutar en el contenedor en ejecución.  El comando exec solo se ejecutará mientras se está ejecutando el proceso primario del contenedor (PID 1).  La estructura será la siguiente
-```bash
-docker exec -ti my_container sh -c "echo a && echo b".
-```
-El parámetro "-it" permitirá levantar una terminal interactiva (en vez de ejecutar un comando) para que podamos acceder a la consola del contenedor. Específicamente el último parámetro "/bin/bash" indicará al contenedor que la consola que queremos utilizar será bash (ya que podría haber otras disponibles cómo sh, dash, entre otras)
-Para más información acerca de la ejecución de comandos dentro de la consola, dirigirse al sitio oficial de docker (https://docs.docker.com/engine/reference/commandline/exec/)
 
-Entonces, Una vez dentro, podemos realizar diversos comandos básicos para ver el estado y los paquetes instalados en dicha distribución.
-Recuerden que siempre se va a tratar de instalar la menor cantidad posible de paquetes para:
-a) No incrementar el tamaño del contenedor
-b) Al instalar un paquete en un contenedor corriendo (en base a una imagen) los cambios solo quedarán reflejados en este contenedor, no en la imagen base.  Por lo tanto si despliego una nuevo contenedor basado en la imagen fuente, los contenedores no serán iguales.
-c) No habilitar herramientas innecesarias que pueden dañar el resto de la red de contenedores (Imágenes root, SSH client, etc)
-
-* Vamos a comenzar por averiguar el sistema y versión de nuestro sistema operativo.
-```bash
-root@a8df97dd5cf1:/# uname -a
-Linux a8df97dd5cf1 4.19.0-8-amd64 #1 SMP Debian 4.19.98-1 (2020-01-26) x86_64 GNU/Linux
-
-root@a8df97dd5cf1:/# cat /etc/os-release
-PRETTY_NAME="Debian GNU/Linux 10 (buster)"
-NAME="Debian GNU/Linux"
-VERSION_ID="10"
-VERSION="10 (buster)"
-VERSION_CODENAME=buster
-ID=debian
-HOME_URL="https://www.debian.org/"
-SUPPORT_URL="https://www.debian.org/support"
-BUG_REPORT_URL="https://bugs.debian.org/"
-root@a8df97dd5cf1:/# 
-```
 
 * Bien, ahora la intención es validar si dentro de la red docker que estemos (esto depende de como se haya generado el docker-compose file) los contenedores se pueden ver por ejemplo a través de IP y nombre de DNS (y buscar de donde viene el nombre de DNS)
 ```bash
