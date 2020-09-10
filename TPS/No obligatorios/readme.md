@@ -30,7 +30,7 @@ Es necesario contar con una distribución linux actualizada (Ubuntu, Debian, Cen
 
 ## 2. Instalar Docker
 Seguir las instrucciones de instalación en https://docs.docker.com/engine/install/
-Hay varias maneras de instalarlo, nosotros seguimos la que se realiza a través del script de instalación para Linux que mostramos a continuación:
+</br>Hay varias maneras de instalarlo, nosotros seguimos la que se realiza a través del script de instalación para Linux que mostramos a continuación:
 * Descargar el script
 ```bash
 curl -fsSL https://get.docker.com -o get-docker.sh
