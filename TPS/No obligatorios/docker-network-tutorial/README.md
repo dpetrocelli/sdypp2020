@@ -456,61 +456,61 @@ $ docker pull portainer/portainer:latest
 ```
 Luego tenemos que configurar algunos parámetros de "entorno" que permiten que la herramienta mantenga las configuraciones que definamos de manera persistente.
 
-*--p* Puertos de escucha: Portainer ahora requiere que dos puertos tcp estén expuestos; 9000 y 8000. El 9000 ha sido históricamente el puerto desde el que servimos la interfaz de usuario. El puerto 8000 es un servidor de túnel SSH y se utiliza para crear un túnel seguro entre el agente y la instancia de Portainer.
+*--p* Puertos de escucha: Portainer ahora requiere que dos puertos tcp estén expuestos; 9000 y 8000. El 9000 ha sido históricamente el puerto desde el que servimos la interfaz de usuario. El puerto 8000 es un servidor de túnel SSH y se utiliza para crear un túnel seguro entre el agente y la instancia de Portainer (podríamos obviarlo inclusive).
 
 *--name* Nombre que le daremos al contenedor
 
 *--restart* Política de gestión cuando el contenedor sufra un reinicio en el HOST anfitrión. En este caso le definimos "always" para que siempre, independientemente de la razón o problema sobre el contenedor, se levante el contendor.
 
-*--v* Volúmenes: Es un muy buen caso para aplicar lo que aprendimos recientemente de "volúmenes". Sin un volumen, cómo dijimos, la información del contenedor se perderá cuando se reinicie (por error o por deseo) y se perderán todos los datos y configuraciones almacenadas dentro del mismo. En este caso, perderemos las configuraciones hacia los HOSTS Docker y otros detalles. ¿Queremos eso? No, entonces debemos persistir esos datos en "algún lado" fuera del contenedor para "sobrevivir" al ciclo de vida del contenedor en cuestión. En este caso utilizamos un folder del host directamente para "montar" dentro del Portainer Container, cómo se detalla a continuación:
+*--v* Volúmenes: Es un muy buen caso para aplicar lo que aprendimos recientemente de "volúmenes". Sin un volumen, cómo dijimos, la información del contenedor se perderá cuando se reinicie (por error o por deseo) y se perderán todos los datos y configuraciones almacenadas dentro del mismo. En este caso, perderemos las configuraciones hacia los HOSTS Docker y otros detalles. ¿Queremos eso? No, entonces debemos persistir esos datos en "algún lado" fuera del contenedor para "sobrevivir" al ciclo de vida del contenedor en cuestión. 
+En este caso, vamos a usar el otro caso posible con los volúmenes docker (bind mount). Vamos a utilizar un folder del host directamente para "montar" dentro del Portainer Container, cómo se detalla a continuación:
 -v /path/on/host/data:/data portainer/portainer
 donde del : tenemos
 - hacia la izquierda el folder en nuestro host y
 - hacia la derecha donde se va a montar el directorio del host dentro del contenedor 
 
-También Portainer define un "volúmen" particular como se detalle a continuación: 
+También Portainer define un "volúmen" particular como se detalle a continuación, que nos va a permitir entender un poco más la teoría:
 
 -v /var/run/docker.sock:/var/run/docker.sock
+<p align="left"> <img src="https://solidgeargroup.com/wp-content/uploads/2018/10/Screen-Shot-2018-10-02-at-18.34.53.png" width="350"/></p> 
+Pero la pregunta es ¿Qué es este "archivo" y por qué a veces lo utilizan los contenedores? 
 
-Algunos contenedores necesitan "enlazar" el montaje del archivo /var/run/docker.sock para poder funcionar. 
-Pero la pregunta es ¿Qué es este archivo y por qué a veces lo utilizan los contenedores? 
-Respuesta corta: es el socket Unix en el que está "escuchando" el demonio Docker de forma predeterminada, y la API de docker "llama" al demonio vía "ese canal". 
-Para poder ejecutar "algo" en docker se requieren permisos de root o pertenencia a un grupo de Docker. (Recordar lo que hicimos al principio de agregar nuestro usuario al grupo de Docker)
-En el caso de "enlazarlo" a un contenedor, lo que estamos haciendo es permitir que el container pueda comunicarse con el demonio desde "dentro". ¿Entonces en Portainer para que lo queremos? Usando la GUI Portainer, las solicitudes HTTP que realice el usuario se envían al demonio de Docker a través de docker.sock "montado".
+Respuesta corta: es el socket Unix en el que Docker está "escuchando" en el equipo HOST y se encarga de comunicarse con el demonio Docker de forma predeterminada. Entonces el Docker cli llama a la API de docker vía "ese canal". En resumen Docker CLI --> API Docker (escuchando en Unix Socket) --> dockerd (Docker daemon)
+Recordar que para poder ejecutar "algo" en docker se requieren permisos de root o pertenencia a un grupo de Docker. (por eso agregamos nuestro usuario al grupo de Docker)
+En el caso de "enlazarlo" a un contenedor, lo que estamos haciendo es permitir que el container pueda comunicarse con el demonio desde "dentro" ("hacer un puente") . ¿Entonces en Portainer para que lo queremos? Usando la GUI Portainer, las solicitudes HTTP que realice el usuario se envían al demonio de Docker a través de docker.sock "montado". Es decir Portainer WEB GUI --> API Docker --> dockerd (Docker daemon)
 
-<p align="center"> <img src="https://miro.medium.com/max/700/1*bKtsM045UOnZcU2QVqcAmg.png" width="350"/> </p> 
-<!--<a href="https://miro.medium.com/max/700/1*bKtsM045UOnZcU2QVqcAmg.png" target="blank"> Cómo acceder al demonio de Docker vía socket Unix</a>-->
+<p align="left"> <img src="https://www.arquitectoit.com/images/dockers/docker-engine-components.png" width="350"/> <img src="https://docs.docker.com/engine/images/architecture.svg" width="350"/> </p> 
 
-Nota de color: Se puede habilitar un socket TCP. ¿Para qué lo habilitaría?
+Nota de color: ¿Y si quiero permitir la administración remota? --> Se puede habilitar un socket TCP
 
 El demonio de Docker puede escuchar las solicitudes de la API de Docker Engine a través de tres tipos diferentes de Socket: unix, tcp y fd.
-Si necesita acceder al demonio de Docker de forma remota, se debe habilitar tcp Socket. Tenga en cuenta que la configuración predeterminada proporciona acceso directo no cifrado y no autenticado al demonio de Docker, y debe protegerse mediante el socket cifrado HTTPS integrado o colocando un proxy web seguro frente a él. Puede escuchar en el puerto 2375 en todas las interfaces de red con -H tcp: //0.0.0.0: 2375, o en una interfaz de red particular usando su dirección IP: -H tcp: //192.168.59.103: 2375. Es convencional usar el puerto 2375 para comunicaciones no cifradas y el puerto 2376 para comunicaciones cifradas con el demonio.
+Si necesita acceder al demonio de Docker de forma remota, se debe habilitar **tcp Socket**. Tenga en cuenta que la configuración predeterminada proporciona acceso directo no cifrado y no autenticado al demonio de Docker, y debe protegerse mediante el socket cifrado HTTPS integrado o colocando un proxy web seguro frente a él. Puede escuchar en el puerto 2375 en todas las interfaces de red con -H tcp: //0.0.0.0: 2375, o en una interfaz de red particular usando su dirección IP: -H tcp: //192.168.59.103:2375. Es convencional usar el puerto 2375 para comunicaciones no cifradas y el puerto 2376 para comunicaciones cifradas con el demonio.
+<p align="left"> <img src="https://i.imgur.com/2JAlqZf.png" width="350"/></p> 
 
-
-
+Bien, basta de cháchara.. Levantemos Portainer GUI
 ```bash
 $ docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /path/on/host/data:/data portainer/portainer
 ```
-
-
+```bash
+$ docker container ps
+CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                                            NAMES
+705fdd6615c5        portainer/portainer   "/portainer"        4 seconds ago       Up 3 seconds        0.0.0.0:8000->8000/tcp, 0.0.0.0:9000->9000/tcp   portainer
+```
+<a href="http://localhost:9000" target="_blank">Vamos a jugar en el navegador!</a> 
 
 
 # Sección 6 -- Redes Básicas -- Docker compose
-Análogamente al caso del servidor, generar un Dockerfile para el Cliente que va a preguntar la fecha y hora al servidor. Como parámetro adicional, el Cliente requiere un nombre de host, por lo que se requiere cambiar la línea *CMD*
-```dockerfile
-CMD ["java", "Cliente", "server", "4444"]
-```
-Como no se sabe de antemano la dirección del host (ya que se creará una red nueva con Compose), por ahora se deja *server*.
-De esta manera, ahora existen dos aplicaciones en dos contenedores distintos que requieren verse. Aquí entra en juego Docker Compose.
-Docker Compose es una herramienta para definir y correr aplicaciones Docker multi contenedor. Este requiere de un archivo *docker-compose.yml* en la raíz del proyecto (en nuestro caso, *tutorial*), que contenga la configuración de los *servicios* que requiere la aplicación. Con esto, basta un solo comando para crear y correr todos los servicios/contenedores definidos.
+Docker Compose es una herramienta que permite simplificar el uso de Docker. A partir de archivos YAML es mas sencillo crear contendores, conectarlos, habilitar puertos, volumenes, etc. Aquí resumimos algunos tips.
+
+* Con Compose puedes crear diferentes contenedores y al mismo tiempo, en cada contenedor, diferentes servicios, unirlos a un volúmen común, iniciarlos y apagarlos, etc. Es un componente fundamental para poder construir aplicaciones y microservicios.
+
+* En vez de utilizar Docker via una serie inmemorizable de comandos bash y scripts, Docker Compose te permite mediante archivos YAML para poder instruir al Docker Engine a realizar tareas, programaticamente. Y esta es la clave, la facilidad para dar una serie de instrucciones, y luego repetirlas en diferentes ambientes.
+
+* Se requiere de un archivo *docker-compose.yml* en la raíz del proyecto (en nuestro caso, *tutorial*), que contenga la configuración de los *servicios* que requiere la aplicación. Con esto, basta un solo comando para crear y correr todos los servicios/contenedores definidos.
 La estructura de directorios entonces queda:
 ```
 tutorial
     |- docker-compose.yml
-    |- cliente
-        |-- Dockerfile
-        |-- src
-            |--- Cliente.java
     |- servidor
         |-- Dockerfile
         |-- src
@@ -523,89 +523,81 @@ El archivo de configuración *docker-compose.yml* para la aplicación será el s
 ```yaml
 version: '3'
 services:
-  server:
-    build: ./servidor
-    ports:
-      - "4444:4444"
-  client:
-    build: ./cliente
+    javasocketserver:
+        build: ./servidor
+        ports:
+            - "8080:4444"
+    nodejswebserver:
+        build: ./nodejs
+        ports:
+            - "8081:3000"
+    nginx:
+        image: nginx:latest
+        ports:
+            - "8082:80"
 ```
 Aquí se declaran
 - *version*: la versión del formato de configuración (generalmente 3, la última)
 - *services*: los servicios que requiere nuestra aplicación. 
--- un contenedor *server* que se construirá con la imagen generada por el directorio *./servidor*, y que publicará los puertos de manera similar al argumento *-p* en *docker run*.
--- un contenedor *client* que hará lo mismo con la imagen en *./cliente*
+-- servicio1: javasocketserver, el que ya habíamos usado, que se construirá con la imagen generada por el directorio *./servidor*, y que publicará los puertos de manera similar al argumento *-p* en *docker run*. Tener en cuenta  también que incluimos el *build* que estaría realizando lo mismo que el docker build -t .....
+-- servicio2: nodejswebserver, un web server basado en nodejs. Se repiten las ideas anteriores
+-- servicio3: nginx, un web server básico con nginx. Se repiten las ideas anteriores
 
 Para correr este ejemplo, se ejecuta la siguiente línea, desde el directorio raíz (*tutorial*):
 ```bash
-$ docker-compose up
+$ docker-compose -f docker-compose.yml up
+Starting docker-network-tutorial_javasocketserver_1 ... done
+Starting docker-network-tutorial_nodejswebserver_1  ... done
+Starting docker-network-tutorial_nginx_1            ... done
+Attaching to docker-network-tutorial_nginx_1, docker-network-tutorial_javasocketserver_1, docker-network-tutorial_nodejswebserver_1
+nginx_1             | /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+nginx_1             | /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+nginx_1             | /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+nginx_1             | 10-listen-on-ipv6-by-default.sh: error: IPv6 listen already enabled
+nginx_1             | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+nginx_1             | /docker-entrypoint.sh: Configuration complete; ready for start up
+nodejswebserver_1   | server is listening on 3000
+javasocketserver_1  | [Fri Sep 11 14:56:55 GMT 2020] INFO Servidor iniciado en puerto 4444
+
 ```
 Con esto, Docker Compose se encargará de:
 - Crear las imágenes
 - Correr los contenedores
 
-Luego, mostrará en la terminal la salida de ambos contenedores. Pero queda un asunto sin cerrar. ¿Cómo puede el cliente ver al servidor sin definir el host?
-En el Dockerfile del cliente se definió como argumento para host (en *CMD*) la palabra "server". Y eso es todo lo que se necesita para que dos contenedores se vean, que conozcan sus *nombres de servicio* declarados en *docker-compose.yml*. Así, el cliente se conecta a server:4444, Docker resuelve esa dirección y dirige los datos al servidor.
 Docker compose provee muchas herramientas avanzadas para hacer deploy y comunicar contenedores y servicios de todo tipo. Para más información dirigirse a la documentación de Docker Compose (https://docs.docker.com/compose/)
 
-## Sección 7 -- Conectarse por SSH a un contenedor y debug de arquitectura
-Otra actividad importante sobre la que trabajaremos brevemente en este tutorial inicial es la revisión "detallada" de un contenedor o de un conjunto de contenedores (estado de servicios, chequeos de configuración, puertos, entre otras cosas).  Para ello, además de los controles que se pueden realizar desde el HOST (Anfitrión) que aloja Docker, es posible conectarse a las instancias y analizar "internamente" que sucede. En ambientes con productos y servicios en ejecución no siempre es posible cambiar algo y relanzar el contenedor.  En ese caso también es una herramienta util.
-
-Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución linux.  Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, puede ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
-
-Para continuar trabajando con los archivos docker-compose, vamos a agregar a la red que construimos previamente un nodo básico de debian, de la siguiente manera.
-Archivo: docker-compose-ssh-debug.yml
-```yaml
-version: '3'
-services:
-  server:
-    build: ./servidor
-    ports:
-      - "4444:4444"
-  server2:
-    build: ./servidor
-    ports:
-      - "4443:4444"
-  nginx-webserver:
-    image: nginx:latest
-```
-
-A continuación, debemos ponerlo a correr.  De esta manera se levantarán dos servidores (nombre server y server2) y va a levantar una imagen de nginx básica a través del repositorio de Docker Hub (Imagen debian oficial) a la que nos vamos a conectar por BASH para revisar sus configuraciones y el entorno de estos servicios asociados
-```bash
-$ docker-compose -f docker-compose-ssh-debug.yml up
-Starting docker-network-tutorial_server_1          ... done
-Starting docker-network-tutorial_server2_1         ... done
-Creating docker-network-tutorial_nginx-webserver_1 ... done
-Attaching to docker-network-tutorial_server_1, docker-network-tutorial_server2_1, docker-network-tutorial_nginx-webserver_1
-server_1           | [Wed Apr 22 14:34:01 GMT 2020] INFO Servidor iniciado en puerto 4444
-server2_1          | [Wed Apr 22 14:34:01 GMT 2020] INFO Servidor iniciado en puerto 4444
-```
+Ahora vamos a analizar los contenedores desde dentro, avanzando con lo que ya habíamos probado anteriormente (estado de servicios, chequeos de configuración, puertos, entre otras cosas).  Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución linux. Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, puede ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
 
 En otra terminal o pestaña de terminal, sin parar los servicios que pusimos a correr previamente, vamos a revisar que los 3 contenedores estén corriendo correctamente a través del siguiente comando:
 ```bash
 $ docker container ps 
 CONTAINER ID        IMAGE                             COMMAND                  CREATED              STATUS              PORTS                    NAMES
-a8df97dd5cf1        nginx:latest                      "nginx -g 'daemon of…"   13 seconds ago       Up 12 seconds       80/tcp                   docker-network-tutorial_nginx-webserver_1
-ca55452b51e8        docker-network-tutorial_server2   "java Servidor 4444"     About a minute ago   Up 12 seconds       0.0.0.0:4443->4444/tcp   docker-network-tutorial_server2_1
-6875ccf07909        docker-network-tutorial_server    "java Servidor 4444"     About a minute ago   Up 12 seconds       0.0.0.0:4444->4444/tcp   docker-network-tutorial_server_1
+45475dd562f5        docker-network-tutorial_nodejswebserver    "docker-entrypoint.s…"   28 minutes ago      Up 32 seconds       0.0.0.0:8081->3000/tcp                           docker-network-tutorial_nodejswebserver_1
+4de42c909cf9        nginx:latest                               "/docker-entrypoint.…"   28 minutes ago      Up 32 seconds       0.0.0.0:8082->80/tcp                             docker-network-tutorial_nginx_1
+f937ac67d719        docker-network-tutorial_javasocketserver   "java Servidor 4444"     28 minutes ago      Up 32 seconds       0.0.0.0:8080->4444/tcp                           docker-network-tutorial_javasocketserver_1
+705fdd6615c5        portainer/portainer                        "/portainer"             3 hours ago         Up 3 hours          0.0.0.0:8000->8000/tcp, 0.0.0.0:9000->9000/tcp   portainer
+
 ```
 
 Vamos a analizar (inspeccionar) las propiedades de los contenedores (lo vamos a ver en uno pero aplicable al resto) para obtener información de red de los mismos. La información es muy detallada, solo voy a mostrar en el tutorial lo relevante para este apartado.  Para ello, vamos a ejecutar el siguiente comando.
 ```bash
-$ docker container inspect a8df97dd5cf1
+$ docker container inspect docker-network-tutorial_nginx_1
 [
     {
-        "Id": "a8df97dd5cf17564f4d2cc6c364f23bad0451cd18b2e2f424d45a51b84026648",
-        "Created": "2020-04-22T14:34:00.538018261Z",
+        "Id": "4de42c909cf959d33a51e45ee84f7eb0834cca2880513dbd4583a01f6a7e63e1",
+        "Created": "2020-09-11T14:29:12.410562933Z",
         "Path": "nginx",
 ...
     "State": {
             "Status": "running",
 ...
-    "Env": [
+    "Name": "/docker-network-tutorial_nginx_1",
+    "RestartCount": 0,
+...
+   "Env": [
                 "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-                "NGINX_VERSION=1.17.10",
-                "NJS_VERSION=0.3.9",
+                "NGINX_VERSION=1.19.1",
+                "NJS_VERSION=0.4.2",
                 "PKG_RELEASE=1~buster"
             ],
 ...
@@ -617,16 +609,22 @@ $ docker container inspect a8df97dd5cf1
        "docker-network-tutorial_default": {
 ...
         "Ports": {
-                "80/tcp": null
+                "80/tcp": [
+                    {
+                        "HostIp": "0.0.0.0",
+                        "HostPort": "8082"
+                    }
+                ]
             },
+
 ...
-      "Gateway": "172.18.0.1",
-      "IPAddress": "172.18.0.4",
-       "IPPrefixLen": 16,
+      "Gateway": "172.25.0.1",
+      "IPAddress": "172.25.0.3",
+      "IPPrefixLen": 16,
 ...
 ]
 ```
-Esto, entonces, me permite ver las propiedades más importantes (y detalladas) de nuestro contenedor.  Ahora sabemos que la dirección IP es 172.18.0.4, que la imagen corriendo es NGINX y está escuchando en el puerto 80.  También podemos determinar que esa dirección IP pertenece al a red "docker-network-tutorial_default".
+Esto, entonces, me permite ver las propiedades más importantes (y detalladas) de nuestro contenedor.  Ahora sabemos que la dirección IP es 172.25.0.3, que la imagen corriendo es NGINX y está escuchando en el puerto 80.  También podemos determinar que esa dirección IP pertenece al a red "docker-network-tutorial_default".
 Podemos completar esta información con lo que podemos obtener analizando la red a la que el contenedor pertenece a través del siguiente comando.
 
 ```bash
@@ -640,68 +638,67 @@ docker network inspect docker-network-tutorial_default
         "Driver": "bridge",
  ...
             "Config": [
-                {
-                    "Subnet": "172.18.0.0/16",
-                    "Gateway": "172.18.0.1"
+               {
+                    "Subnet": "172.25.0.0/16",
+                    "Gateway": "172.25.0.1"
                 }
             ]
         },
  ...
         "Containers": {
-            "6875ccf079096d899d83771cac971d32e17ec121383815495bbd3ee6be0d57f0": {
-                "Name": "docker-network-tutorial_server_1",
-                "EndpointID": "7240616da52f2eb7e7721795a10398260f305484ff43197dc98b2d358e7ab99b",
-                "MacAddress": "02:42:ac:12:00:02",
-                "IPv4Address": "172.18.0.2/16",
+            "45475dd562f52173ae59b479737b6417890d6f6c61ddf19e7aa8495eb74ef09d": {
+                "Name": "docker-network-tutorial_nodejswebserver_1",
+                "EndpointID": "496b498482b2ffcdef1a5899a07db1e68cb71e8466bab23040e5c76db5668f8a",
+                "MacAddress": "02:42:ac:19:00:04",
+                "IPv4Address": "172.25.0.4/16",
                 "IPv6Address": ""
             },
-            "a8df97dd5cf17564f4d2cc6c364f23bad0451cd18b2e2f424d45a51b84026648": {
-                "Name": "docker-network-tutorial_nginx-webserver_1",
-                "EndpointID": "4080b6f1deb91953681d6e7543aadd74e220b7a617a8a34da3635173d182c623",
-                "MacAddress": "02:42:ac:12:00:04",
-                "IPv4Address": "172.18.0.4/16",
+            "4de42c909cf959d33a51e45ee84f7eb0834cca2880513dbd4583a01f6a7e63e1": {
+                "Name": "docker-network-tutorial_nginx_1",
+                "EndpointID": "6d2822befb121cd1416b7e42d5f19634f454af12990ce96e6ebc7582b2a65630",
+                "MacAddress": "02:42:ac:19:00:03",
+                "IPv4Address": "172.25.0.3/16",
                 "IPv6Address": ""
             },
-            "ca55452b51e8d3c0b18b83cc68131a72789eb194fcf1d67f0927ef3e678b1a69": {
-                "Name": "docker-network-tutorial_server2_1",
-                "EndpointID": "5c48fa60c720555c1f559fa134171105f5f1d59b3acc0368cea70eeb340043f4",
-                "MacAddress": "02:42:ac:12:00:03",
-                "IPv4Address": "172.18.0.3/16",
+            "f937ac67d719adebfb2751b19e93378c5b302e4aedcebccb0f2a091e6fbeae18": {
+                "Name": "docker-network-tutorial_javasocketserver_1",
+                "EndpointID": "ef1cb455072400f9238332085496682864198307d15f5b3836fb1bbcb4314c45",
+                "MacAddress": "02:42:ac:19:00:02",
+                "IPv4Address": "172.25.0.2/16",
                 "IPv6Address": ""
             }
    ...
 ]
 ```
-De esta manera, ahora sabemos también las direcciones IP de los otros contenedores que están corriendo (los de nuestro docker-compose-ssh.yml)
+De esta manera, ahora sabemos también las direcciones IP de los otros contenedores que están corriendo (los de nuestro docker-compose.yml)
 
 Ahora, habiendo realizado las verficaciones necesarias, vamos a conectarnos a la consola de /bin/bash del contenedor de nginx (nginx-webserver) simulando un "SSH" al contenedor a través del siguiente comando para realizar algunas pruebas "desde adentro" de la red de los contenedores. 
 
 ```bash
-$ docker exec -it a8df97dd5cf1 /bin/bash
+$ docker exec -it docker-network-tutorial_nginx_1 /bin/bash
 root@a8df97dd5cf1:/# 
 ```
-
 
 * Bien, ahora la intención es validar si dentro de la red docker que estemos (esto depende de como se haya generado el docker-compose file) los contenedores se pueden ver por ejemplo a través de IP y nombre de DNS (y buscar de donde viene el nombre de DNS)
 ```bash
 root@a8df97dd5cf1:/# ping
 bash: ping: command not found
 ```
-Cómo podemos ver, los paquetes "necesarios" no están disponibles.  Para ello vamos a tener que instalarlos.  A continuación se definen un conjunto de herramientas que se consideran necesarias para revisar las tareas que queremos llevar a cabo. 
+Cómo podemos ver, los paquetes "necesarios" no están disponibles. Para ello vamos a tener que instalarlos. A continuación se definen un conjunto de herramientas que se consideran necesarias para revisar las tareas que queremos llevar a cabo. 
 ```bash
 root@a8df97dd5cf1:/# apt update -y; apt install iputils-ping -y; apt install net-tools -y; apt install telnet -y; apt install ssh-client -y; apt install netcat -y; apt install nmap -y
 ...
-update-alternatives: using /bin/nc.traditional to provide /bin/nc (nc) in auto mode
-update-alternatives: warning: skip creation of /usr/share/man/man1/nc.1.gz because associated file /usr/share/man/man1/nc.traditional.1.gz (of link group nc) doesn't exist
-update-alternatives: warning: skip creation of /usr/share/man/man1/netcat.1.gz because associated file /usr/share/man/man1/nc.traditional.1.gz (of link group nc) doesn't exist
-Setting up netcat (1.10-41.1) 
+update-alternatives: using /usr/lib/x86_64-linux-gnu/blas/libblas.so.3 to provide /usr/lib/x86_64-linux-gnu/libblas.so.3 (libblas.so.3-x86_64-linux-gnu) in auto mode
+Setting up liblinear3:amd64 (2.1.0+dfsg-4) ...
+Setting up nmap (7.70+dfsg1-6+deb10u1) ...
+Processing triggers for libc-bin (2.28-10) ...
 ...
 ```
 
 * Una vez descargado los paquetes, primero que nada voy a revisar mi dirección IP
 ```bash
 root@a8df97dd5cf1:/# ifconfig | grep 172.
-inet 172.18.0.4  netmask 255.255.0.0  broadcast 172.18.255.255
+inet 172.25.0.3  netmask 255.255.0.0  broadcast 172.25.255.255
 ```
 Lo que condice con la información que nos decia el container y la docker-network.
 
@@ -710,45 +707,48 @@ Lo que condice con la información que nos decia el container y la docker-networ
 root@a8df97dd5cf1:/# netstat -ant 
 Active Internet connections (servers and established)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State      
-tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN     
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN    
 tcp        0      0 127.0.0.11:40377        0.0.0.0:*               LISTEN     
 ```
 * A continuación vamos a intentar hacer ping a nuestros vecinos (por IP y por nombre de DNS), para ello utilizamos el paquete ping
 ```bash
-root@a8df97dd5cf1:/# ping 172.18.0.3
-PING 172.18.0.2 (172.18.0.3) 56(84) bytes of data.
-64 bytes from 172.18.0.3: icmp_seq=1 ttl=64 time=0.101 ms
-64 bytes from 172.18.0.3: icmp_seq=2 ttl=64 time=0.190 ms
+root@a8df97dd5cf1:/# ping 172.25.0.4
+PING 172.25.0.4 (172.25.0.4) 56(84) bytes of data.
+64 bytes from 172.25.0.4: icmp_seq=1 ttl=64 time=0.126 ms
+64 bytes from 172.25.0.4: icmp_seq=2 ttl=64 time=0.095 ms
 ...
-root@a8df97dd5cf1:/# ping server2        
-PING server2 (172.18.0.3) 56(84) bytes of data.
-64 bytes from docker-network-tutorial_server2_1.docker-network-tutorial_default (172.18.0.3): icmp_seq=1 ttl=64 time=0.094 ms
-64 bytes from docker-network-tutorial_server2_1.docker-network-tutorial_default (172.18.0.3): icmp_seq=2 ttl=64 time=0.317 ms
+root@a8df97dd5cf1:/# ping docker-network-tutorial_javasocketserver_1
+PING docker-network-tutorial_javasocketserver_1 (172.25.0.2) 56(84) bytes of data.
+64 bytes from docker-network-tutorial_javasocketserver_1.docker-network-tutorial_default (172.25.0.2): icmp_seq=1 ttl=64 time=0.208 ms
+64 bytes from docker-network-tutorial_javasocketserver_1.docker-network-tutorial_default (172.25.0.2): icmp_seq=2 ttl=64 time=0.099 ms
+64 bytes from docker-network-tutorial_javasocketserver_1.docker-network-tutorial_default (172.25.0.2): icmp_seq=3 ttl=64 time=0.099 ms
+
 ...
 ```
 * También vamos a investigar que puertos tiene abierto un determinado nodo de la red (Ya que no tenemos habilitadas reglas de seguridad en los nodos)
 ```bash
-root@a8df97dd5cf1:/# nmap server2
-Starting Nmap 7.70 ( https://nmap.org ) at 2020-04-22 22:32 UTC
-Nmap scan report for server2 (172.18.0.4)
-Host is up (0.000034s latency).
-rDNS record for 172.18.0.4: docker-network-tutorial_server2_1.docker-network-tutorial_default
+root@a8df97dd5cf1:/# nmap  docker-network-tutorial_javasocketserver_1
+Starting Nmap 7.70 ( https://nmap.org ) at 2020-09-11 15:09 UTC
+Nmap scan report for docker-network-tutorial_javasocketserver_1 (172.25.0.2)
+Host is up (0.000017s latency).
+rDNS record for 172.25.0.2: docker-network-tutorial_javasocketserver_1.docker-network-tutorial_default
 Not shown: 999 closed ports
 PORT     STATE SERVICE
 4444/tcp open  krb524
-MAC Address: 02:42:AC:12:00:04 (Unknown)
+MAC Address: 02:42:AC:19:00:02 (Unknown)
 
-Nmap done: 1 IP address (1 host up) scanned in 1.65 seconds
+Nmap done: 1 IP address (1 host up) scanned in 1.70 seconds
 ```
 * Vamos a validar que podemos acceder a la información del servidor de hora que se encuentra escuchando en el 4444 en alguno de los servidores
 
 ```bash
-root@a8df97dd5cf1:/# nc server2 4444
+root@a8df97dd5cf1:/# nc javasocketserver 4444
 Bienvenido al servidor de fecha y hora
-Wed Apr 22 22:37:52 GMT 2020
+Fri Sep 11 15:10:38 GMT 2020
 ```
 
 Finalmente parar los servicios definidos para finalizar con esta parte del tutorial (consola que tiene el docker-compose up). 
-Ahora, tomar un descanso y estar listos para [la segunda parte del tutorial](https://github.com/dpetrocelli/sdypp2020/tree/master/TPS/No%20obligatorios/docker-network-tutorial-p2)
+
+Hay mucho más por ver... No nos va a dar el tiempo, pero se lo dejo para que puedan seguir investigando.. Listos para [la segunda parte del tutorial](https://github.com/dpetrocelli/sdypp2020/tree/master/TPS/No%20obligatorios/docker-network-tutorial-p2)
 
 Gracias!

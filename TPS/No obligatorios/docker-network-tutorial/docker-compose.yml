@@ -1,8 +1,15 @@
 version: '3'
 services:
-  server:
-    build: ./servidor
-    ports:
-      - "4444:4444"
-  client:
-    build: ./cliente
+    javasocketserver:
+        build: ./servidor
+        ports:
+            - "8080:4444"
+    nodejswebserver:
+        build: ./nodejs
+        ports:
+            - "8081:3000"
+    nginx:
+        image: nginx:latest
+        ports:
+            - "8082:80"
+          
