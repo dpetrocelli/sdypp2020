@@ -146,6 +146,10 @@ dpetrocelli/dev-restserver2   latest              e14811d92414        5 weeks ag
 dpetrocelli/dev-restserver2   <none>              cb874034535f        5 weeks ago         534MB
 .....
 ```
+Cómo borrar las imágenes (inclusive cuando docker image prune no funciona). A través de un comando combinado como hicimos con los contenedores
+```bash
+$ docker image rm $(docker image ls -q)
+```
 
 # Sección 3 -- Creando el contenedor
 Una vez creada la imagen, esta se debe instanciar en un contenedor para poder correr la aplicación. Para crear el contenedor se utiliza el comando *docker run*
@@ -498,8 +502,45 @@ CONTAINER ID        IMAGE                 COMMAND             CREATED           
 ```
 <a href="http://localhost:9000" target="_blank">Vamos a jugar en el navegador!</a> 
 
+Luego de tomar las primeras impresiones con Portainer viene un caso para integrar lo que aprendimos y la información gráfica que nos puede mostrar portainer respecto de los contenedores.
 
-# Sección 6 -- Redes Básicas -- Docker compose
+Para ello vamos a armar una imagen Dockerizada de FFMPEG (herramienta de "transcoding de video") la cual va a descargar un video de la web, la va a colocar en el volumen compartido definido (input) y luego va a "recodificarla" en perfiles más pequeños, los cuales los va a colocar también en dicho almacenamiento (output). Esto podría pensarse como el proceso que hace youtube o vimeo con un video en diversas calidades y que los usuarios puedan ajustar la calidad según las capacidades del equipo y el ancho de banda disponible. 
+
+Esto también nos va a permitir ver como esto se ve reflejado en las gráficas en tiempo real de Portainer.
+
+Bien, a jugar!! ¿Por donde arrancamos? Por la imagen de Docker (que lo vamos a describir en un Dockerfile) que parta de alguna imagen reducida (por ejemplo minideb de Bitnami), y vamos a necesitar agregarle mínimamente dos paquetes: FFmpeg y WGET (podría ser curl también). Con esas herramientas vamos a proceder a:
+* Descargar video de la url con WGET y guardarlo en el input correspondiente
+* Ejecutar ffmpeg con un conjunto de parámetros definidos para transcodificar el video (2 definiciones en este caso) y definir un output de salida.
+Etnocnes, todo eso lo haremos "automático" desde el Dockerfile. Comencemos definiendo:
+* Video fuente: https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4
+* Imagen base debian: bitnami/minideb:latest --> https://hub.docker.com/r/bitnami/minideb
+Este Dockerfile está en la carpeta /cpu/
+```dockerfile
+FROM bitnami/minideb:latest
+WORKDIR /usr/src/app
+RUN apt update -y
+RUN apt install ffmpeg -y
+RUN apt install wget -y
+RUN wget -O /tmp/video.mp4 "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4"
+RUN echo "ffmpeg -y -i /tmp/video.mp4 -s 320x180 -aspect 16:9 -c:v libx264 -g 50 -b:v 220k -profile:v baseline -level 3.0 -r 15 -preset ultrafast -threads 0 -c:a aac -strict experimental -b:a 64k -ar 44100 -ac 2 /tmp/perfil_bajo.mp4" > script.sh
+RUN echo "ffmpeg -y -i /tmp/video.mp4 -s 1920x1080 -aspect 16:9 -c:v libx264 -g 50 -b:v 22220k -profile:v high -level 5.0 -r 60 -preset slower -threads 0 -c:a aac -strict experimental -b:a 512k -ar 48000 -ac 6 /tmp/perfil_alto.mp4 & " >> script.sh
+RUN echo "ffmpeg -y -i /tmp/video.mp4 -s 1920x1080 -aspect 16:9 -c:v libx264 -g 50 -b:v 22220k -profile:v high -level 5.0 -r 60 -preset slower -threads 0 -c:a aac -strict experimental -b:a 512k -ar 48000 -ac 6 /tmp/perfil_alto_v2.mp4" >> script.sh
+RUN echo "sleep 30" >> script.sh
+CMD ["bash", "/usr/src/app/script.sh"]
+```
+Ahora debemos construir, parados en la carpeta /cpu/, la imagen sobre la base del Dockerfile a través del siguiente comando:
+```bash
+$ docker build . -t miconversor:latest
+....
+ ---> d9e44d17ce55
+Successfully built d9e44d17ce55
+Successfully tagged miconversor:latest
+```
+Ahora vamos a poner a correr esa imagen recientemente creada instanciando un contenedor. Si queremos que los resultados sean accesibles desde el HOST, debemos adjuntarle un volumen, por ejemplo creando uno con el nombre de "my-vol".  Para ello usaremos el siguiente comando:
+```bash
+$ docker run --name conversor -v my-vol:/tmp -t miconversor:latest
+```
+# Sección 6 -- Docker compose y manejo básico de contenedores -- 
 Docker Compose es una herramienta que permite simplificar el uso de Docker. A partir de archivos YAML es mas sencillo crear contendores, conectarlos, habilitar puertos, volumenes, etc. Aquí resumimos algunos tips.
 
 * Con Compose puedes crear diferentes contenedores y al mismo tiempo, en cada contenedor, diferentes servicios, unirlos a un volúmen común, iniciarlos y apagarlos, etc. Es un componente fundamental para poder construir aplicaciones y microservicios.
