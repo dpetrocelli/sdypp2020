@@ -258,8 +258,11 @@ Ahora vamos a volver a correr nuestro contenedor, pero agregando al mismo el vol
 ```bash
 $ docker run --name tutorial-red-servidor -v servidor-log:/usr/src/app -p 4444:4444 tutorial-red-servidor:latest
 ```
-En el comando *-v* se especifica nombre del volumen:ruta al directorio que se va a persistir. En este caso, y como está definido en el Dockerfile, se persiste el directorio raíz de la aplicación. En este caso, como no existía el volúmen Docker se encargará de crearlo.
-
+En el comando *-v* se especifica **nombre del volumen:ruta en el contenedor**. En este caso, y como está definido en el Dockerfile, se persiste el directorio raíz de la aplicación. Cómo no existía el nombre del volúmen Docker se encargará de crearlo.
+Además, en otra pestaña le hacemos algunas peticiones
+```bash
+$ nc localhost 4444 & nc localhost 4444
+```
 Si ahora se accede al directorio definido en *Mountpoint*, se podrá leer el archivo de log. En otra terminal o pestaña, accedemos al log con alguna de las siguientes dos opciones
 ```bash
 $sudo tail -f /var/lib/docker/volumes/servidor-log/_data/info.log 
@@ -271,7 +274,8 @@ $sudo less +F /var/lib/docker/volumes/servidor-log/_data/info.log
 [Thu Sep 10 16:59:15 GMT 2020] INFO Cliente conectado /172.17.0.1:44822
 .....
 ```
-Perfecto... Ahora vamos a comprobar que pasa cuando "matamos" el contenedor actual. Para ello vamos a cortar el proceso del contenedor con CTRL+C. Y ahora vamos a revisar que no aparezca corriendo
+Perfecto... Ahora vamos a comprobar que pasa cuando "matamos" el contenedor actual. Para ello vamos a cortar el proceso del contenedor con CTRL+C. 
+Ahora revisemos que no aparezca en estado RUNNING 
 ```bash
 $docker container ps
 ```
@@ -285,21 +289,21 @@ Y más tarde lo eliminamos
 ```bash
 $docker container rm 2b69cf17a259
 ```
-Cómo podemos ver, el volumen sigue creado y el "tail -F" sigue "escuchando" por nuevas escrituras.
+Cómo podemos ver, el volumen sigue creado y el "tail -f" sigue "escuchando" por nuevas escrituras.
 Ahora si volvemos a crear el contenedor en cuestión, montamos el mismo volumen, debería seguir escribiendo en él.
 
 ```bash
 $ docker run --name tutorial-red-servidor-nuevocontainer -v servidor-log:/usr/src/app -p 4444:4444 tutorial-red-servidor:latest
 ```
-En el terminal del "tail -F" podemos ver que se actualizó la información
+En el terminal del "tail -f" podemos ver que se actualizó la información
 ```bash
 [Thu Sep 10 17:21:04 GMT 2020] INFO Servidor iniciado en puerto 4444
 [Thu Sep 10 17:21:08 GMT 2020] INFO Cliente conectado /172.17.0.1:45034
 [Thu Sep 10 17:21:13 GMT 2020] INFO Cliente conectado /172.17.0.1:45038
 ```
-Próxima pregunta, ¿Y si pongo más de un contenedor que escribe en el mismo "log"? Vamos a probar agregando un segundo contendor. Abrimos otra pestaña o terminal y agregamos un nuevo contenedor con la misma imagen. A tener en cuenta:
+Próxima pregunta, ¿Y si pongo más de un contenedor que escribe en el mismo "log"? Vamos a probar agregando un segundo contendor. Abrimos otra pestaña o terminal y agregamos un nuevo contenedor con la misma imagen. Aspectos a tener en cuenta:
 * Hay que poner otro nombre porque obviamente no pueden existir dos contenedores con la misma denominación
-* Hay que cambiar el puerto de bind del Host anfitrión. Recuerden que todas las comunicaciónes en redes están sobre TCP/IP y solo podemos asignar un proceso a un puerto.  Esto significa que si yo estoy escuchando en un localhost:4444 no puedo poner un segundo servicio en ese puerto. ¿Solución? Simple, ponerlo a escuchar en otro puerto de host (no toco nada del contenedor). ¿Cómo? A través del flag -p 4443:4444.
+* Hay que cambiar el puerto de bind del Host anfitrión. Recuerden que todas las comunicaciónes en redes están sobre TCP/IP y solo podemos asignar un proceso a un puerto (IP:PUERTO). Esto significa que si yo estoy escuchando en un localhost:4444 no puedo poner un segundo servicio en ese puerto. ¿Solución? Simple, ponerlo a escuchar en otro puerto de host (no toco nada del contenedor). ¿Cómo? A través del flag -p 4443:4444.
 ```bash
 $ docker run --name tutorial-red-servidor-nuevovecino -v servidor-log:/usr/src/app -p 4443:4444 tutorial-red-servidor:latest
 ```
@@ -311,7 +315,7 @@ CONTAINER ID        IMAGE                          COMMAND                CREATE
 763e5a987063        tutorial-red-servidor:latest   "java Servidor 4444"   8 minutes ago       Up 8 minutes        0.0.0.0:4444->4444/tcp   tutorial-red-servidor-nuevocontainer
 ```
 
-Bien ahora podemos probar "pegarle" a través de:
+Una vez realizado, podemos probar "pegarle" a los servidores través de:
 ```bash
 $ nc localhost 4444
 ```
@@ -330,8 +334,8 @@ Verificando que ambos responden registran en el mismo archivo de log.
 [Thu Sep 10 17:28:38 GMT 2020] INFO Servidor iniciado en puerto 4444
 ....
 ```
-¿Y si quiero el volumen en el host?
-Manteniendo el "tail -F", en otra pestaña intentemos acceder a la "carpeta" del directorio del volúmen. Sin ser root sucede que:
+¿Y si quiero manipular el volumen en el host?
+Manteniendo el "tail -f", en otra pestaña intentemos acceder a la "carpeta" del directorio del volúmen. Sin ser root sucede que:
 ```bash
 $ cd /var/lib/docker/volumes/servidor-log/
 bash: cd: /var/lib/docker/volumes/servidor-log/: Permission denied
@@ -343,11 +347,12 @@ En cambio si entramos como root:
 # ls
 info.log  Servidor.class  Servidor.java
 ```
-Pudimos verificar que encontramos el archivo de log. De hecho vamos a agregarle contenido y ver que esto se escribe correctamente y que el "tail -F" lo recibe.
+Pudimos verificar que encontramos el archivo de log. De hecho vamos a agregarle contenido y ver que esto se escribe correctamente y que el "tail -f" lo recibe.
 ```bash
 echo "desde el host anfitrion" >> info.log 
 ```
-Bien, vimos varias cosas respecto de los volúmenes y los contenedores... Pero no vimos nada desde "dentro" de un contenedor. Por lo tanto, vamos a conectarnos a uno de nuestros servidores y ver que pasa con nuestro volumen
+Bien, vimos varias cosas respecto de los volúmenes y los contenedores... Pero no vimos nada desde "dentro" de un contenedor. Por lo tanto, vamos a conectarnos a uno de nuestros servidores y ver que pasa ahí con nuestro volumen.
+
 Primero, vamos a conectarnos a la consola bash (/bin/bash) del contenedor. Esto sería como hacer un "SSH" al mismo.
 ```bash
 $ docker container ps
@@ -366,7 +371,7 @@ Para más información acerca de la ejecución de comandos dentro de la consola,
 Entonces, Una vez dentro, podemos realizar diversos comandos básicos para ver el estado y los paquetes instalados en dicha distribución.
 Recuerden que siempre se va a tratar de instalar la menor cantidad posible de paquetes para:
 a) No incrementar el tamaño del contenedor
-b) Al instalar un paquete en un contenedor corriendo (en base a una imagen) los cambios solo quedarán reflejados en este contenedor, no en la imagen base.  Por lo tanto si despliego una nuevo contenedor basado en la imagen fuente, los contenedores no serán iguales.
+b) Al instalar un paquete en un contenedor corriendo (en base a una imagen) los cambios solo quedarán reflejados en este contenedor, no en la imagen base.  Por lo tanto, si despliego un nuevo contenedor basado en la imagen fuente, los contenedores no serán iguales.
 c) No habilitar herramientas innecesarias que pueden dañar el resto de la red de contenedores (Imágenes root, SSH client, etc)
 
 * Podemos verificar que es un linux por su estructura de directorio
@@ -377,7 +382,7 @@ bin   dev  home  lib64	mnt  proc  run	 srv  tmp  var
 boot  etc  lib	 media	opt  root  sbin  sys  usr
 ```
 
-* Vamos a comenzar por averiguar el sistema y versión de nuestro sistema operativo.
+* Vamos a comenzar por averiguar la versión de nuestro sistema operativo.
 ```bash
 root@a8df97dd5cf1:/# cat /etc/os-release
 NAME="Oracle Linux Server"
@@ -399,7 +404,7 @@ ORACLE_SUPPORT_PRODUCT="Oracle Linux"
 ORACLE_SUPPORT_PRODUCT_VERSION=7.8
 ```
 
-* Somos root en el contenedor... Entonces podemos hacer de todo... Vamos a instalar un paquete solo a modo de ejemplo. En este caso es un centos, así que su manejador de paquetes es YUM.
+* Somos root en el contenedor... Entonces podemos hacer lo que queramos ... Vamos a instalar un paquete solo a modo de ejemplo. En este caso es un centos, así que su manejador de paquetes es YUM.
 ```bash
 # yum update -y ; yum install net-tools -y
 ...
@@ -416,7 +421,7 @@ eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
 ....
 ```
-* Bien, volvamos al tema del volumen. Nosotros definimos cuando armamos el Dockerfile para la imagen del servidor que el WORKDIR iba a ser /usr/src/app. Entonces, si hacemos un pwd (comando linux para saber en que directorio estamos parados en este momento) debería corroborarlo.  Además, si hacemos un ls, nos encontraríamos con los archivos que pasamos con COPY a nuestro contenedor.
+* Bien, volvamos al tema del volumen. Nosotros definimos cuando armamos el Dockerfile para la imagen del servidor que el WORKDIR iba a ser /usr/src/app. Entonces, si hacemos un pwd (comando linux para saber en que directorio estamos parados en este momento) deberíamos poder corroborarlo. Además, si hacemos un ls, nos encontraríamos con los archivos que pasamos con COPY a nuestro contenedor.
 ```bash
 # pwd
 /usr/src/app
@@ -425,7 +430,7 @@ info.log  Servidor.class  Servidor.java
 ```
 Ahora repitamos el proceso que hicimos por fuera para validar que el archivo de log compartido se actualiza.
 ```bash
-# tail -F info.log
+# tail -f info.log
 .....
 [Thu Sep 10 17:21:13 GMT 2020] INFO Cliente conectado /172.17.0.1:45038
 [Thu Sep 10 17:28:38 GMT 2020] INFO Servidor iniciado en puerto 4444
@@ -434,7 +439,7 @@ desde el host anfitrion
 ```
 
 # Sección 5 -- ¿Y si administramos Docker con una GUI? --
-Existen varias alternativas a la hora de buscar administrar gráficamente Docker.  Podemos mencionar las siguientes como principales:
+Existen varias alternativas a la hora de buscar administrar gráficamente Docker. Podemos mencionar las siguientes como principales:
 - [Portainer](https://www.portainer.io/)
 - [Rancher](https://rancher.com/)
 - [Kitematic](https://kitematic.com/)
