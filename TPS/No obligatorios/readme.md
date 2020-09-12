@@ -61,8 +61,10 @@ $ docker pull alpine:latest
 $ docker image ls | grep alpine
 REPOSITORY                           TAG                 IMAGE ID            CREATED             SIZE
 alpine                               latest              a24bb4013296        3 months ago        5.57MB
+$ docker pull bitnami/minideb:latest
 $ docker image ls | grep minideb
 bitnami/minideb                      latest              c107d20226a0        5 weeks ago         67.5MB
+$ docker pull openjdk:latest
 $ docker image ls | grep openjdk
 openjdk                              latest              1f87519703e6        30 hours ago        519MB
 ```
