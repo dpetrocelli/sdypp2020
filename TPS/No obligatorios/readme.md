@@ -1,9 +1,8 @@
 # Taller Docker 
-Docker es un proyecto de código abierto que permite desplegar aplicaciones dentro de contenedores de software de forma automatizada. Un contenedor es un proceso o conjunto de procesos que se ejecutan de forma aislada al resto del sistema, lo que permite que el contenedor tenga sus propias versiones de aplicaciones y librerias. Esto supone grandes ventajas tanto a desarrolladores, testers y administradores de sistemas, que solo tienen que preocuparse de tener un contenedor configurado y ejecutarlo.
+Docker es un proyecto de código abierto que permite desplegar aplicaciones dentro de contenedores de software de forma automatizada. Un contenedor es un proceso o conjunto de procesos que se ejecutan de forma aislada al resto del sistema, lo que permite que el contenedor tenga sus propias versiones de aplicaciones y librerias. Esto supone grandes ventajas para desarrolladores, testers y administradores de sistemas, que solo tienen que preocuparse de tener un contenedor configurado y ejecutarlo.
 
-En este taller se explicarán los conceptos básicos de Docker y se trabajará con actividades prácticas de laboratorio guiadas para implementar y trabajar con contenedores.
-Para ello, trabaj
-que se realizarán a lo largo de la jornada en tres fases:
+En este taller se explicarán los conceptos básicos de Docker y se trabajará con actividades prácticas de laboratorio guiadas para implementar contenedores.
+La jornada se dividirá en tres fases:
 
 * **Primer parte**: Presentación "teórica" de conceptos básicos de Docker. En este apartado veremos:
     -  Conceptos básicos
@@ -21,8 +20,8 @@ que se realizarán a lo largo de la jornada en tres fases:
 
 * **Segunda parte**: Un tutorial y ejercitación básica para aprender los aspectos más relevantes de la herramienta Docker (contenedores) y cómo desarrollar aplicaciones utilizando esta arquitectura. A su vez, lograr conectar contenedores a través de una red Docker.
 
-* **Tercera parte (*)** : Un tutorial avanzado de Docker donde se integran sus capacidades para el desarrollo de aplicaciones distribuidas, buscando definir capacidades de balanceo de carga, redundancia y tolerancia a fallas. Para ello se trabaja en profundidad con la integración de volúmenes para persistir datos, balanceadores de carga para repartir carga, creación de clústeres de servicios, entre otros.
-(*) Esta parte del taller no se realizará en esta clase, podrán realizarlo con el paso a paso que está detallado en el tutorial.
+* **Tercera parte (*)** : Un tutorial avanzado de Docker donde se integran sus capacidades para el desarrollo de aplicaciones distribuidas, buscando definir capacidades de balanceo de carga, redundancia y tolerancia a fallas. Para ello se trabaja en profundidad con la integración de volúmenes para persistir datos, balanceadores de carga, creación de clústeres de servicios, entre otros.
+(*) Esta parte del taller no se realizará en esta clase. Podrán realizarlo con el paso a paso que está detallado en el tutorial.
 
 # Pre requisitos
 ## 1. Distribución Linux
