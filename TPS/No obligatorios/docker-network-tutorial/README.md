@@ -195,7 +195,7 @@ Al usar volúmenes en contenedores que escriben información en disco (en la car
 Podemos montar varios volúmenes en un contenedor y en varios contenedores podemos montar un mismo volumen.
 
 ¿Qué tipos de volúmenes hay entonces?
-<p align="left"> <img src="https://www.returngis.net/wp-content/uploads/2019/02/types-of-mounts-volume.png" width="350"/> </p> 
+<p align="left"> <img src="https://www.returngis.net/wp-content/uploads/2019/02/types-of-mounts-volume.png" width="500"/> </p> 
 
 **Existen tres tipos de almacenamiento:**
 
@@ -476,20 +476,20 @@ donde del : tenemos
 También Portainer define un "volúmen" particular como se detalle a continuación, que nos va a permitir entender un poco más la teoría:
 
 -v /var/run/docker.sock:/var/run/docker.sock
-<p align="left"> <img src="https://solidgeargroup.com/wp-content/uploads/2018/10/Screen-Shot-2018-10-02-at-18.34.53.png" width="350"/></p> 
+<p align="left"> <img src="https://solidgeargroup.com/wp-content/uploads/2018/10/Screen-Shot-2018-10-02-at-18.34.53.png" width="500"/></p> 
 Pero la pregunta es ¿Qué es este "archivo" y por qué a veces lo utilizan los contenedores? 
 
 Respuesta corta: es el socket Unix en el que Docker está "escuchando" en el equipo HOST y se encarga de comunicarse con el demonio Docker de forma predeterminada. Entonces el Docker cli llama a la API de docker vía "ese canal". En resumen Docker CLI --> API Docker (escuchando en Unix Socket) --> dockerd (Docker daemon)
 Recordar que para poder ejecutar "algo" en docker se requieren permisos de root o pertenencia a un grupo de Docker. (por eso agregamos nuestro usuario al grupo de Docker)
 En el caso de "enlazarlo" a un contenedor, lo que estamos haciendo es permitir que el container pueda comunicarse con el demonio desde "dentro" ("hacer un puente") . ¿Entonces en Portainer para que lo queremos? Usando la GUI Portainer, las solicitudes HTTP que realice el usuario se envían al demonio de Docker a través de docker.sock "montado". Es decir Portainer WEB GUI --> API Docker --> dockerd (Docker daemon)
 
-<p align="left"> <img src="https://www.arquitectoit.com/images/dockers/docker-engine-components.png" width="350"/> <img src="https://docs.docker.com/engine/images/architecture.svg" width="350"/> </p> 
+<p align="left"> <img src="https://www.arquitectoit.com/images/dockers/docker-engine-components.png" width="500"/> <img src="https://docs.docker.com/engine/images/architecture.svg" width="500"/> </p> 
 
 Nota de color: ¿Y si quiero permitir la administración remota? --> Se puede habilitar un socket TCP
 
 El demonio de Docker puede escuchar las solicitudes de la API de Docker Engine a través de tres tipos diferentes de Socket: unix, tcp y fd.
 Si necesita acceder al demonio de Docker de forma remota, se debe habilitar **tcp Socket**. Tenga en cuenta que la configuración predeterminada proporciona acceso directo no cifrado y no autenticado al demonio de Docker, y debe protegerse mediante el socket cifrado HTTPS integrado o colocando un proxy web seguro frente a él. Puede escuchar en el puerto 2375 en todas las interfaces de red con -H tcp: //0.0.0.0: 2375, o en una interfaz de red particular usando su dirección IP: -H tcp: //192.168.59.103:2375. Es convencional usar el puerto 2375 para comunicaciones no cifradas y el puerto 2376 para comunicaciones cifradas con el demonio.
-<p align="left"> <img src="https://i.imgur.com/2JAlqZf.png" width="350"/></p> 
+<p align="left"> <img src="https://i.imgur.com/2JAlqZf.png" width="500"/></p> 
 
 Bien, basta de cháchara.. Levantemos Portainer GUI
 ```bash
