@@ -500,7 +500,7 @@ $ docker container ps
 CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                                            NAMES
 705fdd6615c5        portainer/portainer   "/portainer"        4 seconds ago       Up 3 seconds        0.0.0.0:8000->8000/tcp, 0.0.0.0:9000->9000/tcp   portainer
 ```
-<a href="http://localhost:9000" target="_blank">Vamos a jugar en el navegador!</a> 
+<a href="http://localhost:9000" target="_blank">Vamos a jugar en el navegador!</a>
 
 Luego de tomar las primeras impresiones con Portainer viene un caso para integrar lo que aprendimos y la información gráfica que nos puede mostrar portainer respecto de los contenedores.
 

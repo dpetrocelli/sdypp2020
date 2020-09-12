@@ -7,12 +7,12 @@ import java.util.Date;
 
 /**
  * Servidor TCP simple. Cuando un cliente se conecta,
- * le envía la fecha y hora actual,
- * luego cierra la conexión.
+ * le envia la fecha y hora actual,
+ * luego cierra la conexion.
  */
 public class Servidor {
 	public static void Log(String string, String logfile) {
-		// Añadir fecha y hora
+		// Aniadir fecha y hora
 		String logString = "[" + new Date().toString() + "] INFO " + string;
 		// Output por consola
 		System.out.println(logString);
@@ -27,7 +27,7 @@ public class Servidor {
 	
     public static void main(String[] args) {
 
-    	// Recibir el puerto por parámetro
+    	// Recibir el puerto por parametro
 		String nombre = System.getenv("nombre");
 		String logfile = System.getenv("logName");
 		int port = Integer.parseInt(System.getenv("port"));

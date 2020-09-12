@@ -44,7 +44,7 @@ sudo usermod -aG docker $USER
 ```
 * Verificar la instalación con el siguiente comando. (A veces el SO no toma el agregado del usuario al grupo de Docker hasta que no se cierre sesión o se reinicie) 
 ```bash
-docker run hello-world
+$ docker run hello-world
 ...
 Unable to find image 'hello-world:latest' locally
 latest: Pulling from library/hello-world
@@ -56,7 +56,16 @@ Hello from Docker!
 This message shows that your installation appears to be working correctly.
 ....
 ```
-
+```bash
+$ docker pull alpine:latest
+$ docker image ls | grep alpine
+REPOSITORY                           TAG                 IMAGE ID            CREATED             SIZE
+alpine                               latest              a24bb4013296        3 months ago        5.57MB
+$ docker image ls | grep minideb
+bitnami/minideb                      latest              c107d20226a0        5 weeks ago         67.5MB
+$ docker image ls | grep openjdk
+openjdk                              latest              1f87519703e6        30 hours ago        519MB
+```
 ## 3. Instalar Docker Compose
 Seguir las instrucciones de instalación en https://docs.docker.com/compose/install/
 ```bash

@@ -1,4 +1,5 @@
 # Tutorial parte 2 -- Escalar servicios en Docker con Docker compose
+
 ## Sección 1 -- Introducción
 
 Bienvenidos a la segunda parte del tutorial de Docker network. Este tutorial te guiará en:
@@ -173,14 +174,14 @@ $ cat /tmp/javadir/logfile2.log
 Para balancear carga entre los servicios de Java se va a proceder a instalar un balanceador de carga en el Host (equipo). Para ello se va a instalar HaProxy a través de la línea de comandos y los repositorios APT.
 
 ```bash
-$ sudo apt update ; sudo apt install haproxy
+$ sudo apt update -y ; sudo apt install haproxy -y ; sudo apt install vim -y ; sudo apt install parallel -y
 ```
 
 * Una vez instalado se va a proceder a configurar el balanceador en base a la arquitectura definida.  Como archivo de configuración en sistema Linux se encuentra dentro del directorio etc.  En este caso en el archivo se encuentra en /etc/haproxy/haproxy.cfg
 
 - Primero, realizar un bkp del archivo original
 ```bash
-$ cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy_old.cfg
+$ sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy_old.cfg
 ```
 - Segundo, agregar al final del contenido del archivo la siguiente información
 ```bash
@@ -188,7 +189,7 @@ $ vim /etc/haproxy/haproxy.cfg
 ...
 listen backend-server
     #Peticiones que lleguen a 8080
-    bind 0.0.0.0:8080
+    bind 0.0.0.0:9500
     mode tcp
     #Lo balanceo con mismo peso (RoundRobin)
     balance roundrobin
@@ -221,12 +222,12 @@ Donde debe dar algo similar a lo siguiente
 ```bash
 Active: active (running) since Mon 2020-04-13 22:07:10 -03; 1s ago
 ```
-- Quinto, iniciar el sitio de administración (http://localhost:8181) y validar que estén los nodos en verde funcionando.
+- Quinto, iniciar el sitio de administración (http://localhost:8181) y validar que estén los nodos en verde funcionando. <a href="http://localhost:8181" target="_blank">Vamos a ver la GUI!</a>
 
 - Sexto, realizar pruebas de peticiones y validar que la carga se va repartiendo entre los nodos (a la configuración del bind del haproxy)
 
 ```bash
-$ telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080 & telnet localhost 8080
+$ seq 10 | parallel -n0 --jobs 10 "nc localhost 9500"
 ```
 - Finalmente, luego de validar las funciones, parar los servicios.
 ```bash
@@ -936,276 +937,3 @@ listen stats
     stats auth admin:admin
     stats refresh 5s
 ```
-### FALTA HACER LAS PRUEBAS DE CAIDA DE LOS NODOS DE RABBITMQ 
-
-## Sección 7 -- "Armar" un cluster de RabbitMQ + Cluster de HAProxy + KeepAlived
-Para construir un cluster se requeriría tener una red con la que se puedan obtener más de una IP y no solo la local (Por ejemplo con Docker Swarm o Kubernetes).  Para solventar este apartado vamos a intentar crear un balanceador en cluster redundante pero dentro de la docker network que creamos previamente y lo haremos redundante y tolerante a fallos dentro de dicha red. Este apartado hará un repaso intenso de todos los conceptos visto en el curso por lo que se requiere especial atención en cada uno de los puntos.  El consumo del cluster de RabbitMQ y de los webservers Java será a través de clientes dentro de la docker network. 
-
-### 7.1 - Cluster RabbitMQ 
-Para construir el cluster de rabbitMQ vamos a setearle (en base a lo que hicimos en todos los pasos anteriores) IP fija.
-Archivo cluster_rabbitmq/docker-compose-cluster-rabbitmq.yml
-
-```yaml
-version: '3'
-services:
-  stats:
-    image: bitnami/rabbitmq
-    environment:
-      - RABBITMQ_NODE_TYPE=stats
-      - RABBITMQ_NODE_NAME=rabbit@stats
-      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
-    ports:
-      - 15672:15672
-      - 5672:5672
-      - 4369:4369
-    networks:
-      default:
-        ipv4_address: 172.30.0.30
-    volumes:
-      - '/tmp/rabbit/stats/:/bitnami'
-  node1:
-    image: bitnami/rabbitmq
-    environment:
-      - RABBITMQ_NODE_TYPE=queue-disc
-      - RABBITMQ_NODE_NAME=rabbit@node1
-      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
-      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
-    ports:
-      - 5673:5672
-      - 4370:4369
-    networks:
-      default:
-        ipv4_address: 172.30.0.31
-    volumes:
-      - '/tmp/rabbit/node1:/bitnami'
-  node2:
-    image: bitnami/rabbitmq
-    environment:
-      - RABBITMQ_NODE_TYPE=queue-disc
-      - RABBITMQ_NODE_NAME=rabbit@node2
-      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
-      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
-    ports:
-      - 5674:5672
-      - 4371:4369
-    networks:
-      default:
-        ipv4_address: 172.30.0.32
-    volumes:
-      - '/tmp/rabbit/node2:/bitnami'   
-networks:
-  default:
-    external:
-      name: network-bridge-from-console
-```
-
-
-### 7.2 -- Crear la imagen docker de haproxy adaptada a nuestra necesidad (configuración de haproxy.cfg)
-* Definir el archivo haproxy.cfg
-Archivo: imagenpersonalizada/haproxy.cfg
-
-```bash
-global
-    maxconn 4096
-    daemon
-
-defaults
-    log     global
-    mode    http
-    
-    timeout connect 5000
-    timeout client  50000
-    timeout server  50000
-    
-listen rabbitmq_service5672
-	#todo lo que venga a 5672
-	bind 0.0.0.0:5672
-	mode tcp
-		#Lo balanceo con mismo peso (RoundRobin)
-	balance roundrobin
-		#Evitar desconexiones de los CLI se configura timeout client/server 3h
-	timeout client 3h
-	timeout server 3h
-		#Configuracion clitcpka -> enviarse paquetes de Heartbeat (Cliente) y no se pierda conexion
-	option clitcpka
-
-	server stats 172.30.0.30:5672 check inter 5s rise 2 fall 3
-	server rabbit1 172.30.0.31:5672 check inter 5s rise 2 fall 3
-	server rabbit2 172.30.0.32:5672 check inter 5s rise 2 fall 3
-
-listen rabbitmq_service4369
-	#todo lo que venga a 5672
-	bind 0.0.0.0:4369
-	mode tcp
-		#Lo balanceo con mismo peso (RoundRobin)
-	balance roundrobin
-		#Evitar desconexiones de los CLI se configura timeout client/server 3h
-	timeout client 3h
-	timeout server 3h
-		#Configuracion clitcpka -> enviarse paquetes de Heartbeat (Cliente) y no se pierda conexion
-	option clitcpka
-
-	server stats 172.30.0.30:4369 check inter 5s rise 2 fall 3
-	server rabbit1 172.30.0.31:4369 check inter 5s rise 2 fall 3
-	server rabbit2 172.30.0.32:4369 check inter 5s rise 2 fall 3
-
-listen rabbitmq_management
-	#todo lo que venga a 15672
-    bind 0.0.0.0:15672
-    mode http
-	#Lo balanceo con mismo peso (RoundRobin)
-    balance roundrobin
-    server stats 172.30.0.30:15672 check fall 3 rise 2
-
-listen stats
-	#Interfaz de administracion
-    bind 0.0.0.0:8181
-    stats enable
-    stats uri /
-    stats realm Haproxy\ Statistics
-    stats auth admin:admin
-    stats refresh 5s
-```
-* Definimos el archivo Dockerfile para crear la imagen personalizada
-```yaml
-FROM haproxy:latest
-COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
-```
-* Construimos la imagen 
-```bash
-$ docker build . -t haproxy-personalized
-```
-
-* ahora definimos nuestro yaml del docker-compose para el servicio haproxy
-Arcjivo: docker-compose-haproxy.yml
-```yaml
-version: '3'
-services:
-  haproxy1:
-    image: haproxy-personalized
-    networks:
-      default:
-        ipv4_address: 172.30.0.40
-networks:
-  default:
-    external:
-      name: network-bridge-from-console
-```
-
-* Corremos el docker-compose
-$ docker-compose -f docker-compose-haproxy.yml up
-la imagen adaptada ALTA HACER LAS PRUEBAS DE CAIDA DE LOS NODOS DE RABBITMQ 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Luego de instalar hay que configurar el producto (con diferentes configuraciones en los equipos debido a uno se configurará como Maestro y otro como Esclavo.
-
-
-interface: donde indicamos la tarjeta de red de nuestro servidor.
-state: le decimos cual va a ser el MASTER y cual el BACKUP.
-priority: daremos más prioridad al servidor maestro de tal forma que en caso de que los dos servidores HAProxy estén iniciados tomará toda la carga de conexiones.
-virtual_router_id: identificador numérico que tiene que ser igual en los dos servidores.
-auth_pass: especifica la contraseña utilizada para autenticar los servidores en la sincronización de failover.
-virtual_ipaddress: será la dirección IP virtual que compartirán lo dos servidores y a la que tienen que realizar las peticiones los clientes.
-
-```
-docker run -d --net network-bridge-from-console --ip 172.30.0.40 --name haproxy1 haproxy-david
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```bash
-$ cat /etc/network/interfaces
-
-# The loopback network interface
-auto lo
-iface lo inet loopback
-
-```
-- Ahora vamos a crear una interfaz vinculada a nuestra placa de red (wifi en mi caso).  Para averiguar cual es la activa ejecutamos:
-
-```bash
-$ ifconfig 
-....
-
-wlp5s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-inet 192.168.0.25  netmask 255.255.255.0  broadcast 192.168.0.255
-.....
-También lo pueden hacer con ip addr list
-
-```
-- Sabiendo el nombre del adaptador, ahora vamos a crear el adaptador virtual relacionado con esa placa
-
-```bash
-auto wlp5s0:0
-iface wlp5s0:0 inet static
-        address 192.168.0.101
-        netmask 255.255.255.0
-```
-- Guardar cambios y reiniciar configuración de la placa
-
-```bash
-$ systemctl restart networking
-```
-- Verificar que disponemos de la placa virtual asociada a nuestra NIC
-```bash
-$ ifconfig 
-....
-wlp1s0:0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.0.110  netmask 255.255.255.0  broadcast 192.168.0.255
-        ether 40:f0:2f:fd:e6:ac  txqueuelen 1000  (Ethernet)
-....
-
-```
-
-* Luego de instalar KeepAlived hay que configurar el producto (con diferentes configuraciones en los equipos debido a uno se configurará como Maestro y otro como Esclavo)
-
-* interface: donde indicamos la tarjeta de red de nuestro servidor.
-* state: le decimos cual va a ser el MASTER y cual el BACKUP.
-* priority: daremos más prioridad al servidor maestro de tal forma que en caso de que los dos servidores HAProxy estén iniciados tomará toda la carga de conexiones.
-* virtual_router_id: identificador numérico que tiene que ser igual en los dos servidores.
-* auth_pass: especifica la contraseña utilizada para autenticar los servidores en la sincronización de failover.
-* virtual_ipaddress: será la dirección IP virtual que compartirán lo dos servidores y a la que tienen que realizar las peticiones los clientes.
-
