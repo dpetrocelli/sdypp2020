@@ -172,7 +172,7 @@ $ cat /tmp/javadir/logfile2.log
 
 ## Sección 4 -- Balancear carga entre instancias de servicios con HaProxy (Desde el HOST)
 Para balancear carga entre los servicios de Java se va a proceder a instalar un balanceador de carga en el Host (equipo). Para ello se va a instalar HaProxy a través de la línea de comandos y los repositorios APT.
-
+También vamos a instalar vim para poder pegar el contenido que "definimos" para el archivo de configuración de HAPROXY. Finalmente parallel la utilizaremos para hacer múltiples peticiones concurrentes hacia los Sockets servers.
 ```bash
 $ sudo apt update -y ; sudo apt install haproxy -y ; sudo apt install vim -y ; sudo apt install parallel -y
 ```
