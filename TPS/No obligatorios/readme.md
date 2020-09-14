@@ -83,10 +83,13 @@ docker-compose --version
 docker-compose version 1.27.0, build xxxxxx
 ....
 ```
-## 4.  Conocimientos previos
+## 4.  Instalar un editor de texto/código
+Puede ser cualquiera que le guste, pero en mi caso voy a trabajar con Visual Studio Code. Se los recomiendo. <a href="https://code.visualstudio.com/download" target="_blank"> Site de descarga !</a>
+
+## 5.  Conocimientos previos
 Es importante que antes de realizar el laboratorio de docker, los alumnos se internalicen en el uso del sistema operativo Linux y esencialmente el manejo de la consola del mismo, así como también aspectos de redes, comunicación y enfoques de programación distribuida.  Se recomienda tener claro los conceptos de TCP/IP, binding de puertos y repasar los comandos y servicios básicos para la administración de una plataforma linux.   
  
-## Comenzar con el Taller Docker
+## 6. Comenzar con el Taller Docker
 Para comenzar con el taller, vamos a navegar hacia [docker-network-tutorial](https://github.com/dpetrocelli/sdypp2020/tree/master/TPS/No%20obligatorios/docker-network-tutorial)
 
 

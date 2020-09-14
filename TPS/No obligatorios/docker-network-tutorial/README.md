@@ -182,12 +182,12 @@ $ docker start tutorial-red-servidor -a
 La opción *-a* de *attach* mostrará la salida estándar y de error en la terminal donde se ejecutó (recordar usar *docker ps --all* para ver todos los contenedores).
 
 # Sección 4 -- Añadiendo persistencia a través de los Volúmenes
-Hasta ahora solamente se tiene acceso a la salida estándar (y errores) de la aplicación montada en el contenedor. Sin embargo, la clase Servidor JAVA también genera un archivo de log en el directorio donde se ejecuta la aplicación. ¿Dónde? Si se acuerdan, se definió cuando creamos la imagen Dockerfile que el "WORKDIR" de trabajo iba a ser */usr/src/app*. Entonces, el archivo de log va a quedar en */usr/src/app/info.log*. 
+Hasta ahora solamente se tiene acceso a la salida estándar (y errores) de la aplicación montada en el contenedor. Sin embargo, la clase Servidor JAVA también genera un archivo de log en el directorio donde se ejecuta la aplicación. ¿Dónde? Recordemos que se definió cuando creamos la imagen Dockerfile que el "WORKDIR" de trabajo iba a ser */usr/src/app*. Entonces, el archivo de log va a quedar en */usr/src/app/info.log*. 
 Ahora... Muy lindo el log en el contenedor, pero.... ¿No surgen algunas preguntas como....?
 * ¿Cómo se puede acceder a este directorio desde fuera del contenedor? 
-* ¿Que pasa con la información cuando un contenedor es borrado o si sufre un reinicio? 
+* ¿Qué pasa con la información cuando un contenedor es borrado o si sufre un reinicio? 
 * ¿Cómo puedo compartir un directorio para varios contenedores?
-* ¿Cómo veo los archivos desde dentro de un contenedor?.
+* ¿Cómo veo los archivos desde dentro de un contenedor?
 
 Todas las preguntas, en principio, se contestan a partir de la misma respuesta, el uso de volúmenes.
 Un volumen es un directorio o un fichero en el host (Administrado por el usuario del SO) o un volumen de Docker (Administrado por Docker) que se monta directamente en el contenedor. 
@@ -201,17 +201,17 @@ Podemos montar varios volúmenes en un contenedor y en varios contenedores podem
 
 * volumes: 
     -  Docker almacena los datos dentro de un área que él controla del sistema de ficheros del equipo HOST. 
-    -  Es el mecanismo preferido para persistir los datos a día de hoy (según Docker). Los volúmenes se almacenarán en */var/lib/docker/volumes/* y **solo Docker tiene permisos** sobre esta ubicación (solo con un usario ROOT se puede entrar y revisar que tiene).
+    -  Es el mecanismo recomendado según Docker. Los volúmenes se almacenarán en */var/lib/docker/volumes/* y **solo Docker tiene permisos** sobre esta ubicación (solo con un usuario ROOT se puede entrar y revisar que tiene).
     -  Un volumen puede ser montado por diferentes contenedores a la vez.
     -  La administración se realiza "completamente" mediante los comandos vía Docker CLI o Docker API.
     -  Hay que definirle un nombre descriptivo, para poder "localizarlo" amigablemente o hacer un backup
-    -  Tienen funcionalidades extra que bind mount (el próximo a ver) no tiene. Por ejemplo, drivers que te "permiten" almacenar los volúmenes en sitios remotos o cifrarlos.
+    -  Tienen funcionalidades extra que bind mount (el próximo tipo de almacenamiento a ver) no tiene. Por ejemplo, drivers que te "permiten" almacenar los volúmenes en sitios remotos o cifrarlos.
 
 * bind mounts: 
     -  Se utiliza para mapear cualquier sitio del sistema de ficheros dentro de tu contenedor. 
     -  A diferencia de los volúmenes, a través de este mecanismo es posible acceder a la ruta mapeada y modificar los ficheros (sin tantos permisos). Por lo tanto los cambios que realice en el HOST serán reflejados en el contenedor/es y viceversa
     -  Históricamente esta era la única opción que existía en las primeras fases de Docker. 
-    -  Estamos más limitados al host, a su sistema de ficheros, y a que con volumes puedes utilizar drivers para almacenar en remoto
+    -  Estamos más limitados al host, a su sistema de ficheros, y a que con volumes podemos utilizar drivers para almacenar en remoto
     
 * tmpfs: Se trata de un almacenamiento temporal en memoria. Se suele utilizar para el almacenamiento de configuraciones y espacios efímeros que desparecerán cada vez que el contenedor se pare (No aplica a lo que buscamos)
 
@@ -305,7 +305,7 @@ En el terminal del "tail -f" podemos ver que se actualizó la información
 [Thu Sep 10 17:21:08 GMT 2020] INFO Cliente conectado /172.17.0.1:45034
 [Thu Sep 10 17:21:13 GMT 2020] INFO Cliente conectado /172.17.0.1:45038
 ```
-Próxima pregunta, ¿Y si pongo más de un contenedor que escribe en el mismo "log"? Vamos a probar agregando un segundo contendor. Abrimos otra pestaña o terminal y agregamos un nuevo contenedor con la misma imagen. Aspectos a tener en cuenta:
+Próxima pregunta, ¿Y si pongo más de un contenedor que escribe en el mismo "log"? Vamos a probar agregando un segundo contendor. Abrimos otra pestaña o terminal y agregamos un nuevo contenedor con la misma imagen. Aspectos para tener en cuenta:
 * Hay que poner otro nombre porque obviamente no pueden existir dos contenedores con la misma denominación
 * Hay que cambiar el puerto de bind del Host anfitrión. Recuerden que todas las comunicaciónes en redes están sobre TCP/IP y solo podemos asignar un proceso a un puerto (IP:PUERTO). Esto significa que si yo estoy escuchando en un localhost:4444 no puedo poner un segundo servicio en ese puerto. ¿Solución? Simple, ponerlo a escuchar en otro puerto de host (no toco nada del contenedor). ¿Cómo? A través del flag -p 4443:4444.
 ```bash
@@ -344,7 +344,7 @@ Manteniendo el "tail -f", en otra pestaña intentemos acceder a la "carpeta" del
 $ cd /var/lib/docker/volumes/servidor-log/
 bash: cd: /var/lib/docker/volumes/servidor-log/: Permission denied
 ```
-En cambio si entramos como root:
+En cambio, si entramos como root:
 ```bash
 # cd /var/lib/docker/volumes/servidor-log/
 # cd _data
@@ -378,7 +378,7 @@ a) No incrementar el tamaño del contenedor
 b) Al instalar un paquete en un contenedor corriendo (en base a una imagen) los cambios solo quedarán reflejados en este contenedor, no en la imagen base.  Por lo tanto, si despliego un nuevo contenedor basado en la imagen fuente, los contenedores no serán iguales.
 c) No habilitar herramientas innecesarias que pueden dañar el resto de la red de contenedores (Imágenes root, SSH client, etc)
 
-* Podemos verificar que es un linux por su estructura de directorio
+* Podemos verificar que es un Linux por su estructura de directorio
 ```bash
 bash-4.2# cd /
 bash-4.2# ls
@@ -408,7 +408,7 @@ ORACLE_SUPPORT_PRODUCT="Oracle Linux"
 ORACLE_SUPPORT_PRODUCT_VERSION=7.8
 ```
 
-* Somos root en el contenedor... Entonces podemos hacer lo que queramos ... Vamos a instalar un paquete solo a modo de ejemplo. En este caso es un centos, así que su manejador de paquetes es YUM.
+* Somos root en el contenedor... Entonces podemos hacer lo que queramos ... Vamos a instalar un paquete solo a modo de ejemplo. En este caso es un CentOS, así que su manejador de paquetes es YUM.
 ```bash
 # yum update -y ; yum install net-tools -y
 ...
@@ -425,7 +425,7 @@ eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
 ....
 ```
-* Bien, volvamos al tema del volumen. Nosotros definimos cuando armamos el Dockerfile para la imagen del servidor que el WORKDIR iba a ser /usr/src/app. Entonces, si hacemos un pwd (comando linux para saber en que directorio estamos parados en este momento) deberíamos poder corroborarlo. Además, si hacemos un ls, nos encontraríamos con los archivos que pasamos con COPY a nuestro contenedor.
+* Bien, volvamos al tema del volumen. Nosotros definimos cuando armamos el Dockerfile para la imagen del servidor que el WORKDIR iba a ser /usr/src/app. Entonces, si hacemos un pwd (comando Linux para saber en qué directorio estamos parados en este momento) deberíamos poder corroborarlo. Además, si hacemos un ls, nos encontraremos con los archivos que pasamos con COPY a nuestro contenedor.
 ```bash
 # pwd
 /usr/src/app
@@ -454,11 +454,11 @@ En nuestro caso vamos a utilizar Portainer, ya que es simple de integrar y confi
 Portainer se puede instalar como contenedor o como herramienta independiente en el SO.
 En este tutorial, instalaremos Portainer como un contenedor Docker :)
 
-Antes de "instalarlo", descarguemos la imagen de Portainer desde DockerHub usando el comando docker pull.
+Antes de "instalarlo", descarguemos la imagen de Portainer desde DockerHub usando el comando **docker pull**.
 ```bash
 $ docker pull portainer/portainer:latest
 ```
-Luego tenemos que configurar algunos parámetros de "entorno" que permiten que la herramienta mantenga las configuraciones que definamos de manera persistente.
+Luego tenemos que configurar algunos parámetros de "entorno" que permiten que la herramienta mantenga las configuraciones que definimos de manera persistente.
 
 *--p* Puertos de escucha: Portainer ahora requiere que dos puertos tcp estén expuestos; 9000 y 8000. El 9000 ha sido históricamente el puerto desde el que servimos la interfaz de usuario. El puerto 8000 es un servidor de túnel SSH y se utiliza para crear un túnel seguro entre el agente y la instancia de Portainer (podríamos obviarlo inclusive).
 
@@ -466,10 +466,10 @@ Luego tenemos que configurar algunos parámetros de "entorno" que permiten que l
 
 *--restart* Política de gestión cuando el contenedor sufra un reinicio en el HOST anfitrión. En este caso le definimos "always" para que siempre, independientemente de la razón o problema sobre el contenedor, se levante el contendor.
 
-*--v* Volúmenes: Es un muy buen caso para aplicar lo que aprendimos recientemente de "volúmenes". Sin un volumen, cómo dijimos, la información del contenedor se perderá cuando se reinicie (por error o por deseo) y se perderán todos los datos y configuraciones almacenadas dentro del mismo. En este caso, perderemos las configuraciones hacia los HOSTS Docker y otros detalles. ¿Queremos eso? No, entonces debemos persistir esos datos en "algún lado" fuera del contenedor para "sobrevivir" al ciclo de vida del contenedor en cuestión. 
+*--v* Volúmenes: Es un muy buen caso para aplicar lo que aprendimos recientemente sobre "volumes". Sin un volumen, cómo dijimos, la información del contenedor se perderá cuando se reinicie (por error o por voluntad) y se perderán todos los datos y configuraciones almacenadas dentro del mismo. En este caso, perderemos las configuraciones hacia los HOSTS Docker y otros detalles. ¿Queremos eso? No, entonces debemos persistir esos datos en "algún lado" fuera del contenedor para "sobrevivir" al ciclo de vida del contenedor en cuestión. 
 En este caso, vamos a usar el otro caso posible con los volúmenes docker (bind mount). Vamos a utilizar un folder del host directamente para "montar" dentro del Portainer Container, cómo se detalla a continuación:
 -v /path/on/host/data:/data portainer/portainer
-donde del : tenemos
+</br>donde el ":" significa:
 - hacia la izquierda el folder en nuestro host y
 - hacia la derecha donde se va a montar el directorio del host dentro del contenedor 
 
@@ -479,9 +479,9 @@ También Portainer define un "volúmen" particular como se detalle a continuaci�
 <p align="left"> <img src="https://solidgeargroup.com/wp-content/uploads/2018/10/Screen-Shot-2018-10-02-at-18.34.53.png" width="500"/></p> 
 Pero la pregunta es ¿Qué es este "archivo" y por qué a veces lo utilizan los contenedores? 
 
-Respuesta corta: es el socket Unix en el que Docker está "escuchando" en el equipo HOST y se encarga de comunicarse con el demonio Docker de forma predeterminada. Entonces el Docker cli llama a la API de docker vía "ese canal". En resumen Docker CLI --> API Docker (escuchando en Unix Socket) --> dockerd (Docker daemon)
+Respuesta corta: es el socket Unix en el que Docker está "escuchando" en el equipo HOST y se encarga de comunicarse con el demonio Docker de forma predeterminada. Entonces el Docker cli llama a la API de docker vía "ese canal". En resumen, Docker CLI --> API Docker (escuchando en Unix Socket) --> dockerd (Docker daemon)
 Recordar que para poder ejecutar "algo" en docker se requieren permisos de root o pertenencia a un grupo de Docker. (por eso agregamos nuestro usuario al grupo de Docker)
-En el caso de "enlazarlo" a un contenedor, lo que estamos haciendo es permitir que el container pueda comunicarse con el demonio desde "dentro" ("hacer un puente") . ¿Entonces en Portainer para que lo queremos? Usando la GUI Portainer, las solicitudes HTTP que realice el usuario se envían al demonio de Docker a través de docker.sock "montado". Es decir Portainer WEB GUI --> API Docker --> dockerd (Docker daemon)
+En el caso de "enlazarlo" a un contenedor, lo que estamos haciendo es permitir que el container pueda comunicarse con el demonio desde "dentro" ("hacer un puente"). Entonces, en Portainer ¿Para que lo queremos? Usando la GUI Portainer, las solicitudes HTTP que realice el usuario se envían al demonio de Docker a través de docker.sock "montado". Es decir Portainer WEB GUI --> API Docker --> dockerd (Docker daemon)
 
 <p align="left"> <img src="https://www.arquitectoit.com/images/dockers/docker-engine-components.png" width="500"/> <img src="https://docs.docker.com/engine/images/architecture.svg" width="500"/> </p> 
 
@@ -504,11 +504,11 @@ CONTAINER ID        IMAGE                 COMMAND             CREATED           
 
 Luego de tomar las primeras impresiones con Portainer viene un caso para integrar lo que aprendimos y la información gráfica que nos puede mostrar portainer respecto de los contenedores.
 
-Para ello vamos a armar una imagen Dockerizada de FFMPEG (herramienta de "transcoding de video") la cual va a descargar un video de la web, la va a colocar en el volumen compartido definido (input) y luego va a "recodificarla" en perfiles más pequeños, los cuales los va a colocar también en dicho almacenamiento (output). Esto podría pensarse como el proceso que hace youtube o vimeo con un video en diversas calidades y que los usuarios puedan ajustar la calidad según las capacidades del equipo y el ancho de banda disponible. 
+Para ello vamos a armar una imagen Dockerizada de FFMPEG (herramienta de "transcoding de video") la cual va a descargar un video de la web, la va a colocar en el volumen compartido definido (input), y luego va a "recodificarla" en perfiles más pequeños, los cuales va a colocar también en dicho almacenamiento (output). Esto podría pensarse como el proceso que hace youtube o vimeo con un video en diversas calidades y que los usuarios puedan ajustar la calidad según las capacidades del equipo y el ancho de banda disponible. 
 
-Esto también nos va a permitir ver como esto se ve reflejado en las gráficas en tiempo real de Portainer.
+Esto también nos va a permitir ver como se ve reflejado en las gráficas en tiempo real de Portainer.
 
-Bien, a jugar!! ¿Por donde arrancamos? Por la imagen de Docker (que lo vamos a describir en un Dockerfile) que parta de alguna imagen reducida (por ejemplo minideb de Bitnami), y vamos a necesitar agregarle mínimamente dos paquetes: FFmpeg y WGET (podría ser curl también). Con esas herramientas vamos a proceder a:
+Bien, a jugar!! ¿Por donde arrancamos? Por la imagen de Docker (que lo vamos a describir en un Dockerfile) que parta de alguna imagen reducida (por ejemplo, minideb de Bitnami), y vamos a necesitar agregarle mínimamente dos paquetes: FFmpeg y WGET (podría ser curl también). Con esas herramientas vamos a proceder a:
 * Descargar video de la url con WGET y guardarlo en el input correspondiente
 * Ejecutar ffmpeg con un conjunto de parámetros definidos para transcodificar el video (2 definiciones en este caso) y definir un output de salida.
 Etnocnes, todo eso lo haremos "automático" desde el Dockerfile. Comencemos definiendo:
@@ -536,16 +536,16 @@ $ docker build . -t miconversor:latest
 Successfully built d9e44d17ce55
 Successfully tagged miconversor:latest
 ```
-Ahora vamos a poner a correr esa imagen recientemente creada instanciando un contenedor. Si queremos que los resultados sean accesibles desde el HOST, debemos adjuntarle un volumen, por ejemplo creando uno con el nombre de "my-vol".  Para ello usaremos el siguiente comando:
+Hecho esto, vamos a poner a correr esa imagen recientemente creada instanciando un contenedor. Si queremos que los resultados sean accesibles desde el HOST, debemos adjuntarle un volumen, por ejemplo, creando uno con el nombre de "my-vol".  Para ello usaremos el siguiente comando:
 ```bash
 $ docker run --name conversor -v my-vol:/tmp -t miconversor:latest
 ```
 # Sección 6 -- Docker compose y manejo básico de contenedores -- 
-Docker Compose es una herramienta que permite simplificar el uso de Docker. A partir de archivos YAML es mas sencillo crear contendores, conectarlos, habilitar puertos, volumenes, etc. Aquí resumimos algunos tips.
+Docker Compose es una herramienta que permite simplificar el uso de Docker. A partir de archivos YAML es más sencillo crear contendores, conectarlos, habilitar puertos, volumenes, etc. Aquí resumimos algunos tips.
 
-* Con Compose puedes crear diferentes contenedores y al mismo tiempo, en cada contenedor, diferentes servicios, unirlos a un volúmen común, iniciarlos y apagarlos, etc. Es un componente fundamental para poder construir aplicaciones y microservicios.
+* Con Compose podés crear diferentes contenedores y al mismo tiempo, en cada contenedor, diferentes servicios, unirlos a un volumen común, iniciarlos y apagarlos, etc. Es un componente fundamental para poder construir aplicaciones y microservicios.
 
-* En vez de utilizar Docker via una serie inmemorizable de comandos bash y scripts, Docker Compose te permite mediante archivos YAML para poder instruir al Docker Engine a realizar tareas, programaticamente. Y esta es la clave, la facilidad para dar una serie de instrucciones, y luego repetirlas en diferentes ambientes.
+* En vez de utilizar Docker vía una serie imposible de recordar de comandos bash y scripts; Docker Compose te permite mediante archivos YAML para poder instruir al Docker Engine a realizar tareas, programáticamente. Y esta es la clave; la facilidad para dar una serie de instrucciones, y luego repetirlas en diferentes ambientes.
 
 * Se requiere de un archivo *docker-compose.yml* en la raíz del proyecto (en nuestro caso, *tutorial*), que contenga la configuración de los *servicios* que requiere la aplicación. Con esto, basta un solo comando para crear y correr todos los servicios/contenedores definidos.
 La estructura de directorios entonces queda:
@@ -580,9 +580,9 @@ services:
 Aquí se declaran
 - *version*: la versión del formato de configuración (generalmente 3, la última)
 - *services*: los servicios que requiere nuestra aplicación. 
--- servicio1: javasocketserver, el que ya habíamos usado, que se construirá con la imagen generada por el directorio *./servidor*, y que publicará los puertos de manera similar al argumento *-p* en *docker run*. Tener en cuenta  también que incluimos el *build* que estaría realizando lo mismo que el docker build -t .....
--- servicio2: nodejswebserver, un web server basado en nodejs. Se repiten las ideas anteriores
--- servicio3: nginx, un web server básico con nginx. Se repiten las ideas anteriores
+-- servicio1: javasocketserver, que ya habíamos usado, se construirá con la imagen generada por el directorio *./servidor*, y que publicará los puertos de manera similar al argumento *-p* en *docker run*. Tener en cuenta  también que incluimos el *build* que estaría realizando lo mismo que el docker build -t .....
+-- servicio2: nodejswebserver, un web server basado en nodejs. 
+-- servicio3: nginx, un web server básico con nginx. 
 
 Para correr este ejemplo, se ejecuta la siguiente línea, desde el directorio raíz (*tutorial*):
 ```bash
@@ -605,9 +605,9 @@ Con esto, Docker Compose se encargará de:
 - Crear las imágenes
 - Correr los contenedores
 
-Docker compose provee muchas herramientas avanzadas para hacer deploy y comunicar contenedores y servicios de todo tipo. Para más información dirigirse a la documentación de Docker Compose (https://docs.docker.com/compose/)
+Docker Compose provee muchas herramientas avanzadas para hacer deploy y comunicar contenedores y servicios de todo tipo. Para más información dirigirse a la documentación de Docker Compose (https://docs.docker.com/compose/)
 
-Ahora vamos a analizar los contenedores desde dentro, avanzando con lo que ya habíamos probado anteriormente (estado de servicios, chequeos de configuración, puertos, entre otras cosas).  Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución linux. Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, puede ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
+Ahora vamos a analizar los contenedores desde dentro, avanzando con lo que ya habíamos probado anteriormente (estado de servicios, chequeos de configuración, puertos, entre otras cosas).  Como punto de partida, entonces, necesitamos acceder a la consola BASH del contenedor y a partir de ahí comenzar a realizar las tareas de administración tradicionales que se pueden realizar sobre una distribución Linux. Tener en cuenta que las imágenes Docker tienden a ser mucho más pequeñas que una imagen completa de Debian ; Ubuntu o similares.  Por dicho motivo, puede ser requisito instalar la mayoría de los paquetes que se vayan a utilizar para la revisión de los servicios.
 
 En otra terminal o pestaña de terminal, sin parar los servicios que pusimos a correr previamente, vamos a revisar que los 3 contenedores estén corriendo correctamente a través del siguiente comando:
 ```bash
@@ -620,7 +620,7 @@ f937ac67d719        docker-network-tutorial_javasocketserver   "java Servidor 44
 
 ```
 
-Vamos a analizar (inspeccionar) las propiedades de los contenedores (lo vamos a ver en uno pero aplicable al resto) para obtener información de red de los mismos. La información es muy detallada, solo voy a mostrar en el tutorial lo relevante para este apartado.  Para ello, vamos a ejecutar el siguiente comando.
+Vamos a analizar (inspeccionar) las propiedades de los contenedores (lo vamos a ver en uno, pero es aplicable al resto) para obtener información de red de los mismos. La inspección es muy detallada, solo voy a mostrar en el tutorial lo relevante para este apartado.  Para ello, vamos a ejecutar el siguiente comando.
 ```bash
 $ docker container inspect docker-network-tutorial_nginx_1
 [
@@ -665,8 +665,8 @@ $ docker container inspect docker-network-tutorial_nginx_1
 ...
 ]
 ```
-Esto, entonces, me permite ver las propiedades más importantes (y detalladas) de nuestro contenedor.  Ahora sabemos que la dirección IP es 172.25.0.3, que la imagen corriendo es NGINX y está escuchando en el puerto 80.  También podemos determinar que esa dirección IP pertenece al a red "docker-network-tutorial_default".
-Podemos completar esta información con lo que podemos obtener analizando la red a la que el contenedor pertenece a través del siguiente comando.
+Esto, entonces, me permite ver las propiedades más importantes (en detalle) de nuestro contenedor.  Ahora sabemos que la dirección IP es 172.25.0.3, que la imagen corriendo es NGINX y que está escuchando en el puerto 80.  También podemos determinar que esa dirección IP pertenece al a red "docker-network-tutorial_default".
+Podemos completar estos datos con lo que podemos obtener analizando la red a la que el contenedor pertenece a través del siguiente comando.
 
 ```bash
 $ docker network inspect docker-network-tutorial_default
@@ -711,16 +711,16 @@ docker network inspect docker-network-tutorial_default
    ...
 ]
 ```
-De esta manera, ahora sabemos también las direcciones IP de los otros contenedores que están corriendo (los de nuestro docker-compose.yml)
+De esta manera, sabemos también las direcciones IP de los otros contenedores que están corriendo (los de nuestro docker-compose.yml)
 
-Ahora, habiendo realizado las verficaciones necesarias, vamos a conectarnos a la consola de /bin/bash del contenedor de nginx (nginx-webserver) simulando un "SSH" al contenedor a través del siguiente comando para realizar algunas pruebas "desde adentro" de la red de los contenedores. 
+Habiendo ya realizado las verificaciones necesarias, vamos a conectarnos a la consola de /bin/bash del contenedor de nginx (nginx-webserver) simulando un "SSH" al contenedor para realizar algunas pruebas "desde adentro" de la red de los contenedores, a través del siguiente comando:
 
 ```bash
 $ docker exec -it docker-network-tutorial_nginx_1 /bin/bash
 root@a8df97dd5cf1:/# 
 ```
 
-* Bien, ahora la intención es validar si dentro de la red docker que estemos (esto depende de como se haya generado el docker-compose file) los contenedores se pueden ver por ejemplo a través de IP y nombre de DNS (y buscar de donde viene el nombre de DNS)
+* Bien, ahora la intención es validar si dentro de la red docker que estamos (esto depende de cómo se haya generado el docker-compose file) los contenedores se pueden ver por ejemplo a través de IP y nombre de DNS (y buscar de donde viene el nombre de DNS)
 ```bash
 root@a8df97dd5cf1:/# ping
 bash: ping: command not found
@@ -741,7 +741,7 @@ Processing triggers for libc-bin (2.28-10) ...
 root@a8df97dd5cf1:/# ifconfig | grep 172.
 inet 172.25.0.3  netmask 255.255.0.0  broadcast 172.25.255.255
 ```
-Lo que condice con la información que nos decia el container y la docker-network.
+Lo que condice con la información que nos decía el container y la docker-network.
 
 * También voy a revisar que se cumple lo que dice el docker container ps (PORTS tcp/80). Para ello ejecutamos lo siguiente
 ```bash
@@ -766,7 +766,7 @@ PING docker-network-tutorial_javasocketserver_1 (172.25.0.2) 56(84) bytes of dat
 
 ...
 ```
-* También vamos a investigar que puertos tiene abierto un determinado nodo de la red (Ya que no tenemos habilitadas reglas de seguridad en los nodos)
+* También vamos a investigar que puertos tiene abiertos un determinado nodo de la red (ya que no tenemos habilitadas reglas de seguridad en los nodos)
 ```bash
 root@a8df97dd5cf1:/# nmap  docker-network-tutorial_javasocketserver_1
 Starting Nmap 7.70 ( https://nmap.org ) at 2020-09-11 15:09 UTC
@@ -788,8 +788,8 @@ Bienvenido al servidor de fecha y hora
 Fri Sep 11 15:10:38 GMT 2020
 ```
 
-Finalmente parar los servicios definidos para finalizar con esta parte del tutorial (consola que tiene el docker-compose up). 
+* Finalmente parar los servicios definidos para finalizar con esta parte del tutorial (consola que tiene el docker-compose up). 
 
-Hay mucho más por ver... No nos va a dar el tiempo, pero se lo dejo para que puedan seguir investigando.. Listos para [la segunda parte del tutorial](https://github.com/dpetrocelli/sdypp2020/tree/master/TPS/No%20obligatorios/docker-network-tutorial-p2)
+Hay mucho más por ver... No nos va a dar el tiempo, pero se los dejo para que puedan seguir investigando.. Listos para [la segunda parte del tutorial](https://github.com/dpetrocelli/sdypp2020/tree/master/TPS/No%20obligatorios/docker-network-tutorial-p2)
 
 Gracias!
