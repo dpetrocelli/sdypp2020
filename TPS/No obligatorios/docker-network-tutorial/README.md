@@ -491,7 +491,7 @@ El demonio de Docker puede escuchar las solicitudes de la API de Docker Engine a
 Si necesita acceder al demonio de Docker de forma remota, se debe habilitar **tcp Socket**. Tenga en cuenta que la configuración predeterminada proporciona acceso directo no cifrado y no autenticado al demonio de Docker, y debe protegerse mediante el socket cifrado HTTPS integrado o colocando un proxy web seguro frente a él. Puede escuchar en el puerto 2375 en todas las interfaces de red con -H tcp: //0.0.0.0: 2375, o en una interfaz de red particular usando su dirección IP: -H tcp: //192.168.59.103:2375. Es convencional usar el puerto 2375 para comunicaciones no cifradas y el puerto 2376 para comunicaciones cifradas con el demonio.
 <p align="left"> <img src="https://i.imgur.com/2JAlqZf.png" width="500"/></p> 
 
-Para realizar una configuración simple en un HOST remoto debo seguir los siguientes pasos (sin configuración TLS):
+## Configurar un HOST remoto para administrar con Portainer (sin configuración TLS):
 * Crear una carpeta en la siguiente ruta para cargar un archivo de configuración
 ```bash
 mkdir /etc/systemd/system/docker.service.d
@@ -510,8 +510,10 @@ ExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375
 * Guardar y salir del archivo
 * Reiniciar los servicios de Docker para que tomen los cambios en la configuración
 ```bash
-sudo systemctl daemon-reload ; sudo service docker restart)
+sudo systemctl daemon-reload ; sudo service docker restart
 ```
+
+## Levantar Portainer GUI
 Bien, basta de cháchara.. Levantemos Portainer GUI
 ```bash
 $ docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /path/on/host/data:/data portainer/portainer
