@@ -1,0 +1,63 @@
+
+version: '3'
+services:
+  server:
+    image: rancher/k3s:latest
+    container_name: server1
+    hostname: server1
+    command: server --no-deploy traefik --cluster-init
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_TOKEN=mope
+    - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
+    - K3S_KUBECONFIG_MODE=666
+    volumes:
+    - k3s-server:/var/lib/rancher/k3s
+    # This is just so that we get the kubeconfig file out
+    - .:/output
+    ports:
+    - 6443:6443
+  server2:
+    image: rancher/k3s:latest
+    hostname: server2
+    container_name: server2
+    command: server --server https://server:6443
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_URL=https://server:6443
+    - K3S_TOKEN=mope
+    ports:
+    - 6445:6443
+  server3:
+    container_name: server3
+    hostname: server3
+    image: rancher/k3s:latest
+    command: server --server https://server:6443
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_URL=https://server:6443
+    - K3S_TOKEN=mope
+    ports:
+    - 6444:6443
+  worker1:
+    image: rancher/k3s:latest
+    container_name: worker1
+    hostname: worker1
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_URL=https://server:6443
+    - K3S_TOKEN=mope
+volumes:
+  k3s-server: {}
