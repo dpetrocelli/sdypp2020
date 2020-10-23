@@ -14,3 +14,5 @@
 2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: unlu2019-master
 2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: vms
 2020-04-17 20:26:45 | INFO  | [main] o.e.App:65 -  LINE ERROR: ls: cannot access '/homopiy': No such file or directory
+2020-10-23 17:59:26 | INFO  | [main] o.e.App:18 -  OS: linux
+2020-10-23 17:59:26 | INFO  | [main] o.e.App:65 -  LINE ERROR: /bin/bash: /home/soporte/installer.sh: No such file or directory

@@ -1,0 +1,11 @@
+RabbitMQ basics:
+* Montado en máquina general y habilitación de servicios básicos (management UI ,etc)
+* GUI  y funciones principales
+
+Luego vimos como montarlo en Docker, introduciendo algunos pasos esenciales de docker
+* storage y persistencia (básica), mostrando el ciclo de vida de un container (guardado o no guardado de datos)
+* publicar mensajes desde la gui 
+* levantar rabbit con docker simple (docker run)
+* Conceptos básicos de Docker-compose y archivos yaml
+* Levantar un "cluster" de rabbit en Docker con 3 unidades
+* Definir políticas de HA y aplicarlas a un conjunto de colas (regex) , probando réplicas y caídas.
