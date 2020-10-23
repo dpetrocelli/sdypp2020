@@ -1,0 +1,6 @@
+LocalTunnel <-> Tunel solo para https 
+url: https://github.com/localtunnel/localtunnel
+sudo npm install -g localtunnel
+npx localtunnel --port 8000
+
+url de referencia para ambos: https://www.luciano.im/blog/comparti-tu-localhost-de-forma-segura-con-ngrok-y-localtunnel/
