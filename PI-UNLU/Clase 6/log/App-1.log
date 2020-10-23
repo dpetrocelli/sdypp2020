@@ -1,0 +1,16 @@
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:18 -  OS: linux
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: aws
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: azure
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: config_before_aws
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: corregir
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: Custom Office Templates
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: distributedProcessingThesis
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: docker
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: docs
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: eclipse
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: isos
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: kubfiles
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: unlu
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: unlu2019-master
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:57 -  LINEA INPUT: vms
+2020-04-17 20:26:45 | INFO  | [main] o.e.App:65 -  LINE ERROR: ls: cannot access '/homopiy': No such file or directory
