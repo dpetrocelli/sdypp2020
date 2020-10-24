@@ -7,10 +7,8 @@ Includes:
 - [Elasticsearch][elasticsearch]
 - [Fluentd][fluentd]
 - [Kibana][kibana]
-<p align="left"> <img src="https://repository-images.githubusercontent.com/216833591/46ad5000-f521-11e9-9a77-9add70bac3c2" width="500"/> </p> 
 
-
-<p align="left"> <img src="https://www.fluentd.org/assets/img/recipes/fluentd_docker.png" width="500"/> </p> 
+<p align="left"> <img src="https://www.cncf.io/wp-content/uploads/2020/07/image3.pnghttps://www.cncf.io/wp-content/uploads/2020/07/image3.png" width="500"/> </p> 
 
 ## Introduction
 
@@ -52,6 +50,8 @@ Together, these three different open source products (ELK or EFK) are most commo
 - Tagging and Dynamic Routing with FluentD
 - Larger Plugin Library with FluentD
 
+<p align="left"> <img src="https://www.fluentd.org/assets/img/recipes/fluentd_docker.png" width="500"/> </p> 
+
 ## Launching the EFK stack
 
 ### 1. Requirements
@@ -91,11 +91,13 @@ curl -X POST -d 'json={"action":"test","userId":"dpetrocelli"}' http://localhost
 ## Reference
 
 - [Quora - What is the ELK stack](https://www.quora.com/What-is-the-ELK-stack)
-- [Kubernetes Logging: Comparing Fluentd vs. Logstash](https://platform9.com/blog/kubernetes-logging-comparing-fluentd-vs-logstash/#:~:text=The%20components%20for%20log%20parsing,and%20more%20prone%20to%20errors.)
+- [Kubernetes Logging: Comparing Fluentd vs. Logstash](https://bit.ly/3dTrovb)
 - [Fluentd vs Logstash, An unbiased comparison](https://techstricks.com/fluentd-vs-logstash/)
 - [Fluentd vs. Logstash: A Comparison of Log Collectors | Logz.io](https://logz.io/blog/fluentd-logstash/)
 - [Logstash vs Fluentd — Which one is better !](https://medium.com/techmanyu/logstash-vs-fluentd-which-one-is-better-adaaba45021b)
-- [FluentD vs. Logstash: How to Decide for Your Organization](https://www.openlogic.com/blog/fluentd-vs-logstash#:~:text=FluentD%20and%20Logstash%20are%20both,offers%20better%20performance%20than%20Logstash.)
+- [FluentD vs. Logstash: How to Decide for Your Organization](https://bit.ly/2J43KRp)
+- [Stackshare - Fluentd vs Logtash current state](https://stackshare.io/stackups/fluentd-vs-logstash)
+
 [elasticsearch]: https://www.elastic.co/products/elasticsearch
 [fluentd]: https://www.fluentd.org/
 [kibana]: https://www.elastic.co/products/kibana
@@ -106,7 +108,7 @@ curl -X POST -d 'json={"action":"test","userId":"dpetrocelli"}' http://localhost
 [docker]: https://www.docker.com/
 [docker-compose]: https://docs.docker.com/compose/
 [rested]: https://itunes.apple.com/au/app/rested-simple-http-requests/id421879749?mt=12
-[kubernetes]: https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/#:~:text=The%20name%20Kubernetes%20originates%20from,and%20practices%20from%20the%20community.
+[kubernetes]: https://bit.ly/2TlLl4v
 [filebeat]: https://www.elastic.co/es/beats/filebeat
 [fluent-bit]: https://fluentbit.io/
 [cncf]: https://www.cncf.io/
