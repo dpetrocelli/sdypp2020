@@ -8,7 +8,7 @@ Includes:
 - [Fluentd][fluentd]
 - [Kibana][kibana]
 
-<p align="left"> <img src="https://www.cncf.io/wp-content/uploads/2020/07/image3.pnghttps://www.cncf.io/wp-content/uploads/2020/07/image3.png" width="500"/> </p> 
+<p align="left"> <img src="https://miro.medium.com/max/906/1*jr0cpmzt4pzLv_iU53nTdw.jpeg" width="500"/> </p> 
 
 ## Introduction
 
@@ -78,7 +78,7 @@ This settings has been changed to show how to magen Fluentd configurations.
 
 * Kibana container (Web GUI) is exposed on port `5601`.
 
-### 4. Test Fluentd configuration and Kibana Wew Gui 
+### 4. Test Fluentd configuration and Kibana Web GUI
 
 Have you installed curl client? If not install it :D 
 
@@ -87,6 +87,18 @@ Then, you can generate a simple JSON HTTP request to be managed by fluentD and r
 ```bash
 curl -X POST -d 'json={"action":"test","userId":"dpetrocelli"}' http://localhost:9999/dpetrocelli/testSite
 ```
+
+### 5. Open your Kibana Web GUI
+
+- Open your web browser on http://localhost:5601
+<p align="left"> <img src="https://i.imgur.com/wYqAzw0.png" width="500"/> </p> 
+
+- Go to the "Discover" web page
+<p align="left"> <img src="https://i.imgur.com/GVnaAR7.png" width="500"/> </p> 
+
+- Look for our action=test Json message
+<p align="left"> <img src="https://i.imgur.com/4JmBzOT.png" width="500"/> </p> 
+
 
 ## Reference
 
