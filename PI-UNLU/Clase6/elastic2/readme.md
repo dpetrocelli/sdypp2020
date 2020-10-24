@@ -91,13 +91,13 @@ curl -X POST -d 'json={"action":"test","userId":"dpetrocelli"}' http://localhost
 ### 5. Open your Kibana Web GUI
 
 - Open your web browser on http://localhost:5601
-<p align="left"> <img src="https://i.imgur.com/wYqAzw0.png" width="500"/> </p> 
+<p align="left"> <img src="https://i.imgur.com/wYqAzw0.png" width="1000"/> </p> 
 
 - Go to the "Discover" web page
-<p align="left"> <img src="https://i.imgur.com/GVnaAR7.png" width="500"/> </p> 
+<p align="left"> <img src="https://i.imgur.com/GVnaAR7.png" width="1000"/> </p> 
 
 - Look for our action=test Json message
-<p align="left"> <img src="https://i.imgur.com/4JmBzOT.png" width="500"/> </p> 
+<p align="left"> <img src="https://i.imgur.com/4JmBzOT.png" width="1000"/> </p> 
 
 
 ## Reference
