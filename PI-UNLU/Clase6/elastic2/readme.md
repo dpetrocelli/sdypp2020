@@ -1,91 +1,112 @@
-# EFK stack on Docker
+# EFK stack on Docker (vía Docker Compose)
 
-A sample environment running an [EFK stack][efk] on your local machine.
+A tutorial to build a complete Docker environment for running an EFK stack on your local machine.
 
 Includes:
 
 - [Elasticsearch][elasticsearch]
 - [Fluentd][fluentd]
 - [Kibana][kibana]
+<p align="left"> <img src="https://repository-images.githubusercontent.com/216833591/46ad5000-f521-11e9-9a77-9add70bac3c2" width="500"/> </p> 
+
+
+<p align="left"> <img src="https://www.fluentd.org/assets/img/recipes/fluentd_docker.png" width="500"/> </p> 
 
 ## Introduction
 
-As software systems grow and become more and more decoupled, log aggregation is a key aspect to take care of.
+Here we are going to explore how to implement an unified logging system for your Docker containers. As software systems grow and become more and more decoupled, log aggregation is a key aspect to take care of. 
+
+**How is done in the past:**
+The old fashion way is to write these messages to a log file (or even worst, not using a Logging framework :/), but that inherits certain problems specifically when:
+* We try to perform some searchs and analysis over the registers
+* We have more than one instance running (multithread p.e)
+* Other cases, even more complex.
+
+**How we must to face:**
 
 The issues to tackle down with logging are:
 
 - Having a centralized overview of all log events
-- Normalizing different log types
+- Normalizing different log types (p.e using json format)
 - Automated processing of log messages
-- Supporting several and very different event sources
+- Supporting several sources and integrating with very different scenarios 
 
-While [Elasticsearch][elasticsearch] and [Kibana][kibana] are the reference products *de facto* for log searching and visualization in the open source community, there's no such agreement for log collectors.
+While [Elasticsearch][elasticsearch] and [Kibana][kibana] are the reference products *de facto* for log searching and visualization in the open source community. Elasticsearch is a NoSQL database that is based on the Lucene search engine. Kibana is a visualization layer that works on top of Elasticsearch. However, there's no such agreement for **data/log collectors and data aggregation**. A data collector is a pipeline tool that accepts inputs from various sources, executes different transformations, and exports the data to various targets.
 
 The two most-popular data collectors are:
 
-- [Logstash][logstash], most known for being part of the [ELK Stack][elk]
-- [Fluentd][fluentd], used by communities of users of software such as [Docker][docker-fluentd] and [GCP][gcp-fluentd]
+- [Logstash][logstash], or their lite version [Elastic Beats][filebeat] are most known for being part of the [ELK Stack][elk]. This version is commonly used in "traditional environments", p.e for monolithic applications on traditional VMs
+- [Fluentd][fluentd], or their lite version [Fluent-bit][fluent-bit] are usually referenced as [EFK stack][efk]. This version is the most used by communities of users of [Cloud Native software][cncf], or microservices  hosted on [Docker][docker-fluentd]/[Kubernetes][kubernetes]
+If you need more detail about this two data/log collectors (Logtash - Fluentd), you can go to the [reference](#reference) part of this repository. 
 
-Logging systems using Fluentd as collector are usually referenced as [EFK stack][efk].
+Together, these three different open source products (ELK or EFK) are most commonly used in log analysis in IT environments (though there are many more use cases for the ELK Stack starting including business intelligence, security and compliance, and web analytics).
 
-Aim of this repository is to run an EFK stack on your local machine using docker-compose.
 
-I'm not personally involved with companies supporting Logstash nor Fluentd.
+**Our aim is to show and explain how to run a simple EFK stack on your local machine using docker-compose.**
 
-If you need help to choose between Logstash and Fluent, take a look to the [reference](#reference).
+### Why I choose Fluentd (EFK Stack)?
+- Docker "native" support
+- Performance and high-volume logging
+- FluentD provides both active-active and active-passive deployment patterns for both availability and scale.
+- FluentD can forward log and event data to any number of additional processing nodes
+- Tagging and Dynamic Routing with FluentD
+- Larger Plugin Library with FluentD
 
 ## Launching the EFK stack
 
-### Requirements
+### 1. Requirements
 
 On your machine, make sure you have installed:
 
 - [Docker][docker]
 - [Docker Compose][docker-compose]
 
-### Run
+### 2. Clone the repository!
 
+```bash
+git clone https://github.com/dpetrocelli/sdypp2020/tree/master/PI-UNLU/Clase6/elastic2
+```
+
+### 3. Run the Docker Compose file!
 ```bash
 docker-compose up
 ```
 
-Please note: in this example Fluentd will run on port `8080` instead of the default `24224`.
+Please note: 
+* In this example Fluentd will be running as a container on port `9999` instead of the default `24224`.
+This settings has been changed to show how to magen Fluentd configurations.
 
-This settings has been changed to show how to configure Fluentd to listen on a different port.
+* Kibana container (Web GUI) is exposed on port `5601`.
 
-Kibana is exposed on port `5601`.
+### 4. Test Fluentd configuration and Kibana Wew Gui 
 
-### Testing with sample data
+Have you installed curl client? If not install it :D 
 
-If you are running macOS and you want to send sample data to test the EFK stack, you'll need [RESTed][rested].
-
-Files are available in the [examples](examples) folder.
-
-Please note that RESTed is not strictly necessary as any other REST client application will work fine.
-
-If you have curl client installed on your system, you can generate sample data by running:
+Then, you can generate a simple JSON HTTP request to be managed by fluentD and routed to ElasticSearch container:
 
 ```bash
-curl -X POST -d 'json={"action":"login","userId":"5b07fbbb4e6b8"}' http://localhost:8080/myapp.log
+curl -X POST -d 'json={"action":"test","userId":"dpetrocelli"}' http://localhost:9999/dpetrocelli/testSite
 ```
 
 ## Reference
 
 - [Quora - What is the ELK stack](https://www.quora.com/What-is-the-ELK-stack)
-- [Fluentd vs. LogStash: A Feature Comparison](https://www.loomsystems.com/blog/single-post/2017/01/30/a-comparison-of-fluentd-vs-logstash-log-collector)
-- [Panda Strike: Fluentd vs Logstash](https://www.pandastrike.com/posts/20150807-fluentd-vs-logstash)
-- [Log Aggregation with Fluentd, Elasticsearch and Kibana - Haufe-Lexware.github.io](http://work.haufegroup.io/log-aggregation/)
+- [Kubernetes Logging: Comparing Fluentd vs. Logstash](https://platform9.com/blog/kubernetes-logging-comparing-fluentd-vs-logstash/#:~:text=The%20components%20for%20log%20parsing,and%20more%20prone%20to%20errors.)
 - [Fluentd vs Logstash, An unbiased comparison](https://techstricks.com/fluentd-vs-logstash/)
 - [Fluentd vs. Logstash: A Comparison of Log Collectors | Logz.io](https://logz.io/blog/fluentd-logstash/)
-
+- [Logstash vs Fluentd — Which one is better !](https://medium.com/techmanyu/logstash-vs-fluentd-which-one-is-better-adaaba45021b)
+- [FluentD vs. Logstash: How to Decide for Your Organization](https://www.openlogic.com/blog/fluentd-vs-logstash#:~:text=FluentD%20and%20Logstash%20are%20both,offers%20better%20performance%20than%20Logstash.)
 [elasticsearch]: https://www.elastic.co/products/elasticsearch
 [fluentd]: https://www.fluentd.org/
 [kibana]: https://www.elastic.co/products/kibana
 [logstash]: https://www.elastic.co/products/logstash
 [elk]: https://www.elastic.co/videos/introduction-to-the-elk-stack
 [docker-fluentd]: https://docs.docker.com/reference/logging/fluentd/
-[gcp-fluentd]: https://github.com/GoogleCloudPlatform/google-fluentd
 [efk]: https://docs.openshift.com/enterprise/3.1/install_config/aggregate_logging.html#overview
 [docker]: https://www.docker.com/
 [docker-compose]: https://docs.docker.com/compose/
 [rested]: https://itunes.apple.com/au/app/rested-simple-http-requests/id421879749?mt=12
+[kubernetes]: https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/#:~:text=The%20name%20Kubernetes%20originates%20from,and%20practices%20from%20the%20community.
+[filebeat]: https://www.elastic.co/es/beats/filebeat
+[fluent-bit]: https://fluentbit.io/
+[cncf]: https://www.cncf.io/
