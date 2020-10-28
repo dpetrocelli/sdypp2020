@@ -94,11 +94,13 @@ curl -X POST -d 'json={"action":"test","userId":"dpetrocelli"}' http://localhost
 <p align="left"> <img src="https://i.imgur.com/wYqAzw0.png" width="1000"/> </p> 
 
 - Go to the "Discover" web page
-<p align="left"> <img src="https://i.imgur.com/GVnaAR7.png" width="1000"/> </p> 
+<p align="left"> <img src="https://i.imgur.com/GVnaAR7.png" width="700"/> </p> 
 
 - Look for our action=test Json message
 <p align="left"> <img src="https://i.imgur.com/4JmBzOT.png" width="1000"/> </p> 
 
+Please note: 
+* In this example you have used **"my fluent.conf"** file configuration and we haven't explained how it must be configured for your own necesities. In the following part [Configure Docker Logging Driver](#configure-docker-logging-driver), we will explain it in detail.
 
 ## Reference
 
@@ -109,6 +111,8 @@ curl -X POST -d 'json={"action":"test","userId":"dpetrocelli"}' http://localhost
 - [Logstash vs Fluentd — Which one is better !](https://medium.com/techmanyu/logstash-vs-fluentd-which-one-is-better-adaaba45021b)
 - [FluentD vs. Logstash: How to Decide for Your Organization](https://bit.ly/2J43KRp)
 - [Stackshare - Fluentd vs Logtash current state](https://stackshare.io/stackups/fluentd-vs-logstash)
+- [Fluentd - Config File Syntax](https://docs.fluentd.org/configuration/config-file)
+- [Fluentd logging driver](https://test-dockerrr.readthedocs.io/en/latest/admin/logging/fluentd/)
 
 [elasticsearch]: https://www.elastic.co/products/elasticsearch
 [fluentd]: https://www.fluentd.org/
@@ -124,3 +128,91 @@ curl -X POST -d 'json={"action":"test","userId":"dpetrocelli"}' http://localhost
 [filebeat]: https://www.elastic.co/es/beats/filebeat
 [fluent-bit]: https://fluentbit.io/
 [cncf]: https://www.cncf.io/
+
+## Configure Docker Logging Driver
+
+The configuration file consists of the following directives:
+- **source**    directives determine the input sources
+- **match**     directives determine the output destinations
+- **filter**    directives determine the event processing pipelines
+- **system**    directives set system-wide configuration
+- **label**     directives group the output and filter for internal routing
+- **@include**  directives include other files
+
+### 1. Configure Source
+Fluentd input sources are enabled by selecting and configuring the desired input plugins using source directives. Fluentd standard input plugins include http and forward. The http provides an HTTP endpoint to accept incoming HTTP messages whereas forward provides a TCP endpoint to accept TCP packets. Of course, it can be both at the same time. You may add multiple source configurations as required.
+```yaml
+# Receive events from 24224/tcp
+# This is used by log forwarding and the fluent-cat command
+<source>
+  @type forward
+  port 24224
+</source>
+
+# Set Fluentd to listen via http on port 9999, listening on all hosts
+<source>
+  @type http
+  port 9999
+  bind 0.0.0.0
+</source>
+# Events having prefix 'dpetrocelli.**' will be stored both on Elasticsearch and files.
+<match dpetrocelli.**>
+  @type copy
+  <store>
+    # Elastic search method 
+    @type elasticsearch
+    host elasticsearch
+    port 9200
+    index_name fluentd
+    type_name fluentd
+    logstash_format true
+    logstash_prefix fluentd
+    logstash_dateformat %Y%m%d
+    include_tag_key true
+    tag_key @log_name
+    flush_interval 1s
+  </store>
+  #<store>
+    # Store to a file (if needed)
+    #@type file
+    #path /logs/dpetrocelli
+    #flush_interval 15s
+  #</store>
+  <store>
+  # All will be also printed to stdout
+    @type stdout
+  </store>
+</match>
+```
+### 2. Configure "match", Tell fluentd what to do!
+
+### Configure FluentD vía fluent.conf file
+
+### How do Docker Logs work?
+The default configuration of Docker supplies a view of the logs emitted from containers (and the applications within) in two forms: the console or standard output (also known as stdout) and JSON-formatted files stored on the hard disk.
+<p align="left"> <img src="https://coralogix.com/wp-content/uploads/2020/07/1.How-does-logging-work-in-Docker.png" width="700"/> </p> 
+
+On Docker v1.6, the concept of logging drivers was introduced. The Docker engine is aware of the output interfaces that manage the application messages.
+
+Since Docker v1.8, it was implemented a native Fluentd Docker logging driver. With that, you are able to have a unified and structured logging system with the simplicity and high performance of Fluentd.
+<p align="left"> <img src="http://dondocker.com/wp-content/uploads/2016/10/dondocker-fluentd-logs.png" width="700"/> </p> 
+
+The Fluentd Logging Driver supports following options through the --log-opt Docker command-line argument:
+- fluentd-address
+- tag
+
+The fluentd-address specifies the optional address (<ip>:<port>) for Fluentd.
+Log tags are a major requirement for Fluentd as they allow for **identifying the source** of incoming data and **take routing decisions**. By default, the Fluentd logging driver uses the container_id as a tag (64 character ID). You can change its value with the tag
+
+```yaml
+   web:
+    container_name: nodejs-ws
+    build: ./node-web-server
+    ports:
+      - "8080:8080"
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:9999
+        tag: ws-logs
+```

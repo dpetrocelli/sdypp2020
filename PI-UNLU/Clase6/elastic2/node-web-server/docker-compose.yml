@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    container_name: nodejs-ws
+    build: .
+    ports:
+      - "8080:8080"
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:9999
+        tag: ws-logs
