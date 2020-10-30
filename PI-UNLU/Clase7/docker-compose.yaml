@@ -1,10 +1,10 @@
 version: '3'
-services:
-  web:
-    container_name: nodejs-ws
+services:  
+  java-efk:
+    container_name: java-efk
     build: .
     ports:
-      - "8080:8080"
+      - 9090:9090
     logging:
       driver: fluentd
       options:

@@ -27,10 +27,14 @@ services:
   web:
     container_name: nodejs-ws
     build: ./node-web-server
+    links:
+      - elasticsearch
     ports:
-      - "8080:8080"
+      - 8080:8080
     logging:
       driver: fluentd
       options:
         fluentd-address: localhost:9999
-        #tag: ws-logs
+        tag: ws-logs
+
+    
