@@ -1,0 +1,68 @@
+2020-11-06 19:21:27 | INFO  | [main] o.e.Server:44 - mensaje
+2020-11-06 19:29:19 | INFO  | [main] o.e.Server:48 - Iniciando Servicio
+2020-11-06 19:29:19 | INFO  | [main] o.e.Server:66 - Connection factory has been configured
+2020-11-06 19:32:35 | INFO  | [main] o.e.Server:47 - Iniciando Servicio
+2020-11-06 19:32:35 | INFO  | [main] o.e.Server:67 - Connection factory has been configured
+2020-11-06 19:33:52 | INFO  | [main] o.e.Server:47 - Iniciando Servicio
+2020-11-06 19:33:52 | INFO  | [main] o.e.Server:66 - Connection factory has been configured
+2020-11-06 19:36:36 | INFO  | [main] o.e.Server:47 - Iniciando Servicio
+2020-11-06 19:36:36 | INFO  | [main] o.e.Server:66 - Connection factory has been configured
+2020-11-06 19:38:59 | INFO  | [main] o.e.Server:47 - Iniciando Servicio
+2020-11-06 19:38:59 | INFO  | [main] o.e.Server:67 - Connection factory has been configured
+2020-11-06 19:40:59 | INFO  | [main] o.e.Server:51 - Iniciando Servicio
+2020-11-06 19:41:08 | INFO  | [main] o.e.Server:51 - Iniciando Servicio
+2020-11-06 19:41:08 | WARN  | [AMQP Connection 127.0.0.1:5672] c.r.c.i.ForgivingExceptionHandler:115 - An unexpected connection driver error occured (Exception message: Socket closed)
+2020-11-06 19:41:53 | INFO  | [main] o.e.Server:51 - Iniciando Servicio
+2020-11-06 19:42:53 | INFO  | [main] o.e.Server:51 - Iniciando Servicio
+2020-11-06 19:44:45 | INFO  | [main] o.e.Server:51 - Iniciando Servicio
+2020-11-06 19:44:45 | INFO  | [main] o.e.Server:70 - Connection factory has been configured
+2020-11-06 19:46:17 | INFO  | [main] o.e.Server:51 - Iniciando Servicio
+2020-11-06 19:46:17 | INFO  | [main] o.e.Server:72 - Connection factory has been configured
+2020-11-06 19:46:17 | INFO  | [main] o.e.Server:75 -  Queueconnection OK
+2020-11-06 19:46:17 | INFO  | [main] o.e.Server:77 -  Queue Channel OK 
+2020-11-06 19:48:33 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 19:48:33 | INFO  | [main] o.e.Server:73 - Connection factory has been configured
+2020-11-06 19:49:54 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 19:49:54 | INFO  | [main] o.e.Server:72 - URI:amqp://user:bitnami@127.0.0.1:5672/virtualHost
+2020-11-06 19:49:54 | INFO  | [main] o.e.Server:75 - Connection factory has been configured
+2020-11-06 19:49:54 | INFO  | [main] o.e.Server:78 -  Queueconnection OK
+2020-11-06 19:49:54 | INFO  | [main] o.e.Server:80 -  Queue Channel OK 
+2020-11-06 19:50:58 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 19:50:58 | INFO  | [main] o.e.Server:72 - URI:amqp://user:bitnami@127.0.0.1:5672/%2F
+2020-11-06 19:50:58 | INFO  | [main] o.e.Server:75 - Connection factory has been configured
+2020-11-06 19:50:58 | INFO  | [main] o.e.Server:78 -  Queueconnection OK
+2020-11-06 19:50:58 | INFO  | [main] o.e.Server:80 -  Queue Channel OK 
+2020-11-06 19:51:23 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 19:51:23 | INFO  | [main] o.e.Server:72 - URI:amqp://user:bitnami@127.0.0.1:5672/%2F
+2020-11-06 19:51:23 | INFO  | [main] o.e.Server:75 - Connection factory has been configured
+2020-11-06 19:51:23 | INFO  | [main] o.e.Server:78 -  Queueconnection OK
+2020-11-06 19:51:23 | INFO  | [main] o.e.Server:80 -  Queue Channel OK 
+2020-11-06 19:55:06 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 19:55:06 | INFO  | [main] o.e.Server:68 - URI:amqp://user:bitnami@127.0.0.1:5672/%2F
+2020-11-06 19:55:06 | INFO  | [main] o.e.Server:71 - Connection factory has been configured
+2020-11-06 19:55:06 | INFO  | [main] o.e.Server:74 -  Queueconnection OK
+2020-11-06 19:55:06 | INFO  | [main] o.e.Server:76 -  Queue Channel OK 
+2020-11-06 19:55:32 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 19:55:32 | INFO  | [main] o.e.Server:69 - URI:amqp://user:bitnami@127.0.0.1:5672/%2F
+2020-11-06 19:55:32 | INFO  | [main] o.e.Server:72 - Connection factory has been configured
+2020-11-06 19:55:32 | INFO  | [main] o.e.Server:75 -  Queueconnection OK
+2020-11-06 19:55:32 | INFO  | [main] o.e.Server:77 -  Queue Channel OK 
+2020-11-06 19:55:32 | INFO  | [main] o.e.Server:83 -  Queue Session has been disconnected 
+2020-11-06 19:57:39 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 19:57:39 | INFO  | [main] o.e.Server:69 - URI:amqp://user:bitnami@127.0.0.1:5672/%2F
+2020-11-06 19:57:39 | INFO  | [main] o.e.Server:72 - Connection factory has been configured
+2020-11-06 19:57:39 | INFO  | [main] o.e.Server:75 -  Queueconnection OK
+2020-11-06 19:57:40 | INFO  | [main] o.e.Server:77 -  Queue Channel OK 
+2020-11-06 20:01:31 | INFO  | [AMQP Connection 127.0.0.1:5672] c.r.c.i.AMQConnection:736 - Received a frame on an unknown channel, ignoring it
+2020-11-06 20:02:20 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 20:02:20 | INFO  | [main] o.e.Server:69 - URI:amqp://user:bitnami@127.0.0.1:5672/%2F
+2020-11-06 20:02:20 | INFO  | [main] o.e.Server:72 - Connection factory has been configured
+2020-11-06 20:02:20 | INFO  | [main] o.e.Server:75 -  Queueconnection OK
+2020-11-06 20:02:20 | INFO  | [main] o.e.Server:77 -  Queue Channel OK 
+2020-11-06 20:02:20 | INFO  | [main] o.e.Server:84 -  Queue Session has been disconnected 
+2020-11-06 20:09:27 | INFO  | [main] o.e.Server:52 - Iniciando Servicio
+2020-11-06 20:09:27 | INFO  | [main] o.e.Server:69 - URI:amqp://user:bitnami@127.0.0.1:5672/%2F
+2020-11-06 20:09:27 | INFO  | [main] o.e.Server:72 - Connection factory has been configured
+2020-11-06 20:09:27 | INFO  | [main] o.e.Server:75 -  Queueconnection OK
+2020-11-06 20:09:27 | INFO  | [main] o.e.Server:77 -  Queue Channel OK 
+2020-11-06 20:09:27 | INFO  | [main] o.e.Server:84 -  Queue Session has been disconnected 

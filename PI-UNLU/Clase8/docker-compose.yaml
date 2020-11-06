@@ -1,0 +1,12 @@
+version: '3'
+services:  
+  java-efk:
+    container_name: java-efk
+    build: .
+    ports:
+      - 9090:9090
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: localhost:9999
+        tag: ws-logs
