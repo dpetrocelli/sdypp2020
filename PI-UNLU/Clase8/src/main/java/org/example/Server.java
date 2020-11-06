@@ -39,6 +39,11 @@ Objetivos:
     ** administrador maestro -> código -> genere esa "política"
     *** -> replicas
 
+
+    CLIENTE--> request -> hacer tarea X --> WEB/SOCKET SERVER   --> Almacena el file        <-- WORKER
+                                                                --> Almacena el trabajo         <-- Esperando trabajo
+                                                                                                    <-- obtiene trabajo
+                                                                                                    ......
     PARTE 1: ** Server que reciba tareas
     1. Web Server / Socket Server
         /recibirTrabajo
@@ -54,7 +59,7 @@ Objetivos:
         4. sube resultados 
             -> mensaje a la cola diciendo OK termine
             -> archivo modificado (imagen, video, -----)
-            
+
     *** -> asignar tareas:
         **** Dilan, instalar filezilla (FTP)
         **** descargar de FTP archivo de video
