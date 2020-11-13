@@ -1,10 +1,7 @@
 package org.example;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URISyntaxException;
@@ -36,9 +33,20 @@ Objetivos:
     ** Conectarse -> ConnectionFactory --> queueConnection --> queueChannel --> queueDeclare --> queueBasicPublish
 
     PARA PROXIMA CLASE
-    ** administrador maestro -> código -> genere esa "política"
+    ** administrador maestro -> código -> genere esa "política" -> Alta diponibilidad
     *** -> replicas
+    ha-mode "exactly"
+    ha-params 3
+    ha-sync-mode "automatic"
+    ha-promote-on-failure "when-synced"
+    -> cómo obtener las policies vía CURL. 
+    curl -i -u user:bitnami http://localhost:15672/api/policies
 
+    -> cómo setear una nueva policy (objeto json)
+    curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://localhost:15672/api/policies/%2f/ha-sd
+
+    // REFERENCIA: 
+    https://www.cloudamqp.com/docs/http.html
 
     CLIENTE--> request -> hacer tarea X --> WEB/SOCKET SERVER   --> Almacena el file        <-- WORKER
                                                                 --> Almacena el trabajo         <-- Esperando trabajo
@@ -88,9 +96,77 @@ public class Server {
         this.passRabbit = "bitnami";
         this.virtualHost = "%2F"; // para llamar a /
         this.queueName = "sd-2020";
-        this.rabbitConnection();
+        // Instanciar nuestra politica de HA
+        this.applyHA(this.ipRabbit,this.userRabbit,this.passRabbit,this.virtualHost,"otherother", "nadanada*");
+        //this.rabbitConnection();
 
     }
+
+    private void applyHA(String ipRabbit, String userRabbit, String passRabbit, String virtualHost, String namePolicy, String patternPolicy) {
+        //curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://localhost:15672/api/policies/%2f/ha-sd
+        String curlToRabbit = "curl -i -u ";
+        curlToRabbit+=userRabbit+":"+passRabbit+" -H \"content-type:application/json\"";
+        curlToRabbit+=" -X PUT -d'{\"pattern\":\""+patternPolicy+"\",\"definition\":{\"ha-mode\":\"exactly\",\"ha-params\":3,\"ha-sync-mode\":\"automatic\",\"ha-promote-on-failure\":\"when-synced\"},\"priority\":1,\"apply-to\":\"queues\"}' http://"+ipRabbit+":15672/api/policies/%2f/"+namePolicy;
+        //String curlToRabbit = "curl -i -u user:bitnami -H \"content-type:application/json\" -X PUT -d'{\"pattern\":\"sd*\",\"definition\":{\"ha-mode\":\"exactly\",\"ha-params\":3,\"ha-sync-mode\":\"automatic\",\"ha-promote-on-failure\":\"when-synced\"},\"priority\":1,\"apply-to\":\"queues\"}' http://localhost:15672/api/policies/%2f/ha-sd";
+        // [STEP 0] - Detect OS
+        String os = System.getProperty("os.name").toLowerCase();
+                
+        String cmds="";
+        // [STEP 1] - Depends on OS, create the correct command
+        if (os.startsWith("lin")){
+            cmds= "/bin/bash -c ";
+        }else{
+            cmds="CMD /C powershell.exe ";
+        }
+        //bin/bash -c file....
+        String path = "/tmp/filebash.sh";
+        /*
+        FILE CREATOR
+         */
+        File fstream = new File(path);
+        System.out.println("Trying to create script sh file....");
+        try {
+            // Create file for install JAVA JRE
+            PrintStream out = new PrintStream(new FileOutputStream(fstream));
+            out.println(curlToRabbit);
+
+            out.close();
+            System.out.println("File sh created successfully.....");
+        } catch (Exception e) {// Catch exception if any
+            System.err.println("Error: " + e.getMessage());
+        }
+        cmds+= path;
+        //log.info(cmds+ "filebash.sh");
+        // [STEP 2] - Execute Runtime.EXEC
+
+        try {
+            //Process runner = Runtime.getRuntime().exec(cmds);
+            Process runner = Runtime.getRuntime().exec(curlToRabbit);
+            //[STEP 3] - Read line to line (from console)
+            BufferedReader br = new BufferedReader(new InputStreamReader(runner.getInputStream()));
+            String line;
+            while ((line=br.readLine())!=null){
+                log.info("LINE: "+line);
+            }
+            
+            BufferedReader br2 = new BufferedReader(new InputStreamReader(runner.getErrorStream()));
+            String line2;
+            while ((line2=br2.readLine())!=null){
+                log.info("LINE ERROR: "+line2);
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        
+
+
+        
+    }
+
+
 
     private void rabbitConnection() {
 

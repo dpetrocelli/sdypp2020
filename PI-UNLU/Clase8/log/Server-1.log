@@ -66,3 +66,140 @@
 2020-11-06 20:09:27 | INFO  | [main] o.e.Server:75 -  Queueconnection OK
 2020-11-06 20:09:27 | INFO  | [main] o.e.Server:77 -  Queue Channel OK 
 2020-11-06 20:09:27 | INFO  | [main] o.e.Server:84 -  Queue Session has been disconnected 
+2020-11-13 18:49:36 | INFO  | [main] o.e.Server:84 - Iniciando Servicio
+2020-11-13 18:49:36 | INFO  | [main] o.e.Server:101 - URI:amqp://user:bitnami@127.0.0.1:5672/%2F
+2020-11-13 18:49:36 | INFO  | [main] o.e.Server:104 - Connection factory has been configured
+2020-11-13 18:49:36 | INFO  | [main] o.e.Server:107 -  Queueconnection OK
+2020-11-13 18:49:36 | INFO  | [main] o.e.Server:109 -  Queue Channel OK 
+2020-11-13 18:49:36 | INFO  | [main] o.e.Server:116 -  Queue Session has been disconnected 
+2020-11-13 19:20:40 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:20:40 | INFO  | [main] o.e.Server:112 - HEADER:curl -i -u user:bitnami -H "content-type:application/json"
+2020-11-13 19:23:29 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:23:29 | INFO  | [main] o.e.Server:114 - HEADER:curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://127.0.0.1:15672/api/policies/%2f/sdtest1ha
+2020-11-13 19:24:03 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:24:03 | INFO  | [main] o.e.Server:114 - HEADER:curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd2*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://127.0.0.1:15672/api/policies/%2f/sdtest1ha
+2020-11-13 19:26:42 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:26:42 | INFO  | [main] o.e.Server:115 - OS: Linux
+2020-11-13 19:29:34 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:29:56 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:29:56 | INFO  | [main] o.e.Server:116 - OS: linux
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: Clase Sockets.iml
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: deploy-automation.sh
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: docker-compose.yaml
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: Dockerfile
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: log
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: pom.xml
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: rabbit
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: src
+2020-11-13 19:37:44 | INFO  | [main] o.e.Server:132 - LINE: target
+2020-11-13 19:38:01 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:38:01 | INFO  | [main] o.e.Server:132 - LINE: /home/david/Documents/sdypp2020/PI-UNLU/Clase8
+2020-11-13 19:54:15 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:54:15 | INFO  | [main] o.e.Server:125 - /bin/bash -c curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd2*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://127.0.0.1:15672/api/policies/%2f/sdtest1ha
+2020-11-13 19:54:35 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:54:35 | INFO  | [main] o.e.Server:125 - /bin/bash -c curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd25*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://127.0.0.1:15672/api/policies/%2f/sdtest1ha
+2020-11-13 19:55:33 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:55:33 | INFO  | [main] o.e.Server:125 - /bin/bash -c curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd25*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://127.0.0.1:15672/api/policies/%2f/sdtest1ha
+2020-11-13 19:55:33 | INFO  | [main] o.e.Server:141 - LINE ERROR: curl: try 'curl --help' or 'curl --manual' for more information
+2020-11-13 19:56:10 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:56:10 | INFO  | [main] o.e.Server:125 - /bin/bash -c curl www.google.com.ar -o prueba.html
+2020-11-13 19:56:10 | INFO  | [main] o.e.Server:141 - LINE ERROR: curl: try 'curl --help' or 'curl --manual' for more information
+2020-11-13 19:56:26 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:56:26 | INFO  | [main] o.e.Server:125 - curl www.google.com.ar -o prueba.html
+2020-11-13 19:56:27 | INFO  | [main] o.e.Server:141 - LINE ERROR:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2020-11-13 19:56:27 | INFO  | [main] o.e.Server:141 - LINE ERROR:                                  Dload  Upload   Total   Spent    Left  Speed
+2020-11-13 19:56:27 | INFO  | [main] o.e.Server:141 - LINE ERROR: 
+2020-11-13 19:56:27 | INFO  | [main] o.e.Server:141 - LINE ERROR:   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2020-11-13 19:56:27 | INFO  | [main] o.e.Server:141 - LINE ERROR: 100 12912    0 12912    0     0   175k      0 --:--:-- --:--:-- --:--:--  175k
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: HTTP/1.1 400 Bad Request
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: content-length: 128
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: content-security-policy: script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'self'
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: content-type: application/json
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: date: Fri, 13 Nov 2020 22:57:17 GMT
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: server: Cowboy
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: vary: accept, accept-encoding, origin
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: 
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:136 - LINE: {"error":"bad_request","reason":"invalid payload: the request body JSON-decoded to a string. Is the input doubly-JSON-encoded?"}
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:142 - LINE ERROR:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:142 - LINE ERROR:                                  Dload  Upload   Total   Spent    Left  Speed
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:142 - LINE ERROR: 
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:142 - LINE ERROR:   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2020-11-13 19:57:17 | INFO  | [main] o.e.Server:142 - LINE ERROR: 100   296  100   128  100   168   125k   164k --:--:-- --:--:-- --:--:--  289k
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:124 - curl: curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://localhost:15672/api/policies/%2f/ha-sd
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: HTTP/1.1 400 Bad Request
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: content-length: 128
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: content-security-policy: script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'self'
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: content-type: application/json
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: date: Fri, 13 Nov 2020 23:01:35 GMT
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: server: Cowboy
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: vary: accept, accept-encoding, origin
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: 
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:137 - LINE: {"error":"bad_request","reason":"invalid payload: the request body JSON-decoded to a string. Is the input doubly-JSON-encoded?"}
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:143 - LINE ERROR:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:143 - LINE ERROR:                                  Dload  Upload   Total   Spent    Left  Speed
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:143 - LINE ERROR: 
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:143 - LINE ERROR:   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2020-11-13 20:01:35 | INFO  | [main] o.e.Server:143 - LINE ERROR: 100   294  100   128  100   166  42666  55333 --:--:-- --:--:-- --:--:-- 98000
+2020-11-13 20:07:50 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:07:50 | INFO  | [main] o.e.Server:125 - /bin/bash -c filebash.sh
+2020-11-13 20:07:50 | INFO  | [main] o.e.Server:141 - LINE ERROR: /bin/bash: -c: option requires an argument
+2020-11-13 20:08:15 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:08:15 | INFO  | [main] o.e.Server:125 - bash filebash.sh
+2020-11-13 20:09:15 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:09:15 | INFO  | [main] o.e.Server:142 - LINE ERROR: bash: filebash.sh: command not found
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: Clase Sockets.iml
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: deploy-automation.sh
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: docker-compose.yaml
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: Dockerfile
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: log
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: pom.xml
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: prueba.html
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: rabbit
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: src
+2020-11-13 20:09:35 | INFO  | [main] o.e.Server:136 - LINE: target
+2020-11-13 20:10:27 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:10:27 | INFO  | [main] o.e.Server:142 - LINE ERROR: bash: src/main/java/org/example/filebash.sh: Permission denied
+2020-11-13 20:11:05 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:11:05 | INFO  | [main] o.e.Server:142 - LINE ERROR: bash: src/main/resources/filebash.sh: Permission denied
+2020-11-13 20:12:25 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:12:25 | INFO  | [main] o.e.Server:142 - LINE ERROR: bash: src/main/resources/filebash.sh: Permission denied
+2020-11-13 20:15:54 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:15:54 | INFO  | [main] o.e.Server:142 - LINE ERROR: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:95 - Iniciando Servicio
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:136 - LINE: HTTP/1.1 201 Created
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:136 - LINE: content-length: 0
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:136 - LINE: content-security-policy: script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'self'
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:136 - LINE: date: Fri, 13 Nov 2020 23:16:20 GMT
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:136 - LINE: server: Cowboy
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:136 - LINE: vary: accept, accept-encoding, origin
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:136 - LINE: 
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:142 - LINE ERROR:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:142 - LINE ERROR:                                  Dload  Upload   Total   Spent    Left  Speed
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:142 - LINE ERROR: 
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:142 - LINE ERROR:   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2020-11-13 20:16:21 | INFO  | [main] o.e.Server:142 - LINE ERROR: 100   166    0     0  100   166      0  23714 --:--:-- --:--:-- --:--:-- 23714
+2020-11-13 20:22:55 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:23:25 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:24:01 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:24:01 | INFO  | [main] o.e.Server:155 - LINE ERROR: /bin/bash: src/main/resources/filebash.sh: Permission denied
+2020-11-13 20:24:40 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:24:40 | INFO  | [main] o.e.Server:155 - LINE ERROR: /bin/bash: /tmp/filebash.sh: Permission denied
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: HTTP/1.1 400 Bad Request
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: content-length: 128
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: content-security-policy: script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'self'
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: content-type: application/json
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: date: Fri, 13 Nov 2020 23:26:07 GMT
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: server: Cowboy
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: vary: accept, accept-encoding, origin
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: 
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:149 - LINE: {"error":"bad_request","reason":"invalid payload: the request body JSON-decoded to a string. Is the input doubly-JSON-encoded?"}
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:155 - LINE ERROR:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:155 - LINE ERROR:                                  Dload  Upload   Total   Spent    Left  Speed
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:155 - LINE ERROR: 
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:155 - LINE ERROR:   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2020-11-13 20:26:07 | INFO  | [main] o.e.Server:155 - LINE ERROR: 100   300  100   128  100   172   125k   167k --:--:-- --:--:-- --:--:--  292k

@@ -1,0 +1,1 @@
+curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"nadanada*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://127.0.0.1:15672/api/policies/%2f/otherother

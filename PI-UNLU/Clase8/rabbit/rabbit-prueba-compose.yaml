@@ -17,6 +17,8 @@ services:
       - RABBITMQ_NODE_NAME=rabbit@node1
       - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
       - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+    depends_on:
+      - "stats"
     ports:
       - 5672:5672
       - 4369:4369
@@ -24,6 +26,8 @@ services:
       - '/tmp/rabbit/node1:/bitnami'
   node2:
     image: bitnami/rabbitmq
+    depends_on:
+      - "stats"
     environment:
       - RABBITMQ_NODE_TYPE=queue-disc
       - RABBITMQ_NODE_NAME=rabbit@node2
