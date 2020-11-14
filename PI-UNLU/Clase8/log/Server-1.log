@@ -203,3 +203,44 @@
 2020-11-13 20:26:07 | INFO  | [main] o.e.Server:155 - LINE ERROR: 
 2020-11-13 20:26:07 | INFO  | [main] o.e.Server:155 - LINE ERROR:   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
 2020-11-13 20:26:07 | INFO  | [main] o.e.Server:155 - LINE ERROR: 100   300  100   128  100   172   125k   167k --:--:-- --:--:-- --:--:--  292k
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: HTTP/1.1 400 Bad Request
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: content-length: 128
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: content-security-policy: script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'self'
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: content-type: application/json
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: date: Fri, 13 Nov 2020 23:38:10 GMT
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: server: Cowboy
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: vary: accept, accept-encoding, origin
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: 
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:149 - LINE: {"error":"bad_request","reason":"invalid payload: the request body JSON-decoded to a string. Is the input doubly-JSON-encoded?"}
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:155 - LINE ERROR:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:155 - LINE ERROR:                                  Dload  Upload   Total   Spent    Left  Speed
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:155 - LINE ERROR: 
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:155 - LINE ERROR:   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2020-11-13 20:38:11 | INFO  | [main] o.e.Server:155 - LINE ERROR: 100   300  100   128  100   172   125k   167k --:--:-- --:--:-- --:--:--  292k
+2020-11-13 20:38:30 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:38:30 | INFO  | [main] o.e.Server:155 - LINE ERROR: /bin/bash: /tmp/filebash.sh: Permission denied
+2020-11-13 20:38:44 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:38:44 | INFO  | [main] o.e.Server:155 - LINE ERROR: bash: /tmp/filebash.sh: Permission denied
+2020-11-13 20:39:29 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:39:45 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:39:45 | INFO  | [main] o.e.Server:155 - LINE ERROR: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+2020-11-13 20:40:13 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:40:13 | INFO  | [main] o.e.Server:155 - LINE ERROR: /bin/bash: /home/filebash.sh: No such file or directory
+2020-11-13 20:41:04 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:41:04 | INFO  | [main] o.e.Server:155 - LINE ERROR: /bin/bash: /home/david/filebash.sh: Permission denied
+2020-11-13 20:45:47 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:45:47 | INFO  | [main] o.e.Server:156 - LINE ERROR: /bin/bash: /tmp/filebash.sh: Permission denied
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:92 - Iniciando Servicio
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:152 - LINE: HTTP/1.1 201 Created
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:152 - LINE: content-length: 0
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:152 - LINE: content-security-policy: script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'self'
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:152 - LINE: date: Fri, 13 Nov 2020 23:50:38 GMT
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:152 - LINE: server: Cowboy
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:152 - LINE: vary: accept, accept-encoding, origin
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:152 - LINE: 
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:158 - LINE ERROR:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:158 - LINE ERROR:                                  Dload  Upload   Total   Spent    Left  Speed
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:158 - LINE ERROR: 
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:158 - LINE ERROR:   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2020-11-13 20:50:38 | INFO  | [main] o.e.Server:158 - LINE ERROR: 100   170    0     0  100   170      0  34000 --:--:-- --:--:-- --:--:-- 34000

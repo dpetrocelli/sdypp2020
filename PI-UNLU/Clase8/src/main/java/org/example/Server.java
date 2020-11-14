@@ -130,6 +130,7 @@ public class Server {
             PrintStream out = new PrintStream(new FileOutputStream(fstream));
             out.println(curlToRabbit);
 
+
             out.close();
             System.out.println("File sh created successfully.....");
         } catch (Exception e) {// Catch exception if any
@@ -140,8 +141,10 @@ public class Server {
         // [STEP 2] - Execute Runtime.EXEC
 
         try {
-            //Process runner = Runtime.getRuntime().exec(cmds);
-            Process runner = Runtime.getRuntime().exec(curlToRabbit);
+            Process runner = Runtime.getRuntime().exec("chmod +rx "+path);
+            runner.waitFor();
+            runner = Runtime.getRuntime().exec(cmds);
+            //Process runner = Runtime.getRuntime().exec(curlToRabbit);
             //[STEP 3] - Read line to line (from console)
             BufferedReader br = new BufferedReader(new InputStreamReader(runner.getInputStream()));
             String line;
@@ -157,13 +160,11 @@ public class Server {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
 
-        
-
-
-        
     }
 
 
