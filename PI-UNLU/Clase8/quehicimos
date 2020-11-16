@@ -1,0 +1,15 @@
+- En el dockerfile de Rabbit agregamos algunas variables de entorno extra y los depends_on. 
+- Armanos un mini bash para levantar todo (carpetas, files y configuración)
+- Vimos cómo definir HA desde la GUI. Ejemplos y pruebas sobre eso. Caidas réplicas, ver cuando sincroniza. 
+- Persistencia de contenedores fuera de su ciclo de vida, etc.
+- Luego vimos la integración de herramientas de línea de comando (WIN / LINUX) desde Java y cómo tomar acciones desde ahí.
+- Practicamos un poco con CURL como herramienta comodín para distintas acciones.
+- En este contexto también vimos como "pegarle" a una API de un servicio, en este caso la de rabbitMQ para tomar acciones. El objetivo fue:   
+    ** Entender / Integrar como comunicarse con una API a través de msg JSON (desde una consola)    
+    ** Tomar acciones con dichas APIs (desde una consola)    
+    ** Particularmente, generar las políticas de HA desde una consola con CURL  (con las credenciales correspondientes) y finalmente    
+    ** Generar las políticas de HA, vía Java con credenciales de la factoría de conexión para poder "automatizar" el proceso y no depender de un paso manual. 
+        Para ello necesitamos:
+        *** Parametrizar lo que queremos ejecutar creando un archivo .sh
+        *** Dar permisos con chmod +ax file.sh
+        *** Ejecutar script.sh sin sudo
