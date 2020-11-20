@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Location hostname</title>
+<style>
+   form {
+      width:70%;
+      margin: 0 auto;
+      text-align: center;
+   }
+   * {
+      padding: 2px;
+      margin:5px;
+   }
+   input[type="button"] {
+      border-radius: 10px;
+   }
+</style>
+</head>
+<body>
+<form>
+<fieldset>
+<legend>Location-hostname</legend>
+<label for="urlSelect">Current URL:</label>
+<input type="url" size="27" id="urlSelect" value="https://www.example.com:2544">
+<input type="button" onclick="getHostname()" value="Get Hostname">
+<div id="divDisplay"></div>
+</fieldset>
+</form>
+<script>
+   var divDisplay = document.getElementById("divDisplay");
+   var urlSelect = document.getElementById("urlSelect");
+   function getHostname(){
+      divDisplay.textContent = 'Hostname: '+location.hostname;
+   }
+</script>
+</body>
+</html>

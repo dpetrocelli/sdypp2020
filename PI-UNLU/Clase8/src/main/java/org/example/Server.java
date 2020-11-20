@@ -45,8 +45,12 @@ Objetivos:
     -> cómo setear una nueva policy (objeto json)
     curl -i -u user:bitnami -H "content-type:application/json" -X PUT -d'{"pattern":"sd*","definition":{"ha-mode":"exactly","ha-params":3,"ha-sync-mode":"automatic","ha-promote-on-failure":"when-synced"},"priority":1,"apply-to":"queues"}' http://localhost:15672/api/policies/%2f/ha-sd
 
-    // REFERENCIA: 
+    // REFERENCIA:
     https://www.cloudamqp.com/docs/http.html
+
+    // hasta acá clase 9.
+
+    // Clase 10 ->
 
     CLIENTE--> request -> hacer tarea X --> WEB/SOCKET SERVER   --> Almacena el file        <-- WORKER
                                                                 --> Almacena el trabajo         <-- Esperando trabajo

@@ -1,0 +1,38 @@
+- Inspección de redes Docker y contenedores (docker network inspect / docker container ID inspect)
+- Montar volúmenes y servicios webs con File Servers compartidos entre Dockers. (Nginx webservers)
+- Uso de red Bridge y redes definidas en Docker-Compose (Networks)
+- Análisis interno desde un contedor (exec -it -> SSH)
+- Instalación (que no se recomienda ya que no dejo los contenedores de manera inmutable) de herramientas para debug dentro de un container(iputils, ifconfig, netcat)
+- Mapping de puertos / Hostname
+- Mini servidor web basado en nodejs (o cualquier otro lenguaje) donde podamos pasar variables de entorno
+- prueba local (fuera de Docker) para pasar variables de entorno -> documentado en el ejemplo .js
+- Generación de imagenes propias (x ej: node js + mi codigo) -> build
+- Paso de variables de entorno a contenedor (docker run --env)
+- Paso de variables de entorno en Docker-Compose (:environment)
+- Balance de carga  -> TCP              -> SockeServer / RabbitMQ TCP 5269 -> HAPROXY
+                    -> HTTP/HTTPS       -> Nginx LB -> nginx upstream balancer
+    Hoy configuramos NGINX con Upstream
+- Balanceo de carga a distintos web Servers
+            Load Balancer
+                |
+    -------------------------
+    |           |           |
+    v           v           v
+   WS1          WS2         WS3
+- Configurar Ngrok para permitir accesos desde fuera:
+    - descarga con wget
+    - unzip
+    - configuración de ngrok token para publicar via web (con su usuario)
+- Generamos un archivo "deploy-automation" que levanta:
+    * Baja todos los contenedores que están corriendo
+    * Buildea la imagen de los webserver y pone N a correr
+    * Buildea la imagen de nginx upstream y lo pone a correr
+    * Levanta los tuneles de Ngrok
+
+Tarea es investigar cómo hacer "dinámico", es decir que nginx upstream se de cuenta que hay un nuevo WS!
+
+WS4 -> "alguien se de cuenta"
+        -> nginx.conf -> modifique
+        -> build de nginx upstream
+        -> baje el nginx upstream
+        -> suba el nginx upstream
