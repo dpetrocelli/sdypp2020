@@ -49,8 +49,11 @@ Objetivos:
     https://www.cloudamqp.com/docs/http.html
 
     // hasta acá clase 9.
-
-    // Clase 10 ->
+    // Clase 10, hicimos servicios en docker + balanceador
+    // Clase 11 -> Hasta el momento, vimos
+        // Socket Server
+        // RMI
+        // Web HTTP -> Spring Boot
 
     CLIENTE--> request -> hacer tarea X --> WEB/SOCKET SERVER   --> Almacena el file        <-- WORKER
                                                                 --> Almacena el trabajo         <-- Esperando trabajo
@@ -101,7 +104,7 @@ public class Server {
         this.virtualHost = "%2F"; // para llamar a /
         this.queueName = "sd-2020";
         // Instanciar nuestra politica de HA
-        this.applyHA(this.ipRabbit,this.userRabbit,this.passRabbit,this.virtualHost,"otherother", "nadanada*");
+        this.applyHA(this.ipRabbit,this.userRabbit,this.passRabbit,this.virtualHost,"sd", "sd-*");
         //this.rabbitConnection();
 
     }
@@ -191,7 +194,7 @@ public class Server {
 
             this.queueChannel.queueDeclare(this.queueName, true, false, false, null);
 
-            this.queueChannel.basicPublish("", this.queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, "hola".getBytes());
+            //this.queueChannel.basicPublish("", this.queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, "hola".getBytes());
             this.queueChannel.close();
             this.queueConnection.close();
             log.info(" Queue Session has been disconnected ");

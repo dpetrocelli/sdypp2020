@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: Class11.demo.DemoApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.685 s - in Class11.demo.DemoApplicationTests
