@@ -61,11 +61,12 @@ Objetivos:
                                                                                                     ......
     PARTE 1: ** Server que reciba tareas
     1. Web Server / Socket Server
-        /recibirTrabajo
+        /uploadFile -> PUT
+        /downloadFile -> GET
     2. a) archivo b) parámetros -> video1 y quiero comprimirlo a 240p
     3. Guardarlo en la cola de trabajo 
-        -> estructura del trabajo
-        -> archivo ? FTP
+        -> estructura del trabajo {endpoint: http://server:8080/downloadFile?name="path"; parametros="480"}
+
 
     PARTE 2: Workers que están "escuchando" por tareas
         1. estar escuchadno si hay algo en la cola
